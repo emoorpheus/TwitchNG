@@ -41,6 +41,11 @@ html.ng-ui {
     unicode-range: U+0000-024F, U+0400-045F, U+0490-0491, U+2000-206F, U+20AC, U+20BD, U+2116, U+2122, U+2190-2193; }
 
 html.ng-ui body, html.ng-ui .screens, html.ng-ui .screen_size { letter-spacing: 0 !important; font-kerning: normal !important; -webkit-text-stroke: 0 !important; }
+/* main.js checks its base sheet with a hidden span.fa (font-family must be "icons"; the sheet's own .fa rule is an invalid shorthand,
+ * so the check always fails) and then appends icons.min.css again - after this sheet, and a later @font-face wins: the Roboto
+ * remap above would be lost. Passing the check keeps the order (twitchng.js re-orders the links if it happens anyway); .fa is
+ * used by nothing else. */
+html.ng-ui .fa { font-family: icons; }
 
 /* ---------------------------------------------------------------- canvas: the splash night + a faint purple haze (static, dark: OLED-safe) */
 html.ng-ui #scene1 { background: radial-gradient(ellipse 70vw 46vh at 50% -8vh, rgba(145, 70, 255, .16), rgba(145, 70, 255, .05) 55%, rgba(145, 70, 255, 0) 100%),
@@ -53,11 +58,12 @@ html.ng-ui #scene1 .top_lable { text-align: left !important; width: auto !import
     font-weight: 900; font-size: 4.26vh !important; line-height: 1 !important; color: var(--ng-text) !important; letter-spacing: -.01em !important; }
 html.ng-ui #scene1 .top_lable > div { margin-left: .5vh; font-weight: 600; font-size: 2.6vh !important; color: var(--ng-mute); letter-spacing: 0; }
 /* header band: masks the rows scrolled up under the header (upstream: a black top bar) - the #scene1 night + haze, aligned to
- * the viewport (the bar starts at 4.75 % = 91 px: haze centre 47.54 %), fading out at the bottom; the clock (z 4) stays above */
-html.ng-ui #topbar.topbar { top: 0 !important; height: 9.4% !important; transform: none !important; background: none !important; z-index: 0; }
+ * the viewport (the bar starts at 4.75 % = 91 px: haze centre 47.54 %), 93 px high, opaque to 82 px (rows scrolled up end above
+ * that: grids below), a short fade; the clock (z 4) stays above */
+html.ng-ui #topbar.topbar { top: 0 !important; height: 8.6% !important; transform: none !important; background: none !important; z-index: 0; }
 html.ng-ui #topbar.topbar::before { content: ''; position: absolute; left: 0; right: 0; top: 0; bottom: 0; z-index: -1; pointer-events: none;
     background: radial-gradient(ellipse 70vw 46vh at 47.54% -8vh, rgba(145, 70, 255, .16), rgba(145, 70, 255, .05) 55%, rgba(145, 70, 255, 0) 100%), var(--ng-bg);
-    -webkit-mask-image: linear-gradient(#000 76%, rgba(0, 0, 0, 0)); mask-image: linear-gradient(#000 76%, rgba(0, 0, 0, 0)); }
+    -webkit-mask-image: linear-gradient(#000 88%, rgba(0, 0, 0, 0)); mask-image: linear-gradient(#000 88%, rgba(0, 0, 0, 0)); }
 html.ng-ui #clock_holder { top: 3.1vh !important; right: 7.9vh !important; }
 html.ng-ui #label_clock { font-family: var(--ng-font) !important; font-size: 2.3vh !important; color: var(--ng-mute) !important; font-weight: 400; }
 html.ng-ui #label_clock .ng-clock-time { color: var(--ng-text); font-weight: 700; margin-left: .9vh; font-feature-settings: 'tnum'; }
@@ -69,6 +75,7 @@ html.ng-ui #controls_div i { color: var(--ng-dim) !important; font-size: 1.1em; 
 html.ng-ui #controls_div [id$="_icondiv"], html.ng-ui #controls_div [id$="_icontext"], html.ng-ui #label_last_refresh { transform: none !important; }
 html.ng-ui #controls_div #label_last_refresh { margin-left: 0 !important; font-weight: 400 !important; }
 html.ng-ui #controls_div #label_last_refresh::before { content: '\00b7'; margin: 0 .8vh; }
+html.ng-ui #controls_div #label_last_refresh:empty::before { content: none; }
 html.ng-ui #dialog_counter { right: 7.9vh !important; bottom: 1.6vh !important; }
 html.ng-ui #dialog_counter > div { background: none !important; }
 html.ng-ui #dialog_counter_text { font-family: var(--ng-font) !important; font-weight: 600; font-size: 1.85vh !important; color: var(--ng-dim) !important; font-feature-settings: 'tnum'; }
@@ -155,3 +162,97 @@ html.ng-ui .side_panel_new_text_options { display: inline-flex !important; align
 html.ng-ui .side_panel_new_text_options::before { font-size: 2.5vh; margin-right: 1.3vh; }
 html.ng-ui #side_panel_movel .side_panel_new_text_options.side_panel_new_icons_text_botton,
 html.ng-ui #side_panel_movel .side_panel_new_text_options.side_panel_new_icons_text { color: #fff !important; }
+
+/* ---------------------------------------------------------------- other grids below the header band. Vertical budget (1080 px):
+ * band 93 px (opaque to 82), the 2nd (3rd) row must end above ~1072 px, a row scrolled up (one step) must end under the opaque
+ * band; the step = main.js row height (49 % / 50.1 % / 32.075 % of the holder height, cached as em at the first render) */
+/* switch screens (a game's live, videos, clips, channel content, history): pills row (52 px) + 2 rows at 17 em steps (as the live
+ * grid) -> cards 4 % narrower than on the live grid, same columns (gutters 1.5 % -> same left edge, 104 px) */
+html.ng-ui #screens_holder > .screen_holder_switch { top: 8.6% !important; height: 93.1% !important; }
+html.ng-ui #screens_holder > .screen_holder_switch .streams_div { margin-left: 4.03% !important; }
+html.ng-ui #screens_holder .screen_holder_switch .stream_thumbnail_live_holder { width: 29.4% !important; padding: 0 1.5% 0 !important; }
+html.ng-ui #screens_holder .screen_holder_switch .stream_thumbnail_live { transform-origin: 50% 45%; }
+/* categories: 5 posters 294 px at 3:4 (+ 2 text lines) fit 2 rows at 17 em */
+html.ng-ui #screens_holder > .screen_holder_games { top: 9.4% !important; height: 91.2% !important; }
+/* channels (search results, followed channels): 3 rows of round avatars */
+html.ng-ui #screens_holder > .screen_holder_channel { top: 9.4% !important; height: 88.5% !important; }
+html.ng-ui #screens_holder > .screen_holder_user { top: 9.4% !important; }
+html.ng-ui .settings_holder { top: 9.4% !important; height: 90.6% !important; }
+
+/* switch cells (a game's / channel's Videos, Clips, Follow; period; play all): pills in one line under the header */
+html.ng-ui .screen_holder_switch .streams_div > div:not([class]) { white-space: nowrap; padding-bottom: 1.1vh; }
+html.ng-ui .stream_cell_period { width: auto !important; padding: 0 !important; margin: 0 1.1vh 0 0; transform: none !important; vertical-align: top; }
+html.ng-ui .stream_cell_period:first-child { margin-left: 1.5%; }
+html.ng-ui .stream_thumbnail_channel_vod { width: auto !important; height: auto !important; margin: 0 !important; padding: .8vh 2vh .85vh 1.7vh !important;
+    border: 0 !important; border-radius: 1.3vh; background: rgba(255, 255, 255, .06) !important; box-shadow: inset 0 0 0 1px var(--ng-line);
+    transition: background-color .15s ease-out, box-shadow .15s ease-out; }
+html.ng-ui .stream_channel_follow_game { width: auto !important; transform: none !important; text-shadow: none !important; text-align: left !important; white-space: nowrap;
+    font: 600 2.05vh/1 var(--ng-font) !important; color: var(--ng-text-2) !important; }
+html.ng-ui .stream_channel_follow_game i { color: inherit !important; font-size: 1.1em !important; }
+html.ng-ui .stream_thumbnail_channel_vod.stream_switch_focused { background: linear-gradient(90deg, #9146ff, #7a2ff0) !important; box-shadow: 0 .8vh 3vh rgba(145, 70, 255, .38) !important; }
+html.ng-ui .stream_switch_focused .stream_channel_follow_game { color: #fff !important; }
+
+/* video / clip cards (ng-vod, ng-ui.js): picture badges = views (left, eye) + duration (right), watched bar inside the picture */
+html.ng-ui .ng-dur { position: absolute; right: 1.1vh; bottom: 1.1vh; z-index: 1; padding: .45vh .8vh .5vh; border-radius: .85vh; background: rgba(8, 7, 13, .78);
+    color: var(--ng-text); font: 700 2vh/1 var(--ng-font); font-feature-settings: 'tnum'; letter-spacing: 0; white-space: nowrap; }
+html.ng-ui .ng-badge.ng-views::before { width: 1.15em; height: 1.15em; margin-right: .6vh; border-radius: 0; vertical-align: -.22em; background-color: var(--ng-text-2); }
+html.ng-ui #screens_holder .vod_watched { height: .55vh !important; bottom: 0 !important; transform: none !important; z-index: 1; }
+html.ng-ui #screens_holder .ng-vod .stream_thumbnail_live_text_holder { height: auto !important; padding: 1.3vh .4vh 0 !important; margin: 0 !important; font-size: 100% !important; }
+html.ng-ui #screens_holder .ng-vod .stream_thumbnail_live .stream_text_holder { top: 0 !important; transform: none !important; display: flex; flex-wrap: wrap; align-items: baseline; }
+html.ng-ui #screens_holder .ng-vod .stream_text_holder > div:first-child { flex: 0 0 100%; display: flex; align-items: center; line-height: 1.2 !important; min-width: 0; }
+html.ng-ui #screens_holder .ng-vod .stream_info_live_name { flex: 1 1 auto; width: auto !important; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font: 700 2.96vh/1.2 var(--ng-font) !important; color: var(--ng-text) !important; }
+html.ng-ui #screens_holder .ng-vod .stream_text_holder > div:first-child > .stream_info_live { flex: none; width: auto !important; float: none !important; margin-left: 1.2vh;
+    overflow: visible; font-size: 0 !important; }
+html.ng-ui #screens_holder .ng-vod [id*="_time_"] { display: none !important; }
+html.ng-ui #screens_holder .ng-chip { display: inline-block; padding: .3vh .65vh; border-radius: .6vh; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16);
+    font: 600 1.6vh/1 var(--ng-font) !important; color: var(--ng-mute) !important; }
+html.ng-ui #screens_holder .ng-chip:empty { display: none; }
+html.ng-ui #screens_holder .ng-vod .stream_info_live_title { flex: 0 0 100%; max-height: 1.3em !important; margin-top: .5vh; white-space: nowrap !important; overflow: hidden;
+    text-overflow: ellipsis; font: 400 2.3vh/1.3 var(--ng-font) !important; color: var(--ng-text-2) !important; }
+html.ng-ui #screens_holder .ng-vod .stream_info_live_title span { font-size: .92em !important; }
+html.ng-ui #screens_holder .ng-vod .stream_text_holder > .stream_info_live { flex: 0 1 auto; width: auto !important; min-width: 0; max-width: 72%; margin-top: .5vh;
+    font: 600 2.13vh/1.3 var(--ng-font) !important; color: var(--ng-mute) !important; }
+html.ng-ui #screens_holder .ng-vod .stream_text_holder > div:last-child:not(:first-child) { flex: none; margin-top: .5vh; line-height: 1.3 !important; white-space: nowrap; }
+html.ng-ui #screens_holder .ng-vod .stream_text_holder > div:last-child:not(:first-child) > .stream_info_live { font: 400 2.13vh/1.3 var(--ng-font) !important;
+    color: var(--ng-mute) !important; }
+html.ng-ui #screens_holder .ng-vod .stream_text_holder > div:last-child:not(:first-child)::before { content: '\00b7'; margin: 0 .8vh; font: 400 2.13vh/1.3 var(--ng-font);
+    color: var(--ng-dim); }
+html.ng-ui #screens_holder .ng-vod .stream_text_holder > .stream_info_live:empty { display: none; }
+html.ng-ui #screens_holder .ng-vod .stream_text_holder > .stream_info_live:empty + div::before { content: none; }
+html.ng-ui #screens_holder .ng-vod [class*="stream_thumbnail_focused"] .stream_info_live_name { color: #fff !important; }
+html.ng-ui #screens_holder .ng-vod [class*="stream_thumbnail_focused"] .stream_info_live_title { color: var(--ng-text) !important; }
+
+/* category cards: box art at its own 3:4 (the row step leaves no room for upstream's 139.7 %), viewers badge on the poster
+ * (ng-ui.js; as the live cards), channels below the name; focus as the live cards */
+html.ng-ui #screens_holder .streams_game_div { margin-left: 3.9% !important; }
+html.ng-ui #screens_holder .stream_thumbnail_game_holder { width: 16.12% !important; padding: 0 1.6% 0 !important; vertical-align: top; }
+html.ng-ui #screens_holder .stream_thumbnail_game { padding-bottom: 159% !important; border: 0 !important; background: transparent !important; transform: scale(1);
+    transform-origin: 50% 40%; transition: transform .2s cubic-bezier(.2, .7, .3, 1) !important; }
+html.ng-ui #screens_holder .stream_thumbnail_live_game { padding-bottom: 133.33% !important; border-radius: var(--ng-r); overflow: hidden; background: var(--ng-surface) !important;
+    box-shadow: 0 0 0 1px var(--ng-line); transition: box-shadow .2s ease-out; }
+html.ng-ui #screens_holder .stream_thumbnail_live_game img.stream_img { left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; border-radius: var(--ng-r); }
+html.ng-ui #screens_holder .stream_thumbnail_game[class*="stream_thumbnail_focused"] { transform: scale(1.05); z-index: 2; background: transparent !important; }
+html.ng-ui #screens_holder .stream_thumbnail_game[class*="stream_thumbnail_focused"] .stream_thumbnail_live_game { box-shadow: 0 0 0 .37vh var(--ng-accent-2),
+    0 0 4.2vh .6vh rgba(145, 70, 255, .55), 0 1.6vh 3.4vh rgba(0, 0, 0, .55); }
+html.ng-ui #screens_holder .stream_thumbnail_game_text_holder { height: auto !important; padding: 1.2vh .3vh 0 !important; margin: 0 !important; font-size: 100% !important; }
+html.ng-ui #screens_holder .stream_thumbnail_game .stream_text_holder { top: 0 !important; transform: none !important; }
+html.ng-ui #screens_holder .stream_info_game_name { font: 700 2.4vh/1.25 var(--ng-font) !important; color: var(--ng-text) !important; }
+html.ng-ui #screens_holder .stream_info_game_name + .stream_info_live { margin-top: .35vh; white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis;
+    font: 400 1.95vh/1.3 var(--ng-font) !important; color: var(--ng-mute) !important; }
+html.ng-ui #screens_holder .stream_thumbnail_game[class*="stream_thumbnail_focused"] .stream_info_game_name { color: #fff !important; }
+
+/* channel cards: round avatar (80 % of the cell) on the canvas, name centred below; focus = ring + lift */
+html.ng-ui #screens_holder .stream_thumbnail_channel { padding-bottom: 100% !important; border: 0 !important; background: transparent !important; transform: scale(1);
+    transform-origin: 50% 40%; transition: transform .2s cubic-bezier(.2, .7, .3, 1) !important; }
+html.ng-ui #screens_holder .stream_thumbnail_channel_img { width: 80% !important; margin: 0 10%; padding-bottom: 80% !important; border-radius: 50%; overflow: hidden;
+    background: var(--ng-surface) !important; box-shadow: 0 0 0 1px var(--ng-line); transition: box-shadow .2s ease-out; }
+html.ng-ui #screens_holder .stream_thumbnail_channel[class*="stream_thumbnail_focused"] { transform: scale(1.05); z-index: 2; background: transparent !important; }
+html.ng-ui #screens_holder .stream_thumbnail_channel[class*="stream_thumbnail_focused"] .stream_thumbnail_channel_img { box-shadow: 0 0 0 .37vh var(--ng-accent-2),
+    0 0 4.2vh .6vh rgba(145, 70, 255, .55); }
+html.ng-ui #screens_holder .stream_thumbnail_channel_text_holder { height: auto !important; bottom: .2vh !important; padding: 0 .4vh !important; margin: 0 !important; display: flex;
+    justify-content: center; align-items: center; font-size: 100% !important; }
+html.ng-ui #screens_holder .stream_info_channel_name { width: auto !important; max-width: 86%; margin: 0 !important; font: 600 2.2vh/1.25 var(--ng-font) !important;
+    color: var(--ng-text-2) !important; }
+html.ng-ui #screens_holder .stream_info_channel_partner_icon { flex: none; margin-left: .2vh; }
+html.ng-ui #screens_holder .stream_thumbnail_channel[class*="stream_thumbnail_focused"] .stream_info_channel_name { color: #fff !important; }

@@ -54,8 +54,17 @@
         for (i = 0; i < l.length; i++) if (/\/ng-(?:ui|icons)\.css(?:\?|$)/.test(l[i].getAttribute('href') || '')) r.push(l[i]);
         return r;
     }
+    // a later @font-face wins: main.js re-appends icons.min.css (its Roboto faces) when its style check fails, so the NG sheets
+    // go after it again (ng-ui.css also makes that check pass: html.ng-ui .fa) - the remap to NG Sans stays in force
+    function uiLast(l) {
+        var all = doc.getElementsByTagName('link'), last = null, i;
+        for (i = 0; i < all.length; i++) if (/icons(?:\.min)?\.css(?:\?|$)/.test(all[i].getAttribute('href') || '')) last = all[i];
+        if (!last || !l.length || !l[0].compareDocumentPosition || !(l[0].compareDocumentPosition(last) & 4)) return;
+        for (i = 0; i < l.length; i++) l[i].parentNode.appendChild(l[i]);
+    }
     function applyUi() {
         var on = uiOn(), l = uiCss(), i;
+        if (on) uiLast(l);
         for (i = 0; i < l.length; i++) l[i].disabled = !on;
         setClass(root, 'ng-ui', on);
         return on;

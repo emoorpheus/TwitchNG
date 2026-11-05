@@ -72,6 +72,14 @@ ok(sp && sp[1] === '!1' && sp[2] === '!0' && sp[3] === '!0' && sp[4] === '!1' &&
 const brandLeft = ['SmartTV Client for Twitch', 'Cliente SmartTV para Twitch', 'SmartTV Client для Twitch', 'Twitch için SmartTV'].filter((k) => main.indexOf(k) >= 0);
 ok(brandLeft.length === 0 && (main.match(/Twitch NG/g) || []).length >= 12, 'main.js brand strings -> Twitch NG (en/fr/es/pt/ru/uk/tr)', { left: brandLeft, ng: (main.match(/Twitch NG/g) || []).length });
 ok(main.indexOf('["rgba(0,0,0,1)","rgba(255,255,255,1)","rgba(145,70,255,1)","rgba(145,70,255,1)"]') >= 0, 'main.js default focus style: purple border + watched bar');
+const ruBad = ['Ужерживайте', 'Врмемя', '"Удерж. ОК"', 'Удерж. влево для доп. опций', '"Акт. каналы"', '"На главной странице"', '"Май","Июнь"'].filter((k) => main.indexOf(k) >= 0);
+const ruNew = ['ho="удерживайте вверх"', 'ru="Время ожидания"', 'vt="удерживайте ОК"', 'hs="Опции: удерживайте влево"', 'qi="Сейчас в эфире"', 'jt="Рекомендуемые"',
+  '"апр","мая","июн","июл"', 'TwitchNG.aboutLabel(U)'].filter((k) => main.split(k).length !== 2);
+ok(ruBad.length === 0 && ruNew.length === 0, 'main.js Russian copy: typos / cut words fixed ("удерживайте ОК", "Сейчас в эфире", "Рекомендуемые", "5 мая"), About label from the app layer', { bad: ruBad, missing: ruNew });
+const ngFiles = ['githubio/css/ng-ui.css', 'githubio/css/ng-icons.css', 'githubio/js/ng-ui.js', 'githubio/css/fonts/ng-sans-400.woff2', 'githubio/css/fonts/ng-sans-600.woff2',
+  'githubio/css/fonts/ng-sans-700.woff2', 'githubio/css/fonts/ng-sans-900.woff2', 'githubio/css/fonts/OFL-Onest.txt'].filter((f) => !fs.existsSync(path.join(REL, f)));
+ok(ngFiles.length === 0 && /<link[^>]+ng-ui\.css\?v=1\.0\.0" id="ng-ui-css">/.test(html) && /<script[^>]+ng-ui\.js\?v=1\.0\.0"/.test(html) && pos(/<script[^>]+ng-ui\.js/) > iNg && pos(/<script[^>]+ng-ui\.js/) < iMain,
+  'NG UI shipped: ng-ui.css / ng-icons.css / ng-ui.js, Onest fonts + OFL; ng-ui.js between twitchng.js and main.js', ngFiles);
 
 // ---------------------------------------------------------------- runtime
 fs.writeFileSync(path.join(W, 'stub/webos-service/index.js'),
@@ -175,6 +183,41 @@ await key('Enter');
 const closed = await page.evaluate(() => document.getElementById('welcome_dialog').classList.contains('hide'));
 ok(closed, 'OK closes the intro (app handler unchanged)');
 await measure('home');
+// Next-Gen UI (pre-release 06): on with the OLED preset (default), its two sheets after the base sheet (a later Roboto @font-face
+// would win over the remap), Roboto / Roboto-Bold text rendered in NG Sans (Onest), the text layer on the live cards
+await page.waitForFunction(() => document.querySelector('#screens_holder .ng-live .ng-badge'), null, { timeout: 15000 }).catch(() => {});
+const ngui = await page.evaluate(async () => {
+  const ui = document.getElementById('ng-ui-css'), ic = document.getElementById('ng-icons-css'), links = [...document.querySelectorAll('link[rel="stylesheet"]')];
+  const at = (el) => links.indexOf(el), lastBase = links.map((l) => /icons\.min\.css/.test(l.getAttribute('href') || '')).lastIndexOf(true);
+  await Promise.all(['400 20px Roboto', '700 20px Roboto', '400 20px Roboto-Bold', '400 20px "NG Sans"', '700 20px "NG Sans"'].map((f) => document.fonts.load(f, 'Пример Ag')));
+  const width = (font) => { const e = document.createElement('span'); e.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font:' + font;
+    e.textContent = 'Перейдите на другом устройстве: Watch live 0123'; document.body.appendChild(e); const r = e.getBoundingClientRect().width; e.remove(); return Math.round(r * 10) / 10; };
+  const fw = { roboto: width('400 40px Roboto'), robotoBold: width('400 40px Roboto-Bold'), roboto700: width('700 40px Roboto'), ng400: width('400 40px "NG Sans"'), ng700: width('700 40px "NG Sans"'),
+    serif: width('400 40px serif') };
+  const cards = [...document.querySelectorAll('#screens_holder .ng-live')].filter((c) => c.offsetParent !== null).slice(0, 6).map((c) => ({
+    badge: (c.querySelector('.ng-badge') || {}).textContent, since: (c.querySelector('[id*="_since_"]') || {}).textContent,
+    game: (c.querySelector('[id*="_game_"]') || {}).textContent, chip: (c.querySelector('.stream_text_holder > div:first-child > .stream_info_live') || {}).textContent,
+    nameFont: getComputedStyle(c.querySelector('.stream_info_live_name')).fontFamily }));
+  return { cls: document.documentElement.classList.contains('ng-ui'), on: !ui.disabled && !ic.disabled, order: at(ui) > lastBase && at(ic) > lastBase, lastBase, ui: at(ui),
+    ng: window.NgUi && NgUi.state(), tw: TwitchNG.state().ui, fw, cards, icons: document.getElementById('side_panel_new_holder').classList.contains('ng-icons'),
+    bottom: [10, 11, 12, 13, 14].map((i) => (document.getElementById('side_panel_movel_new_' + i) || {}).className || ''),
+    clock: !!document.querySelector('#label_clock .ng-clock-time'), refresh: (document.getElementById('label_last_refresh') || {}).textContent };
+});
+ok(ngui.cls && ngui.on && ngui.order && ngui.tw === true && ngui.ng && ngui.ng.on && ngui.ng.started && ngui.ng.version === '1.0.0-pre' + PRE && ngui.ng.passes > 0,
+  'NG UI on by default: html.ng-ui, ng-ui.css + ng-icons.css enabled and after the base sheet, ng-ui.js ' + PRE + ' running', { cls: ngui.cls, on: ngui.on, order: ngui.order, ng: ngui.ng });
+ok(ngui.fw.roboto === ngui.fw.ng400 && ngui.fw.robotoBold === ngui.fw.ng700 && ngui.fw.roboto700 === ngui.fw.ng700 && ngui.fw.ng400 !== ngui.fw.serif && ngui.fw.ng400 > 0,
+  'fonts: upstream Roboto / Roboto-Bold text renders in NG Sans 400 / 700 (Onest), Latin + Cyrillic', ngui.fw);
+const cardOk = (c) => /^\d+(\.\d)?K$|^\d{1,3}$|^\d+(\.\d)?M$/.test(c.badge || '') && /^(\d+h )?\d+m$/.test(c.since || '') && !/^(Playing|Стрим по)\s/.test(c.game || '') &&
+  !/[\[\]]/.test(c.chip || '') && /NG Sans/.test(c.nameFont);
+ok(ngui.cards.length >= 3 && ngui.cards.every(cardOk), 'NG UI live cards: viewers badge (21.1K), "7h 32m" uptime, game without "Playing", language chip without brackets, NG Sans names',
+  ngui.cards.filter((c) => !cardOk(c)).concat(ngui.cards.length < 3 ? [{ cards: ngui.cards.length }] : []).slice(0, 3));
+ok(ngui.icons && ['ng-ico-settings', 'ng-ico-about', 'ng-ico-controls', 'ng-ico-exit', 'ng-ico-news'].every((c, i) => ngui.bottom[i].indexOf(c) >= 0) && ngui.clock &&
+  /^(updated (just now|.* ago))?$/.test(ngui.refresh || ''), 'NG UI chrome: outline icons in the side menu (bottom entries too), clock date + time, "updated ... ago"', { bottom: ngui.bottom, clock: ngui.clock, refresh: ngui.refresh });
+const uiOff = await page.evaluate(() => { const ui = document.getElementById('ng-ui-css'), r = [TwitchNG.ui(false), localStorage.getItem('TWITCHNG_UI'), document.documentElement.classList.contains('ng-ui'), ui.disabled];
+  TwitchNG.oled(false); r.push(document.documentElement.classList.contains('ng-ui'), ui.disabled); TwitchNG.oled(null);
+  r.push(TwitchNG.ui(null), localStorage.getItem('TWITCHNG_UI'), document.documentElement.classList.contains('ng-ui'), ui.disabled); return r; });
+ok(JSON.stringify(uiOff) === JSON.stringify([false, '0', false, true, false, true, true, null, true, false]),
+  'TwitchNG.ui(false) = the OLED preset look (TWITCHNG_UI=0, class + sheets off), classic (oled off) has no NG UI, ui(null) -> default on', uiOff);
 // side menu: navigate by the focused item (LZ focus class), not by blind key counts - focus stays where it was left
 const side = () => page.evaluate(() => {
   const m = document.getElementById('side_panel_movel'); let f = null;

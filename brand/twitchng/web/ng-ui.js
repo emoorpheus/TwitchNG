@@ -3,8 +3,11 @@
  * Loaded by release/index.html right after twitchng.js (build/build-app.mjs --brand twitchng). twitchng.js switches the UI on / off
  * (html.ng-ui + ng-ui.css / ng-icons.css; localStorage.TWITCHNG_UI = '0' or TwitchNG.ui(false) = the OLED preset look); with the
  * class off this file changes nothing. It reshapes a few texts main.js renders, as DOM post-processing, textContent only:
- *   - live cards (html class ng-live on the holder): viewers badge on the picture ("20,7 тыс." / "20.7K"), "game · 7 ч 32 мин"
+ *   - live cards (class ng-live on the holder): viewers badge on the picture ("20,7 тыс." / "20.7K"), "game · 7 ч 32 мин"
  *     (the "Playing" prefix and the seconds go), language chip without brackets
+ *   - video / clip cards (ng-vod): duration + views badges on the picture, "game · 31 окт" (the "Started" / "Playing" prefixes,
+ *     this year and the views line go), language chip
+ *   - category cards: viewers badge on the poster, "8 257 каналов" / "8.3K channels" below the name (was two lines)
  *   - header: clock = date (quiet) + time (bold), "updated 5 min ago" instead of "(Last refreshed: 5m)"
  *   - side menu: the rail icon mirrors the focused / current row, the bottom entries get icons (ng-ico-*)
  * Observers: #screens_holder (cards), #side_panel_new_holder, #topbar and #clock_holder - not the player / chat; one pass per
@@ -35,18 +38,13 @@
     var NB = '\u00a0';
 
     // ---- numbers / times
+    // 21 138 -> "21,1 тыс." / "21.1K"; 20 012 -> "20 тыс." / "20K"; 8 324 -> "8 324" / "8.3K"
     function compact(n, L) {
-        var r;
-        if (L === 'ru') {
-            if (n >= 1e6) r = (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + NB + 'млн';
-            else if (n >= 1e4) r = (n / 1e3).toFixed(n >= 1e5 ? 0 : 1) + NB + 'тыс.';
-            else return n >= 1000 ? String(n).replace(/(\d)(?=(\d{3})+$)/, '$1' + NB) : String(n);
-            return r.replace('.0' + NB, NB).replace('.', ',');
-        }
-        if (n >= 1e6) r = (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M';
-        else if (n >= 1e3) r = (n / 1e3).toFixed(n >= 1e5 ? 0 : 1) + 'K';
-        else return String(n);
-        return r.replace('.0', '');
+        var ru = L === 'ru', big = n >= 1e6, k = big ? 1e6 : 1e3, s;
+        if (n < (ru ? 1e4 : 1e3)) return ru && n >= 1000 ? String(n).replace(/(\d)(?=(\d{3})+$)/, '$1' + NB) : String(n);
+        s = (n / k).toFixed(n >= k * 100 ? 0 : 1).replace(/\.0$/, '');
+        if (s === '1000' && !big) { s = '1'; big = true; }
+        return ru ? s.replace('.', ',') + NB + (big ? 'млн' : 'тыс.') : s + (big ? 'M' : 'K');
     }
     function hm(h, m, L) { return L === 'ru' ? (h ? h + NB + 'ч ' : '') + m + NB + 'мин' : (h ? h + 'h ' : '') + m + 'm'; }
     // upstream since-timer "Уже 07:32:17" / "Since 42:06" / "1:02:03:04" (days) -> "7 ч 32 мин" / "42m"
@@ -66,12 +64,33 @@
         if (!h && !mi) return L === 'ru' ? 'обновлено только что' : 'updated just now';
         return L === 'ru' ? 'обновлено ' + hm(h, mi, L) + ' назад' : 'updated ' + hm(h, mi, L) + ' ago';
     }
-    var GAME_PREFIX = /^\s*(?:Стрим по|Playing|Jugando|Joue à|Jogando|Oynuyor|Грає в)\s+/;
+    var GAME_PREFIX = /^\s*(?:Стрим по|Playing|Jugando|Joue à|Jogando|Oynuyor|Грає в)\s+/,
+        STARTED = /^\s*(?:Started|Commencé|Iniciou|Comenzó|Запустил|Başladı|Розпочато)\s+/,
+        // main.js dates: "31 Окт, 2026" (day first) / "Oct 31, 2026"
+        DATE_RE = /(\d{1,2})\s+([^\s\d,.]+)\.?,?\s+(\d{4})|([^\s\d,.]+)\.?\s+(\d{1,2}),?\s+(\d{4})/;
+    function digits(t) { var n = parseInt(String(t || '').replace(/[^\d]/g, ''), 10); return isNaN(n) ? null : n; }
+    function plural(n, a, b, c) { var m = n % 10, h = n % 100; return m === 1 && h !== 11 ? a : m >= 2 && m <= 4 && (h < 12 || h > 14) ? b : c; }
+    // "31 Окт, 2026" -> "31 окт" (this year) / "31 окт 2025"; "Oct 31, 2026" -> "Oct 31" / "Oct 31, 2025"
+    function shortDate(m, L) {
+        var y = m[3] || m[6], cur = String(new Date().getFullYear()) === y;
+        if (m[1]) return m[1] + NB + (L === 'ru' ? m[2].toLowerCase() : m[2]) + (cur ? '' : ' ' + y);
+        return m[4] + NB + m[5] + (cur ? '' : ', ' + y);
+    }
+    // "09:59:49" -> "9:59:49", "00:34" -> "0:34"
+    function dur(t) { return /^\s*\d+(?::\d{2})+\s*$/.test(t || '') ? t.replace(/^\s*0(\d)/, '$1').replace(/^\s+|\s+$/g, '') : null; }
+    function badge(img, cls, txt) {
+        var b = img.querySelector('.' + cls);
+        if (txt === null) { if (b) img.removeChild(b); return; }
+        if (!b) { b = d.createElement('span'); b.className = cls === 'ng-dur' ? cls : cls === 'ng-views' ? 'ng-badge ng-ico-eye ' + cls : 'ng-badge ' + cls; img.appendChild(b); }
+        set(b, txt);
+    }
 
     // ---- live cards
     function card(holder, L) {
-        var name = holder.querySelector('.stream_info_live_name'), icon = name && name.querySelector('.live_icon');
+        var name = holder.querySelector('.stream_info_live_name'), icon = name && name.querySelector('.live_icon'), vod = !icon && holder.querySelector('[id*="_time_"]');
         setClass(holder, 'ng-live', !!icon);
+        setClass(holder, 'ng-vod', !!vod);
+        if (vod) return video(holder, vod, L);
         if (!icon) return;
         stats.cards++;
         var img = holder.querySelector('.stream_thumbnail_live_img'), views = holder.querySelector('[id*="_views_"]'),
@@ -89,8 +108,44 @@
         if (game) set(game, (game.textContent || '').replace(GAME_PREFIX, ''));
         if (chip) set(chip, (chip.textContent || '').replace(/[\[\]]/g, '').replace(/^\s+|\s+$/g, ''));
     }
+    function video(holder, time, L) {
+        stats.cards++;
+        var img = holder.querySelector('.stream_thumbnail_live_img'), th = holder.querySelector('.stream_text_holder'),
+            kids = th ? th.children : [], last = kids[kids.length - 1], date = last && !last.className ? last.querySelector('.stream_info_live') : null,
+            game = kids[2] && has(kids[2], 'stream_info_live') ? kids[2] : null, lng = time.parentNode && time.parentNode.lastElementChild, m, t;
+        if (img) badge(img, 'ng-dur', dur(time.textContent));
+        if (lng && lng !== time) {
+            setClass(lng, 'ng-chip', true);
+            if (/[\[\]]/.test(lng.textContent)) set(lng, lng.textContent.replace(/[\[\]\s]/g, ''));
+        }
+        if (game) set(game, (game.textContent || '').replace(STARTED, '').replace(GAME_PREFIX, ''));
+        if (date && (m = DATE_RE.exec(date.textContent || ''))) {   // the original line only: once rewritten it has no year
+            t = date.textContent.slice(m.index + m[0].length);
+            if (img) badge(img, 'ng-views', digits(t) === null ? null : compact(digits(t), L));
+            set(date, shortDate(m, L));
+        }
+    }
+
+    // ---- category cards: "8,257 Каналы<br>для 421,726 Зрители" -> viewers badge on the poster ("421,7 тыс.", as the live cards) +
+    //      "8 257 каналов" / "8.3K channels" (other languages: the channels part as main.js wrote it)
+    function game(holder, L) {
+        var meta = holder.querySelector('.stream_info_game_name + .stream_info_live'), img = holder.querySelector('.stream_thumbnail_live_game'),
+            a = '', b = '', br = false, i, n, ch, vw;
+        if (!meta || !meta.querySelector('br')) return;   // rewritten already
+        stats.cards++;
+        for (i = 0; i < meta.childNodes.length; i++) {
+            n = meta.childNodes[i];
+            if (n.nodeName === 'BR') br = true; else if (br) b += n.textContent; else a += n.textContent;
+        }
+        ch = digits(a); vw = digits(b);
+        if (img && vw !== null) badge(img, 'ng-viewers', compact(vw, L));
+        if (L === 'ru' && ch !== null) set(meta, compact(ch, L) + ' ' + (ch >= 1e4 ? 'каналов' : plural(ch, 'канал', 'канала', 'каналов')));
+        else if (L === 'en' && ch !== null) set(meta, compact(ch, L) + (ch === 1 ? ' channel' : ' channels'));
+        else set(meta, a.replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, ''));
+    }
+    var CARD = ['stream_thumbnail_live_holder', 'stream_thumbnail_game_holder'], CARDS = '.' + CARD.join(', .');
     function holderOf(n, stop) {
-        for (; n && n !== stop; n = n.parentNode) if (has(n, 'stream_thumbnail_live_holder')) return n;
+        for (; n && n !== stop; n = n.parentNode) if (has(n, CARD[0]) || has(n, CARD[1])) return n;
         return null;
     }
 
@@ -135,8 +190,8 @@
         if (!on()) { for (i = 0; i < list.length; i++) list[i].ngQueued = false; pend = []; all = wantSide = wantHead = false; return; }
         pend = []; stats.passes++;
         for (i = 0; i < list.length; i++) list[i].ngQueued = false;
-        if (all) { sh = byId('screens_holder'); list = sh ? sh.querySelectorAll('.stream_thumbnail_live_holder') : []; all = false; }
-        for (i = 0; i < list.length; i++) if (list[i].parentNode) card(list[i], L);
+        if (all) { sh = byId('screens_holder'); list = sh ? sh.querySelectorAll(CARDS) : []; all = false; }
+        for (i = 0; i < list.length; i++) if (list[i].parentNode) (has(list[i], CARD[1]) ? game : card)(list[i], L);
         if (wantSide) { wantSide = false; side(); stats.chrome++; }
         if (wantHead) { wantHead = false; header(L); }
     }
@@ -151,8 +206,8 @@
             a = r.addedNodes;
             for (j = 0; a && j < a.length; j++) {
                 if (a[j].nodeType !== 1) continue;
-                if (has(a[j], 'stream_thumbnail_live_holder')) { add(a[j]); continue; }
-                l = a[j].querySelectorAll('.stream_thumbnail_live_holder');
+                if (has(a[j], CARD[0]) || has(a[j], CARD[1])) { add(a[j]); continue; }
+                l = a[j].querySelectorAll(CARDS);
                 for (k = 0; k < l.length; k++) add(l[k]);
             }
             if (pend.length > 400) all = true;
