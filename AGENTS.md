@@ -19,6 +19,7 @@ Canonical instructions for AI coding agents (Codex, Claude Code, Gemini CLI, ...
 | `sttv-speed/sttv-speed.js` | engine, ES5, `VERSION` here (e.g. `1.3.8`) |
 | `sttv-speed/sttv-v2b.js` | v2b MSE hook, ES2015, GPL-3.0-only; `sttv-hls.min.js` vendored hls.js (do not edit) |
 | `brand/twitchng/web/twitchng.{js,css}` | Twitch NG layer, ES5: intro, OLED preset, About, What's new; `PRE_N` here |
+| `brand/twitchng/web/ng-ui.{css,js}`, `ng-icons.css`, `fonts/` | Next-Gen UI redesign (concept, not in the build yet): `DESIGN.md`; generators `tools/make-ng-{icons.mjs,fonts.py}`, screenshots `tools/ui-lab.mjs` |
 | `brand/twitchng/src/` | brand generator: `make_assets.py` (SVG + generated blocks) and `render.mjs` (PNG) |
 | `build/build-app.mjs` | builds the IPK from a SmartTwitchWebOSTV checkout (exact `main.js` patches with count checks) |
 | `deploy/` | `install.sh` / `rollback.sh` (patch the stock app over SSH), `service/sttv_media_fetch.js` (Luna media fetch) |
