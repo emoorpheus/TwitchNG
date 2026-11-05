@@ -6,11 +6,13 @@
  *   - live cards (class ng-live on the holder): viewers badge on the picture ("20,7 тыс." / "20.7K"), "game · 7 ч 32 мин"
  *     (the "Playing" prefix and the seconds go), language chip without brackets
  *   - video / clip cards (ng-vod): duration + views badges on the picture, "game · 31 окт" (the "Started" / "Playing" prefixes,
- *     this year and the views line go), language chip
+ *     this year and the views line go), language chip; card lines get classes (ng-up uptime, ng-when date, ng-seen = the history
+ *     "watched on ..." line) so the CSS does not depend on the line count
  *   - category cards: viewers badge on the poster, "8 257 каналов" / "8.3K channels" below the name (was two lines)
- *   - header: clock = date (quiet) + time (bold), "updated 5 min ago" instead of "(Last refreshed: 5m)"
+ *   - header: clock = date (quiet) + time (bold), "updated 5 min ago" instead of "(Last refreshed: 5m)"; Russian: search titles
+ *     "Поиск: каналы «minecraft»", About "Приложение работает: 1 ч 5 мин"
  *   - side menu: the rail icon mirrors the focused / current row, the bottom entries get icons (ng-ico-*)
- * Observers: #screens_holder (cards), #side_panel_new_holder, #topbar and #clock_holder - not the player / chat; one pass per
+ * Observers: #screens_holder (cards), #side_panel_new_holder, #topbar, #clock_holder, #dialog_about_text - not the player / chat; one pass per
  * animation frame over the changed cards only. window.NgUi = { version, state(), run() } for tests and the console.
  * GPL-3.0. Not affiliated with Twitch Interactive.
  */
@@ -95,7 +97,7 @@
         stats.cards++;
         var img = holder.querySelector('.stream_thumbnail_live_img'), views = holder.querySelector('[id*="_views_"]'),
             since = holder.querySelector('[id*="_since_"]'), game = holder.querySelector('[id*="_game_"]'),
-            row = holder.querySelector('.stream_text_holder > div'), chip = row && row.querySelector('.stream_info_live'), b, n, u;
+            row = holder.querySelector('.stream_text_holder > div'), chip = row && row.querySelector('.stream_info_live'), b, n, u, up, seen;
         if (views && img) {
             n = parseInt((views.textContent || '').replace(/[^\d]/g, ''), 10);
             b = img.querySelector('.ng-badge');
@@ -104,15 +106,22 @@
                 set(b, compact(n, L));
             }
         }
+        up = since && since.parentNode; seen = up && up.nextElementSibling;   // "game · uptime" line; history: "watched on ..." line
+        if (up && has(up, 'stream_info_live')) setClass(up, 'ng-up', true);
+        if (seen && has(seen, 'stream_info_live')) setClass(seen, 'ng-seen', true);
         if (since && /\d:\d/.test(since.textContent)) { u = uptime(since.textContent, L); if (u) set(since, u); }
         if (game) set(game, (game.textContent || '').replace(GAME_PREFIX, ''));
         if (chip) set(chip, (chip.textContent || '').replace(/[\[\]]/g, '').replace(/^\s+|\s+$/g, ''));
     }
     function video(holder, time, L) {
         stats.cards++;
+        // text holder children: name + language row, title, game, date line (a plain div), history only: "watched on ..." line
         var img = holder.querySelector('.stream_thumbnail_live_img'), th = holder.querySelector('.stream_text_holder'),
-            kids = th ? th.children : [], last = kids[kids.length - 1], date = last && !last.className ? last.querySelector('.stream_info_live') : null,
+            kids = th ? th.children : [], when = kids[3] && (!kids[3].className || has(kids[3], 'ng-when')) ? kids[3] : null,
+            date = when && when.querySelector('.stream_info_live'), seen = kids[4] && has(kids[4], 'stream_info_live') ? kids[4] : null,
             game = kids[2] && has(kids[2], 'stream_info_live') ? kids[2] : null, lng = time.parentNode && time.parentNode.lastElementChild, m, t;
+        setClass(when, 'ng-when', !!date);
+        setClass(seen, 'ng-seen', true);
         if (img) badge(img, 'ng-dur', dur(time.textContent));
         if (lng && lng !== time) {
             setClass(lng, 'ng-chip', true);
@@ -180,6 +189,17 @@
         }
         l = byId('label_last_refresh');
         if (l && /\(/.test(l.textContent || '')) { m = refreshed(l.textContent, L); if (m) set(l, m); }
+        if (L !== 'ru') return;
+        // search titles "Поиск Каналы 'minecraft'" -> "Поиск: каналы «minecraft»" (main.js joins two nouns with a space)
+        l = byId('top_lable'); a = l && l.firstChild; b = a && a.nextSibling;
+        if (a && a.nodeType === 3 && /^Поиск[\s\u00a0]+[А-ЯЁ]/.test(a.nodeValue)) a.nodeValue = a.nodeValue.replace(/^Поиск[\s\u00a0]+(.)/, function (x, q) { return 'Поиск: ' + q.toLowerCase(); });
+        if (a && /^Поиск:/.test(a.nodeValue || '') && b && b.nodeType === 1 && /^'.*'$/.test(b.textContent)) set(b, '\u00ab' + b.textContent.slice(1, -1) + '\u00bb');
+        // About: "Приложение работает: 1h 5m" -> "... 1 ч 5 мин"
+        l = byId('about_runningtime');
+        if (l && /\d+m\s*$/.test(l.textContent || '')) {
+            m = /(?:(\d+)d\s*)?(?:(\d+)h\s*)?(\d+)m\s*$/.exec(l.textContent);
+            set(l, l.textContent.slice(0, m.index) + hm((parseInt(m[1], 10) || 0) * 24 + (parseInt(m[2], 10) || 0), parseInt(m[3], 10) || 0, L));
+        }
     }
 
     // ---- scheduling: changed cards + chrome flags, one pass per frame
@@ -230,6 +250,11 @@
             { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
         watch('topbar', function () { if (on()) { wantHead = true; queue(); } }, txt);
         watch('clock_holder', function () { if (on()) { wantHead = true; queue(); } }, txt);
+        watch('dialog_about_text', function () { if (on()) { wantHead = true; queue(); } }, txt);
+        // UI switched back on at run time (TwitchNG.ui / oled): main.js redrew texts meanwhile, unseen while off -> one full pass
+        var was = on();
+        if (w.MutationObserver) new w.MutationObserver(function () { var o = on(); if (o && !was) { all = wantSide = wantHead = true; queue(); } was = o; })
+            .observe(html, { attributes: true, attributeFilter: ['class'] });
         all = wantSide = wantHead = true;
         queue();
     }

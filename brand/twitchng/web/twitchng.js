@@ -9,8 +9,9 @@
  * pre-release 04: speed engine 1.3.7 (TV run 2026-11-05, T7: a quality change at 2x restarted the VOD from 00:00); What's new.
  * pre-release 05: "Twitch Next-Gen" launch screen + matching first-run intro (HEROS); speed engine 1.3.8 (memory: the v2b
  *   segment cache and the MediaSource objects no longer outlive the player); package ~1 MB instead of 6 MB; What's new.
- * pre-release 06: Next-Gen UI stage 1 on by default (DESIGN.md: ng-ui.css / ng-icons.css / ng-ui.js, font Onest as "NG Sans",
- *   Lucide icons in the sharp style, live grid, side menu, header); switched here (html.ng-ui + the two stylesheets);
+ * pre-release 06: Next-Gen UI on by default (DESIGN.md: ng-ui.css / ng-icons.css / ng-ui.js, font Onest as "NG Sans",
+ *   Lucide icons in the sharp style, live grid, side menu, header, video / clip / category / channel cards, true black canvas);
+ *   switched here (html.ng-ui + the two stylesheets, kept after the upstream icon sheet);
  *   aboutLabel (side menu "About" = "О приложении" in Russian); Russian copy fixes in main.js (build patches); What's new.
  * Loaded by release/index.html right after sttv-speed.js (build/build-app.mjs --brand twitchng), before main.js (defer).
  * Script tag attributes (set by the build): data-name (app name), data-variant (icon set L3 | L4 | A | B | C, default L3), data-source (source URL).
@@ -18,7 +19,7 @@
  *       localStorage.TWITCHNG_OLED = '0'  (or TwitchNG.oled(false) in the console; true / null = back to the default)
  *   - Next-Gen UI (githubio/css/ng-ui.css + ng-icons.css, js/ng-ui.js): on by default on top of the OLED preset = html.ng-ui
  *       and both stylesheets enabled (their @font-face remaps the app's Roboto to NG Sans, so off = the links disabled);
- *       off: localStorage.TWITCHNG_UI = '0' (or TwitchNG.ui(false)); the classic look (OLED off) also turns it off
+ *       off: localStorage.TWITCHNG_UI = '0' (or TwitchNG.ui(false), then restart the app); the classic look (OLED off) also turns it off
  *   - first-run welcome dialog (#welcome_dialog_text, filled by the app) -> minimal intro; OK / Back close it as before
  *   - About, "What's new", sign-in help: HTML built here (main.js calls TwitchNG.aboutHtml / newsHtml / newsLabel /
  *     authHelp, patched in by the build); the app language (localStorage app_lang_string) picks Russian or English
@@ -116,8 +117,9 @@
             newsTitle: 'Что нового',
             aboutLabel: 'О приложении',
             news: [
-                'Новый интерфейс Next-Gen (этап 1): шрифт Onest, чёткие значки, крупные карточки «В эфире» со зрителями на превью, ' +
-                    'новое боковое меню и шапка; русские подсказки и названия без сокращений и опечаток.',
+                'Новый интерфейс Next-Gen: шрифт Onest, чёткие значки, крупные карточки «В эфире» со зрителями на превью, ' +
+                    'новые карточки записей, клипов, категорий и каналов, боковое меню и шапка; чистый чёрный фон для OLED.',
+                'Русский текст: подсказки и названия без сокращений и опечаток, даты «5 мая», «Контент для взрослых».',
                 'Заставка при запуске — «Twitch Next-Gen», приветствие при первом запуске в том же стиле.',
                 'Пакет приложения стал меньше: около 1 МБ вместо 6 МБ (убраны неиспользуемые картинки).',
                 'Исправлена утечка памяти при смене скорости: закрытая запись больше не занимает память.',
@@ -154,8 +156,8 @@
             newsTitle: 'What\'s new',
             aboutLabel: '',
             news: [
-                'New Next-Gen interface (stage 1): the Onest font, crisp icons, large live cards with viewers on the picture, ' +
-                    'a new side menu and header.',
+                'New Next-Gen interface: the Onest font, crisp icons, large live cards with viewers on the picture, ' +
+                    'new video, clip, category and channel cards, side menu and header; pure black background for OLED.',
                 'Launch screen: "Twitch Next-Gen", with a first-run welcome in the same style.',
                 'Smaller package: about 1 MB instead of 6 MB (unused images removed).',
                 'Memory leak fixed for speed changes: a closed video no longer holds memory.',
@@ -290,7 +292,8 @@
             applyUi();
             return oledOn();
         },
-        // Next-Gen UI: same contract as oled(); texts already reshaped by ng-ui.js stay until the next screen refresh / restart
+        // Next-Gen UI: same contract as oled(). Takes effect at once, but restart the app after switching: main.js measured the
+        // grid row steps with the other sizes (focus / scroll may sit off until then), and texts ng-ui.js reshaped stay until redrawn
         ui: function (on) {
             if (on !== undefined) lsSet('TWITCHNG_UI', on === null ? null : (on ? '1' : '0'));
             return applyUi();

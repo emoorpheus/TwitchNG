@@ -111,3 +111,8 @@ html:not(.ng-classic) #side_panel_fix .side_panel_new_icons_start { color: #fff 
 
 /* sttv-speed toast */
 html:not(.ng-classic) #sttv_speed_toast { background: #000 !important; border: 1px solid rgba(145, 70, 255, .55) !important; }
+
+/* NG UI switched off at run time (TwitchNG.ui(false) / oled(false); ng-ui.css off): the elements ng-ui.js added stay in the DOM
+ * until main.js redraws them - picture badges hidden, the split clock keeps its comma */
+html:not(.ng-ui) .ng-badge, html:not(.ng-ui) .ng-dur { display: none !important; }
+html:not(.ng-ui) .ng-clock-time::before { content: ', '; }

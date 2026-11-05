@@ -12,9 +12,9 @@
    "info": {
     "n": 80,
     "slope": 2,
-    "ct0": 1014.77,
-    "ct1": 1030.57,
-    "minCt": 1014.77,
+    "ct0": 1014.64,
+    "ct1": 1030.44,
+    "minCt": 1014.64,
     "frozenMs": 0,
     "rrMax": 1,
     "rrMin": 1,
@@ -36,12 +36,12 @@
    "name": "S2 native 1x plays on (content slope 1, frozen < 2 s)",
    "ok": true,
    "info": {
-    "n": 140,
-    "slope": 0.995,
-    "ct0": 1036.7,
-    "ct1": 1050.54,
-    "minCt": 1036.7,
-    "frozenMs": 0,
+    "n": 141,
+    "slope": 0.955,
+    "ct0": 1036.75,
+    "ct1": 1050.12,
+    "minCt": 1036.76,
+    "frozenMs": 496,
     "rrMax": 1,
     "rrMin": 1,
     "v2b": "idle",
@@ -52,8 +52,8 @@
    "name": "S2 no jump back, no Play_PannelEndStart, no bridge reload",
    "ok": true,
    "info": {
-    "pos2": 1036.682626,
-    "minCt": 1036.7,
+    "pos2": 1036.704866,
+    "minCt": 1036.76,
     "end": [],
     "reloads": 0,
     "jams": 0
@@ -67,22 +67,22 @@
      "v2b_restore",
      {
       "reason": "fail:stalls",
-      "pos": 1036.69,
+      "pos": 1036.75,
       "mode": "takeover"
      }
     ],
     [
      "v2b_restored",
      {
-      "pos": 1036.69,
-      "ms": 72,
+      "pos": 1036.75,
+      "ms": 176,
       "attempt": 1
      }
     ],
     [
      "v2b_restore_ok",
      {
-      "ms": 1072,
+      "ms": 1177,
       "nudges": 0,
       "attempt": 1
      }
@@ -104,9 +104,9 @@
     "w4": {
      "n": 60,
      "slope": 2,
-     "ct0": 1075.05,
-     "ct1": 1086.85,
-     "minCt": 1075.05,
+     "ct0": 1075.89,
+     "ct1": 1087.68,
+     "minCt": 1075.89,
      "frozenMs": 0,
      "rrMax": 1,
      "rrMin": 1,
@@ -128,8 +128,8 @@
     "bad": [],
     "end": [],
     "reloads": 0,
-    "pre4": 1067.852874,
-    "min4": 1067.857
+    "pre4": 1067.209544,
+    "min4": 1067.224949
    }
   },
   {
@@ -139,9 +139,9 @@
     "w5": {
      "n": 50,
      "slope": 2,
-     "ct0": 1097.05,
-     "ct1": 1106.85,
-     "minCt": 1097.05,
+     "ct0": 1097.88,
+     "ct1": 1107.69,
+     "minCt": 1097.88,
      "frozenMs": 0,
      "rrMax": 1,
      "rrMin": 1,
@@ -154,7 +154,7 @@
       {
        "n": 1,
        "state": "active",
-       "ahead": 39.1,
+       "ahead": 38.2,
        "rs": 4
       }
      ],
@@ -163,9 +163,9 @@
       {
        "why": "bridge_load",
        "state": "active",
-       "pos": 1090.92,
-       "idleMs": 366,
-       "ahead": 39.1
+       "pos": 1091.83,
+       "idleMs": 800,
+       "ahead": 38.2
       }
      ]
     ]
@@ -182,17 +182,17 @@
      "to": "360p30",
      "needMbps": 2.88,
      "bwEstMbps": 2,
-     "ahead": 39,
-     "pos": 1110.95,
+     "ahead": 38.1,
+     "pos": 1111.89,
      "n": 1
     },
     "toast": "Speed 2× · network too slow, quality 360p30",
     "w6": {
      "n": 60,
      "slope": 2,
-     "ct0": 1115.59,
-     "ct1": 1127.39,
-     "minCt": 1115.59,
+     "ct0": 1116.25,
+     "ct1": 1128.05,
+     "minCt": 1116.25,
      "frozenMs": 0,
      "rrMax": 1,
      "rrMin": 1,
@@ -206,19 +206,19 @@
    "ok": true,
    "info": {
     "w7": {
-     "n": 61,
+     "n": 60,
      "slope": 2,
-     "ct0": 1176.02,
-     "ct1": 1188.02,
-     "minCt": 1176.02,
+     "ct0": 1176.13,
+     "ct1": 1187.93,
+     "minCt": 1176.13,
      "frozenMs": 0,
      "rrMax": 1,
      "rrMin": 1,
      "v2b": "active",
      "mse": true
     },
-    "pre7": 1133.54077,
-    "min7": 1133.588646,
+    "pre7": 1134.191446,
+    "min7": 1134.24581,
     "end": [],
     "net": [
      [
@@ -252,8 +252,8 @@
       {
        "why": "stall_idle",
        "state": "active",
-       "pos": 1169.85,
-       "idleMs": 20656,
+       "pos": 1169.84,
+       "idleMs": 20402,
        "ahead": 0.2
       }
      ],
@@ -279,7 +279,7 @@
        "details": "fragLoadError",
        "n": 2,
        "state": "active",
-       "sinceMs": 1678,
+       "sinceMs": 1637,
        "delayMs": 4000
       }
      ],
@@ -301,9 +301,9 @@
     "w8": {
      "n": 60,
      "slope": 1,
-     "ct0": 1192.72,
-     "ct1": 1198.62,
-     "minCt": 1192.72,
+     "ct0": 1192.76,
+     "ct1": 1198.66,
+     "minCt": 1192.76,
      "frozenMs": 0,
      "rrMax": 1,
      "rrMin": 1,
@@ -315,15 +315,15 @@
       "v2b_restore",
       {
        "reason": "speed_1",
-       "pos": 1192.05,
+       "pos": 1192.18,
        "mode": "takeover"
       }
      ],
      [
       "v2b_restored",
       {
-       "pos": 1192.05,
-       "ms": 67,
+       "pos": 1192.18,
+       "ms": 129,
        "attempt": 1
       }
      ],
@@ -331,8 +331,8 @@
       "v2b_restore_stuck",
       {
        "step": 1,
-       "ct": 1192.05,
-       "pos": 1192.05,
+       "ct": 1192.18,
+       "pos": 1192.18,
        "rate": 1,
        "rs": 4,
        "paused": false
@@ -341,7 +341,7 @@
      [
       "v2b_restore_ok",
       {
-       "ms": 4067,
+       "ms": 4130,
        "nudges": 1,
        "attempt": 1
       }
@@ -361,15 +361,15 @@
      "v2b_restore",
      {
       "reason": "speed_1",
-      "pos": 1211.19,
+      "pos": 1211.59,
       "mode": "takeover"
      }
     ],
     [
      "v2b_restored",
      {
-      "pos": 1211.19,
-      "ms": 56,
+      "pos": 1211.59,
+      "ms": 124,
       "attempt": 1
      }
     ],
@@ -381,8 +381,8 @@
      "v2b_restore_stuck",
      {
       "step": 1,
-      "ct": 1211.19,
-      "pos": 1211.19,
+      "ct": 1211.59,
+      "pos": 1211.59,
       "rate": 1,
       "rs": 4,
       "paused": false
@@ -395,7 +395,7 @@
     [
      "v2b_restore_ok",
      {
-      "ms": 4056,
+      "ms": 4124,
       "nudges": 1,
       "attempt": 1
      }
@@ -410,14 +410,14 @@
    "name": "S11 native 1x plays on from the position: no bridge reload / end, no jump back (TV: 00:00)",
    "ok": true,
    "info": {
-    "pos11": 1211.187906,
-    "min11": 1211.19423,
+    "pos11": 1211.582578,
+    "min11": 1211.594116,
     "w11": {
      "n": 60,
      "slope": 1,
-     "ct0": 1224.17,
-     "ct1": 1230.07,
-     "minCt": 1224.17,
+     "ct0": 1224.48,
+     "ct1": 1230.38,
+     "minCt": 1224.48,
      "frozenMs": 0,
      "rrMax": 1,
      "rrMin": 1,
@@ -439,7 +439,7 @@
      "v2b": "idle",
      "v2bSpeed": 2,
      "engine": null,
-     "ct": 1230.1,
+     "ct": 1230.4,
      "paused": false
     }
    ]
@@ -456,9 +456,9 @@
     "w9": {
      "n": 90,
      "slope": 1,
-     "ct0": 2.63,
-     "ct1": 11.53,
-     "minCt": 2.63,
+     "ct0": 2.59,
+     "ct1": 11.49,
+     "minCt": 2.59,
      "frozenMs": 0,
      "rrMax": 1,
      "rrMin": 1,
@@ -494,51 +494,51 @@
  "marks": [
   {
    "name": "S0 native 1x",
-   "p": 2727.4000000003725
+   "p": 3135.800000000745
   },
   {
    "name": "S1 2x",
-   "p": 4729.5999999996275
+   "p": 5139.9000000003725
   },
   {
    "name": "S2 5 stalls -> fuse -> restore 1x",
-   "p": 21989.200000000186
+   "p": 22633.900000000373
   },
   {
    "name": "S3 retry 1.5x -> 2x",
-   "p": 36214
+   "p": 36908.300000000745
   },
   {
    "name": "S4 quality change 480p30",
-   "p": 46240.200000000186
+   "p": 47271.09999999963
   },
   {
    "name": "S5 mv.load() while active",
-   "p": 59667.299999999814
+   "p": 62264.09999999963
   },
   {
    "name": "S6 step-down (bwEst 2 Mbit/s + stall)",
-   "p": 69678.90000000037
+   "p": 72292.80000000075
   },
   {
    "name": "S7 WAN off 25 s",
-   "p": 81109.29999999981
+   "p": 83772.80000000075
   },
   {
    "name": "S7 WAN back",
-   "p": 106112.70000000019
+   "p": 108780
   },
   {
    "name": "S8 1x restore, stuck native pipeline",
-   "p": 118947.70000000019
+   "p": 121415.80000000075
   },
   {
    "name": "S11 stuck restore + burst 0.25 / 1.5 / 1 (TV T6)",
-   "p": 136629.7999999998
+   "p": 139562.69999999925
   },
   {
    "name": "S9 clip 2x",
-   "p": 162384
+   "p": 165375
   }
  ],
  "fin": {
@@ -565,7 +565,7 @@
     "muted": false,
     "realMuted": false,
     "volume": 1,
-    "ct": 11.597,
+    "ct": 11.596,
     "paused": false,
     "src": "https://sttv.test/clip.mp4"
    },
@@ -608,10 +608,10 @@
     "lastError": null,
     "lastRestore": {
      "reason": "speed_1",
-     "at": 136634
+     "at": 139570
     },
     "want": null,
-    "engageMs": 218,
+    "engageMs": 510,
     "frags": 5,
     "stalls60s": 0,
     "switchStalls": 0,
@@ -638,10 +638,10 @@
      "live": false
     },
     "net": {
-     "bwEstMbps": 2,
-     "samples": 5,
+     "bwEstMbps": 74.51,
+     "samples": 7,
      "needMbps": 1.34,
-     "idleMs": 36829,
+     "idleMs": 37028,
      "kicks": 2,
      "absorbed": 1,
      "netRecovers": 4,
@@ -663,7 +663,7 @@
     },
     "appHls": null,
     "timeline": {
-     "checks": 100,
+     "checks": 102,
      "mismatches": 0,
      "last": {
       "dur": 53591.2,
@@ -690,7 +690,7 @@
       2
      ],
      "ratio": 1,
-     "at": 1793876611767
+     "at": 1793891989327
     },
     "mse": null,
     "v2b": {
@@ -700,7 +700,7 @@
       1.5
      ],
      "ratio": 1.5,
-     "at": 1793876649821
+     "at": 1793892028115
     },
     "gate": true
    },
@@ -708,7 +708,7 @@
     "ratio": 2,
     "speed": 2,
     "pipe": "v2b",
-    "at": 134521
+    "at": 137329
    },
    "lastFail": null,
    "webcodecs": true,
@@ -721,61 +721,56 @@
    },
    "recent": [
     {
-     "t": 118949,
-     "type": "set_speed",
-     "data": 1
-    },
-    {
-     "t": 118949,
+     "t": 121418,
      "type": "v2b_restore",
      "data": {
       "reason": "speed_1",
-      "pos": 1192.05,
+      "pos": 1192.18,
       "mode": "takeover"
      }
     },
     {
-     "t": 118951,
+     "t": 121420,
      "type": "engine_stop",
      "data": "v2b_restore"
     },
     {
-     "t": 119020,
+     "t": 121554,
      "type": "v2b_restored",
      "data": {
-      "pos": 1192.05,
-      "ms": 67,
+      "pos": 1192.18,
+      "ms": 129,
       "attempt": 1
      }
     },
     {
-     "t": 122520,
+     "t": 125055,
      "type": "v2b_restore_stuck",
      "data": {
       "step": 1,
-      "ct": 1192.05,
-      "pos": 1192.05,
+      "ct": 1192.18,
+      "pos": 1192.18,
       "rate": 1,
       "rs": 4,
       "paused": false
      }
     },
     {
-     "t": 123020,
+     "t": 125554,
      "type": "v2b_restore_ok",
      "data": {
-      "ms": 4067,
+      "ms": 4130,
       "nudges": 1,
       "attempt": 1
      }
     },
     {
-     "t": 131176,
+     "t": 133682,
      "type": "set_speed",
      "data": 2
     },
     {
-     "t": 131176,
+     "t": 133683,
      "type": "rate_hold",
      "data": {
       "speed": 2,
@@ -783,22 +778,22 @@
      }
     },
     {
-     "t": 131176,
+     "t": 133683,
      "type": "v2b_engage",
      "data": {
       "mode": "takeover",
       "speed": 2,
-      "ct": 1200.66,
-      "src": "blob:https://sttv.test/3344b496-e9bf-4e93-87a4-e46ff0508de7"
+      "ct": 1200.75,
+      "src": "blob:https://sttv.test/657410ab-74b6-4209-99d4-33db35aec949"
      }
     },
     {
-     "t": 131176,
+     "t": 133683,
      "type": "toast",
      "data": "Speed 2× · preparing…"
     },
     {
-     "t": 131226,
+     "t": 133780,
      "type": "v2b_prefetched",
      "data": {
       "n": 1,
@@ -807,37 +802,37 @@
      }
     },
     {
-     "t": 131232,
+     "t": 133795,
      "type": "v2b_switch",
      "data": {
-      "pos": 1200.71,
+      "pos": 1200.85,
       "speed": 2,
-      "prepMs": 51
+      "prepMs": 101
      }
     },
     {
-     "t": 131394,
+     "t": 134193,
      "type": "v2b_active",
      "data": {
       "speed": 2,
-      "ms": 218,
-      "switchMs": 167,
-      "ct": 1200.72,
+      "ms": 510,
+      "switchMs": 409,
+      "ct": 1200.85,
       "dur": 53591.2
      }
     },
     {
-     "t": 131394,
+     "t": 134193,
      "type": "toast",
      "data": "Speed 2× · v2b"
     },
     {
-     "t": 131397,
+     "t": 134201,
      "type": "audio_context_closed",
      "data": "v2b_start"
     },
     {
-     "t": 131400,
+     "t": 134208,
      "type": "audio_context",
      "data": {
       "opts": "default",
@@ -850,7 +845,7 @@
      }
     },
     {
-     "t": 131400,
+     "t": 134209,
      "type": "engine_start",
      "data": {
       "speed": 2,
@@ -858,7 +853,7 @@
      }
     },
     {
-     "t": 131420,
+     "t": 134275,
      "type": "base_ref",
      "data": {
       "pts": 72.033,
@@ -866,7 +861,7 @@
      }
     },
     {
-     "t": 131420,
+     "t": 134275,
      "type": "source_open",
      "data": {
       "audio": "https://d2vi6trrdongqn.cloudfront.net/fa44536e95f6efe9f2b2_gamesdonequick_321096577376_1793465395/audio_only/index-dvr.m3u8",
@@ -877,15 +872,15 @@
      }
     },
     {
-     "t": 131420,
+     "t": 134275,
      "type": "engine_ready",
      "data": {
       "decoder": "wc",
-      "ms": 26
+      "ms": 75
      }
     },
     {
-     "t": 131486,
+     "t": 134385,
      "type": "pcm_ready",
      "data": {
       "rate": 48000,
@@ -894,21 +889,26 @@
      }
     },
     {
-     "t": 131561,
+     "t": 134410,
+     "type": "anchor_wait_data",
+     "data": 1201.58
+    },
+    {
+     "t": 134489,
      "type": "anchor",
      "data": {
-      "ct": 1201.052,
-      "target": 1201.319,
+      "ct": 1201.441,
+      "target": 1201.745,
       "speed": 2,
-      "lat": 0.033
+      "lat": 0.039
      }
     },
     {
-     "t": 134041,
+     "t": 136889,
      "type": "audio_rendering",
      "data": {
-      "outDb": -26.8,
-      "pcmDb": -31.1,
+      "outDb": -23.4,
+      "pcmDb": -32.4,
       "ctx": "default",
       "out": 0.032,
       "base": 0.01,
@@ -917,50 +917,50 @@
      }
     },
     {
-     "t": 134041,
+     "t": 136890,
      "type": "toast",
      "data": "Speed 2× · audio engine"
     },
     {
-     "t": 136631,
+     "t": 139565,
      "type": "v2b_rate_request",
      "data": 1
     },
     {
-     "t": 136632,
+     "t": 139565,
      "type": "set_speed",
      "data": 1
     },
     {
-     "t": 136632,
+     "t": 139565,
      "type": "v2b_restore",
      "data": {
       "reason": "speed_1",
-      "pos": 1211.19,
+      "pos": 1211.59,
       "mode": "takeover"
      }
     },
     {
-     "t": 136633,
+     "t": 139567,
      "type": "engine_stop",
      "data": "v2b_restore"
     },
     {
-     "t": 136690,
+     "t": 139694,
      "type": "v2b_restored",
      "data": {
-      "pos": 1211.19,
-      "ms": 56,
+      "pos": 1211.59,
+      "ms": 124,
       "attempt": 1
      }
     },
     {
-     "t": 139343,
+     "t": 142300,
      "type": "set_speed",
      "data": 0.25
     },
     {
-     "t": 139343,
+     "t": 142300,
      "type": "rate_hold",
      "data": {
       "speed": 0.25,
@@ -968,24 +968,24 @@
      }
     },
     {
-     "t": 140190,
+     "t": 143194,
      "type": "v2b_restore_stuck",
      "data": {
       "step": 1,
-      "ct": 1211.19,
-      "pos": 1211.19,
+      "ct": 1211.59,
+      "pos": 1211.59,
       "rate": 1,
       "rs": 4,
       "paused": false
      }
     },
     {
-     "t": 140546,
+     "t": 143503,
      "type": "set_speed",
      "data": 1.5
     },
     {
-     "t": 140546,
+     "t": 143504,
      "type": "rate_hold",
      "data": {
       "speed": 1.5,
@@ -993,38 +993,38 @@
      }
     },
     {
-     "t": 140690,
+     "t": 143694,
      "type": "v2b_restore_ok",
      "data": {
-      "ms": 4056,
+      "ms": 4124,
       "nudges": 1,
       "attempt": 1
      }
     },
     {
-     "t": 141150,
+     "t": 144110,
      "type": "set_speed",
      "data": 1
     },
     {
-     "t": 159168,
+     "t": 162139,
      "type": "relaunch",
      "data": {
       "speed": 1,
       "v2b": "idle",
       "v2bSpeed": 2,
       "engine": null,
-      "ct": 1230.1,
+      "ct": 1230.4,
       "paused": false
      }
     },
     {
-     "t": 162385,
+     "t": 165376,
      "type": "set_speed",
      "data": 2
     },
     {
-     "t": 162386,
+     "t": 165377,
      "type": "rate_hold",
      "data": {
       "speed": 2,
@@ -1032,7 +1032,7 @@
      }
     },
     {
-     "t": 162386,
+     "t": 165377,
      "type": "toast",
      "data": "This TV cannot change the speed of clips · 2× has no effect"
     }
@@ -1040,10 +1040,10 @@
   },
   "bridge": {
    "log": [
-    "1307 loadedmetadata",
-    "46353 loadedmetadata",
-    "151457 stall check: transient",
-    "161211 loadedmetadata"
+    "1730 loadedmetadata",
+    "47461 loadedmetadata",
+    "154759 stall check: transient",
+    "164214 loadedmetadata"
    ],
    "retries": 0,
    "stallChecks": 1,
@@ -1096,12 +1096,12 @@
    "unanchor": 3,
    "v2b_external": 1,
    "v2b_release": 1,
+   "anchor_wait_data": 3,
    "v2b_absorb_load": 1,
    "v2b_kick": 2,
    "v2b_step_down": 1,
-   "seg_error": 17,
    "v2b_hls_warn": 16,
-   "anchor_wait_data": 1,
+   "seg_error": 13,
    "v2b_net_recover": 4,
    "v2b_restore_stuck": 2,
    "relaunch": 1
@@ -1114,25 +1114,25 @@
   "[sttv-speed] rate_cap {pipe: native, v: ignored, sp: Array(1), ratio: 1}",
   "[sttv-speed] set_speed 2",
   "[sttv-speed] rate_hold {speed: 2, pipe: native}",
-  "[sttv-speed] v2b_engage {mode: takeover, speed: 2, ct: 1003.2, src: blob:https://sttv.test/53e17f39-f5be-40a7-9568-1f3548d7f671}",
+  "[sttv-speed] v2b_engage {mode: takeover, speed: 2, ct: 1003.01, src: blob:https://sttv.test/2325eed0-cad3-4364-92ae-c72886f40f46}",
   "[sttv-speed] toast Speed 2× · preparing…",
   "[sttv-speed] v2b_libs {hls: 1.5.20, hook: 1.3.8}",
   "[sttv-speed] net_path {path: direct, proxy: undefined}",
-  "[sttv-speed] v2b_prefetched {n: 2, kb: 5477, ms: 63}",
-  "[sttv-speed] v2b_switch {pos: 1003.36, speed: 2, prepMs: 168}",
-  "[sttv-speed] v2b_active {speed: 2, ms: 607, switchMs: 440, ct: 1003.38, dur: 53591.2}",
+  "[sttv-speed] v2b_prefetched {n: 2, kb: 5477, ms: 94}",
+  "[sttv-speed] v2b_switch {pos: 1003.3, speed: 2, prepMs: 293}",
+  "[sttv-speed] v2b_active {speed: 2, ms: 782, switchMs: 489, ct: 1003.3, dur: 53591.2}",
   "[sttv-speed] toast Speed 2× · v2b",
   "[sttv-speed] audio_context {opts: default, owner: v2b, why: v2b_start, sr: 44100, base: 0.01}",
   "[sttv-speed] engine_start {speed: 2, key: vod:2915888911}",
   "[sttv-speed] base_ref {pts: 72.033, src: hlsjs_initpts}",
   "[sttv-speed] source_open {audio: https://d2vi6trrdongqn.cloudfront.net/fa44536e95f6…321096577376_1793465395/audio_only/index-dvr.m3u8, kind: audio_only, segs: 5360, total: 53591, fmp4: false}",
-  "[sttv-speed] engine_ready {decoder: wc, ms: 62}",
+  "[sttv-speed] engine_ready {decoder: wc, ms: 81}",
   "[sttv-speed] pcm_ready {rate: 48000, ch: 2, decoder: wc}",
   "[sttv-speed] rate_verify {speed: 2, pipe: v2b}",
   "[sttv-speed] rate_ok {ratio: 2, speed: 2, pipe: v2b}",
   "[sttv-speed] rate_cap {pipe: v2b, v: ok, sp: Array(1), ratio: 2}",
-  "[sttv-speed] anchor {ct: 1008.599, target: 1008.878, speed: 2, lat: 0.04}",
-  "[sttv-speed] audio_rendering {outDb: -36.7, pcmDb: -23.7, ctx: default, out: 0.032, base: 0.01}",
+  "[sttv-speed] anchor {ct: 1008.526, target: 1008.796, speed: 2, lat: 0.035}",
+  "[sttv-speed] audio_rendering {outDb: -35.9, pcmDb: -23.8, ctx: default, out: 0.032, base: 0.01}",
   "[sttv-speed] toast Speed 2× · audio engine",
   "[sttv-speed] v2b_stall 1",
   "[sttv-speed] v2b_stall 2",
@@ -1140,78 +1140,73 @@
   "[sttv-speed] v2b_stall 4",
   "[sttv-speed] v2b_stall 5",
   "[sttv-speed] v2b_fail stalls",
-  "[sttv-speed] v2b_restore {reason: fail:stalls, pos: 1036.69, mode: takeover}",
+  "[sttv-speed] v2b_restore {reason: fail:stalls, pos: 1036.75, mode: takeover}",
   "[sttv-speed] engine_stop v2b_restore",
   "[sttv-speed] toast Speed-up unavailable (stalls) · 1×",
-  "[sttv-speed] v2b_restored {pos: 1036.69, ms: 72, attempt: 1}",
-  "[sttv-speed] v2b_restore_ok {ms: 1072, nudges: 0, attempt: 1}",
+  "[sttv-speed] v2b_restored {pos: 1036.75, ms: 176, attempt: 1}",
+  "[sttv-speed] v2b_restore_ok {ms: 1177, nudges: 0, attempt: 1}",
   "[sttv-speed] set_speed 1.5",
   "[sttv-speed] rate_hold {speed: 1.5, pipe: native}",
   "[sttv-speed] v2b_retry stalls",
-  "[sttv-speed] v2b_engage {mode: takeover, speed: 1.5, ct: 1050.62, src: blob:https://sttv.test/53e17f39-f5be-40a7-9568-1f3548d7f671}",
+  "[sttv-speed] v2b_engage {mode: takeover, speed: 1.5, ct: 1050.14, src: blob:https://sttv.test/2325eed0-cad3-4364-92ae-c72886f40f46}",
   "[sttv-speed] toast Speed 1.5× · preparing…",
-  "[sttv-speed] v2b_prefetched {n: 1, kb: 2745, ms: 2}",
-  "[sttv-speed] v2b_switch {pos: 1050.65, speed: 1.5, prepMs: 34}",
-  "[sttv-speed] v2b_active {speed: 1.5, ms: 346, switchMs: 312, ct: 1050.68, dur: 53591.2}",
+  "[sttv-speed] v2b_prefetched {n: 1, kb: 2745, ms: 7}",
+  "[sttv-speed] v2b_switch {pos: 1050.2, speed: 1.5, prepMs: 64}",
+  "[sttv-speed] v2b_active {speed: 1.5, ms: 536, switchMs: 472, ct: 1050.24, dur: 53591.2}",
   "[sttv-speed] toast Speed 1.5× · v2b",
   "[sttv-speed] audio_context_closed v2b_start",
   "[sttv-speed] audio_context {opts: default, owner: v2b, why: v2b_start, sr: 44100, base: 0.01}",
   "[sttv-speed] engine_start {speed: 1.5, key: vod:2915888911}",
   "[sttv-speed] base_ref {pts: 72.033, src: hlsjs_initpts}",
   "[sttv-speed] source_open {audio: https://d2vi6trrdongqn.cloudfront.net/fa44536e95f6…321096577376_1793465395/audio_only/index-dvr.m3u8, kind: audio_only, segs: 5360, total: 53591, fmp4: false}",
-  "[sttv-speed] engine_ready {decoder: wc, ms: 24}",
+  "[sttv-speed] engine_ready {decoder: wc, ms: 63}",
   "[sttv-speed] pcm_ready {rate: 48000, ch: 2, decoder: wc}",
   "[sttv-speed] rate_verify {speed: 1.5, pipe: v2b}",
   "[sttv-speed] rate_ok {ratio: 1.5, speed: 1.5, pipe: v2b}",
   "[sttv-speed] rate_cap {pipe: v2b, v: ok, sp: Array(2), ratio: 1.5}",
-  "[sttv-speed] anchor {ct: 1054.594, target: 1054.792, speed: 1.5, lat: 0.032}",
+  "[sttv-speed] anchor {ct: 1054.221, target: 1054.422, speed: 1.5, lat: 0.034}",
   "[sttv-speed] v2b_rate_request 2",
   "[sttv-speed] set_speed 2",
-  "[sttv-speed] v2b_respeed {from: 1.5, to: 2, pos: 1055.2}",
-  "[sttv-speed] v2b_switch {pos: 1055.2, speed: 2, prepMs: 5}",
+  "[sttv-speed] v2b_respeed {from: 1.5, to: 2, pos: 1054.92}",
+  "[sttv-speed] v2b_switch {pos: 1054.92, speed: 2, prepMs: 7}",
   "[sttv-speed] engine_speed {from: 1.5, to: 2}",
   "[sttv-speed] unanchor speed",
-  "[sttv-speed] v2b_active {speed: 2, ms: 346, switchMs: 341, ct: 1055.22, dur: 53591.2}",
+  "[sttv-speed] v2b_active {speed: 2, ms: 554, switchMs: 547, ct: 1054.92, dur: 53591.2}",
   "[sttv-speed] toast Speed 2× · v2b",
-  "[sttv-speed] anchor {ct: 1055.478, target: 1055.742, speed: 2, lat: 0.032}",
-  "[sttv-speed] audio_rendering {outDb: -29.5, pcmDb: -23.5, ctx: default, out: 0.032, base: 0.01}",
+  "[sttv-speed] anchor {ct: 1055.12, target: 1055.389, speed: 2, lat: 0.034}",
+  "[sttv-speed] audio_rendering {outDb: -20.4, pcmDb: -23.9, ctx: default, out: 0.032, base: 0.01}",
   "[sttv-speed] toast Speed 2× · audio engine",
   "[sttv-speed] v2b_external src",
   "[sttv-speed] v2b_release external_src",
   "[sttv-speed] engine_stop v2b_release",
-  "[sttv-speed] v2b_engage {mode: takeover, speed: 2, ct: 1070.33, src: blob:https://sttv.test/3344b496-e9bf-4e93-87a4-e46ff0508de7}",
+  "[sttv-speed] v2b_engage {mode: takeover, speed: 2, ct: 1070.65, src: blob:https://sttv.test/657410ab-74b6-4209-99d4-33db35aec949}",
   "[sttv-speed] toast Speed 2× · preparing…",
-  "[sttv-speed] v2b_prefetched {n: 1, kb: 1720, ms: 25}",
-  "[sttv-speed] v2b_switch {pos: 1070.4, speed: 2, prepMs: 70}",
-  "[sttv-speed] v2b_active {speed: 2, ms: 328, switchMs: 258, ct: 1070.4, dur: 53591.2}",
+  "[sttv-speed] v2b_prefetched {n: 1, kb: 1720, ms: 39}",
+  "[sttv-speed] v2b_switch {pos: 1070.75, speed: 2, prepMs: 108}",
+  "[sttv-speed] v2b_active {speed: 2, ms: 561, switchMs: 453, ct: 1070.78, dur: 53591.2}",
   "[sttv-speed] toast Speed 2× · v2b",
   "[sttv-speed] audio_context_closed v2b_start",
   "[sttv-speed] audio_context {opts: default, owner: v2b, why: v2b_start, sr: 44100, base: 0.01}",
   "[sttv-speed] engine_start {speed: 2, key: vod:2915888911}",
   "[sttv-speed] base_ref {pts: 72.033, src: hlsjs_initpts}",
   "[sttv-speed] source_open {audio: https://d2vi6trrdongqn.cloudfront.net/fa44536e95f6…321096577376_1793465395/audio_only/index-dvr.m3u8, kind: audio_only, segs: 5360, total: 53591, fmp4: false}",
-  "[sttv-speed] engine_ready {decoder: wc, ms: 27}",
+  "[sttv-speed] engine_ready {decoder: wc, ms: 76}",
   "[sttv-speed] pcm_ready {rate: 48000, ch: 2, decoder: wc}",
-  "[sttv-speed] anchor {ct: 1070.727, target: 1071.002, speed: 2, lat: 0.037}",
-  "[sttv-speed] audio_rendering {outDb: -36.6, pcmDb: -24.6, ctx: default, out: 0.032, base: 0.01}",
+  "[sttv-speed] anchor_wait_data 1071.51",
+  "[sttv-speed] anchor {ct: 1071.444, target: 1071.751, speed: 2, lat: 0.038}",
+  "[sttv-speed] audio_rendering {outDb: -27.4, pcmDb: -29.5, ctx: default, out: 0.032, base: 0.01}",
   "[sttv-speed] toast Speed 2× · audio engine",
-  "[sttv-speed] v2b_absorb_load {n: 1, state: active, ahead: 39.1, rs: 4}",
-  "[sttv-speed] v2b_kick {why: bridge_load, state: active, pos: 1090.92, idleMs: 366, ahead: 39.1}",
+  "[sttv-speed] v2b_absorb_load {n: 1, state: active, ahead: 38.2, rs: 4}",
+  "[sttv-speed] v2b_kick {why: bridge_load, state: active, pos: 1091.83, idleMs: 800, ahead: 38.2}",
   "[sttv-speed] v2b_stall 1",
   "[sttv-speed] v2b_step_down {why: stall, speed: 2, from: 480p30, to: 360p30, needMbps: 2.88}",
-  "[sttv-speed] v2b_switch {pos: 1110.95, speed: 2, prepMs: 3}",
+  "[sttv-speed] v2b_switch {pos: 1111.89, speed: 2, prepMs: 6}",
   "[sttv-speed] toast Speed 2× · network too slow, quality 360p30",
   "[sttv-speed] unanchor emptied",
-  "[sttv-speed] v2b_active {speed: 2, ms: 132, switchMs: 130, ct: 1110.96, dur: 53591.2}",
+  "[sttv-speed] v2b_active {speed: 2, ms: 320, switchMs: 314, ct: 1111.9, dur: 53591.2}",
   "[sttv-speed] toast Speed 2× · v2b",
-  "[sttv-speed] anchor {ct: 1111.185, target: 1111.461, speed: 2, lat: 0.038}",
-  "[sttv-speed] seg_error {i: 115, err: net, tries: 1}",
-  "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
-  "[sttv-speed] seg_error {i: 115, err: net, tries: 2}",
-  "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
+  "[sttv-speed] anchor {ct: 1112.098, target: 1112.377, speed: 2, lat: 0.039}",
   "[sttv-speed] v2b_hls_warn fragLoadError",
-  "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
-  "[sttv-speed] seg_error {i: 115, err: net, tries: 3}",
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
   "[sttv-speed] v2b_hls_warn fragLoadError",
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
@@ -1221,10 +1216,6 @@
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
   "[sttv-speed] v2b_hls_warn fragLoadError",
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
-  "[sttv-speed] seg_error {i: 115, err: net, tries: 4}",
-  "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
-  "[sttv-speed] unanchor underrun",
-  "[sttv-speed] anchor_wait_data 1150.26",
   "[sttv-speed] seg_error {i: 116, err: net, tries: 3}",
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
   "[sttv-speed] seg_error {i: 117, err: net, tries: 1}",
@@ -1235,6 +1226,8 @@
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
   "[sttv-speed] seg_error {i: 116, err: net, tries: 4}",
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
+  "[sttv-speed] unanchor underrun",
+  "[sttv-speed] anchor_wait_data 1160.22",
   "[sttv-speed] seg_error {i: 117, err: net, tries: 3}",
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
   "[sttv-speed] seg_error {i: 118, err: net, tries: 1}",
@@ -1248,7 +1241,7 @@
   "[sttv-speed] v2b_stall 1",
   "[sttv-speed] v2b_net_recover {details: fragLoadError, n: 1, state: active, sinceMs: 0, delayMs: 2000}",
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
-  "[sttv-speed] v2b_kick {why: stall_idle, state: active, pos: 1169.85, idleMs: 20656, ahead: 0.2}",
+  "[sttv-speed] v2b_kick {why: stall_idle, state: active, pos: 1169.84, idleMs: 20402, ahead: 0.2}",
   "[sttv-speed] v2b_hls_warn fragLoadError",
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
   "[sttv-speed] v2b_hls_warn fragLoadError",
@@ -1257,7 +1250,7 @@
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
   "[sttv-speed] v2b_hls_warn fragLoadError",
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
-  "[sttv-speed] v2b_net_recover {details: fragLoadError, n: 2, state: active, sinceMs: 1678, delayMs: 4000}",
+  "[sttv-speed] v2b_net_recover {details: fragLoadError, n: 2, state: active, sinceMs: 1637, delayMs: 4000}",
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
   "[sttv-speed] seg_error {i: 116, err: net, tries: 5}",
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
@@ -1269,7 +1262,7 @@
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
   "[sttv-speed] v2b_hls_warn fragLoadError",
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
-  "[sttv-speed] v2b_net_recover {details: fragLoadError, n: 3, state: active, sinceMs: 2020, delayMs: 6000}",
+  "[sttv-speed] v2b_net_recover {details: fragLoadError, n: 3, state: active, sinceMs: 2023, delayMs: 6000}",
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
   "[sttv-speed] seg_error {i: 118, err: net, tries: 4}",
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
@@ -1281,47 +1274,48 @@
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
   "[sttv-speed] v2b_hls_warn fragLoadError",
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
-  "[sttv-speed] v2b_net_recover {details: fragLoadError, n: 4, state: active, sinceMs: 5691, delayMs: 8000}",
+  "[sttv-speed] v2b_net_recover {details: fragLoadError, n: 4, state: active, sinceMs: 5663, delayMs: 8000}",
   "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
-  "[sttv-speed] anchor {ct: 1170.415, target: 1170.69, speed: 2, lat: 0.038}",
+  "[sttv-speed] anchor {ct: 1170.468, target: 1170.746, speed: 2, lat: 0.039}",
   "[sttv-speed] v2b_rate_request 1",
   "[sttv-speed] set_speed 1",
-  "[sttv-speed] v2b_restore {reason: speed_1, pos: 1192.05, mode: takeover}",
+  "[sttv-speed] v2b_restore {reason: speed_1, pos: 1192.18, mode: takeover}",
   "[sttv-speed] engine_stop v2b_restore",
-  "[sttv-speed] v2b_restored {pos: 1192.05, ms: 67, attempt: 1}",
-  "[sttv-speed] v2b_restore_stuck {step: 1, ct: 1192.05, pos: 1192.05, rate: 1, rs: 4}",
-  "[sttv-speed] v2b_restore_ok {ms: 4067, nudges: 1, attempt: 1}",
+  "[sttv-speed] v2b_restored {pos: 1192.18, ms: 129, attempt: 1}",
+  "[sttv-speed] v2b_restore_stuck {step: 1, ct: 1192.18, pos: 1192.18, rate: 1, rs: 4}",
+  "[sttv-speed] v2b_restore_ok {ms: 4130, nudges: 1, attempt: 1}",
   "[sttv-speed] set_speed 2",
   "[sttv-speed] rate_hold {speed: 2, pipe: native}",
-  "[sttv-speed] v2b_engage {mode: takeover, speed: 2, ct: 1200.66, src: blob:https://sttv.test/3344b496-e9bf-4e93-87a4-e46ff0508de7}",
+  "[sttv-speed] v2b_engage {mode: takeover, speed: 2, ct: 1200.75, src: blob:https://sttv.test/657410ab-74b6-4209-99d4-33db35aec949}",
   "[sttv-speed] toast Speed 2× · preparing…",
   "[sttv-speed] v2b_prefetched {n: 1, kb: 816, ms: 1}",
-  "[sttv-speed] v2b_switch {pos: 1200.71, speed: 2, prepMs: 51}",
-  "[sttv-speed] v2b_active {speed: 2, ms: 218, switchMs: 167, ct: 1200.72, dur: 53591.2}",
+  "[sttv-speed] v2b_switch {pos: 1200.85, speed: 2, prepMs: 101}",
+  "[sttv-speed] v2b_active {speed: 2, ms: 510, switchMs: 409, ct: 1200.85, dur: 53591.2}",
   "[sttv-speed] toast Speed 2× · v2b",
   "[sttv-speed] audio_context_closed v2b_start",
   "[sttv-speed] audio_context {opts: default, owner: v2b, why: v2b_start, sr: 44100, base: 0.01}",
   "[sttv-speed] engine_start {speed: 2, key: vod:2915888911}",
   "[sttv-speed] base_ref {pts: 72.033, src: hlsjs_initpts}",
   "[sttv-speed] source_open {audio: https://d2vi6trrdongqn.cloudfront.net/fa44536e95f6…321096577376_1793465395/audio_only/index-dvr.m3u8, kind: audio_only, segs: 5360, total: 53591, fmp4: false}",
-  "[sttv-speed] engine_ready {decoder: wc, ms: 26}",
+  "[sttv-speed] engine_ready {decoder: wc, ms: 75}",
   "[sttv-speed] pcm_ready {rate: 48000, ch: 2, decoder: wc}",
-  "[sttv-speed] anchor {ct: 1201.052, target: 1201.319, speed: 2, lat: 0.033}",
-  "[sttv-speed] audio_rendering {outDb: -26.8, pcmDb: -31.1, ctx: default, out: 0.032, base: 0.01}",
+  "[sttv-speed] anchor_wait_data 1201.58",
+  "[sttv-speed] anchor {ct: 1201.441, target: 1201.745, speed: 2, lat: 0.039}",
+  "[sttv-speed] audio_rendering {outDb: -23.4, pcmDb: -32.4, ctx: default, out: 0.032, base: 0.01}",
   "[sttv-speed] toast Speed 2× · audio engine",
   "[sttv-speed] v2b_rate_request 1",
   "[sttv-speed] set_speed 1",
-  "[sttv-speed] v2b_restore {reason: speed_1, pos: 1211.19, mode: takeover}",
+  "[sttv-speed] v2b_restore {reason: speed_1, pos: 1211.59, mode: takeover}",
   "[sttv-speed] engine_stop v2b_restore",
-  "[sttv-speed] v2b_restored {pos: 1211.19, ms: 56, attempt: 1}",
+  "[sttv-speed] v2b_restored {pos: 1211.59, ms: 124, attempt: 1}",
   "[sttv-speed] set_speed 0.25",
   "[sttv-speed] rate_hold {speed: 0.25, pipe: native}",
-  "[sttv-speed] v2b_restore_stuck {step: 1, ct: 1211.19, pos: 1211.19, rate: 1, rs: 4}",
+  "[sttv-speed] v2b_restore_stuck {step: 1, ct: 1211.59, pos: 1211.59, rate: 1, rs: 4}",
   "[sttv-speed] set_speed 1.5",
   "[sttv-speed] rate_hold {speed: 1.5, pipe: native}",
-  "[sttv-speed] v2b_restore_ok {ms: 4056, nudges: 1, attempt: 1}",
+  "[sttv-speed] v2b_restore_ok {ms: 4124, nudges: 1, attempt: 1}",
   "[sttv-speed] set_speed 1",
-  "[sttv-speed] relaunch {speed: 1, v2b: idle, v2bSpeed: 2, engine: null, ct: 1230.1}",
+  "[sttv-speed] relaunch {speed: 1, v2b: idle, v2bSpeed: 2, engine: null, ct: 1230.4}",
   "[sttv-speed] set_speed 2",
   "[sttv-speed] rate_hold {speed: 2, pipe: native}",
   "[sttv-speed] toast This TV cannot change the speed of clips · 2× has no effect"

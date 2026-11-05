@@ -3,7 +3,8 @@
 // main screens and saves screenshots (+ DOM dumps with --dump).
 // Usage: node tools/ui-lab.mjs <twitchng.ipk> <outDir> [--css a.css[,b.css]] [--js file.js] [--dump 1]
 //   [--screens intro,home,home2,down,side,side2,side3,games,switch,videos,clips,featured,search,search2,user,news,exit,about,settings,player]
-// [--fontsets DIR] (screen fonts) [--probe f.js] (a JS expression evaluated at every shot -> probe-<screen>.json, e.g. element boxes);
+// [--fontsets DIR] (screen fonts) [--probe f.js] (a JS expression evaluated at every shot -> probe-<screen>.json, e.g. element boxes)
+// [--pre f.js] (a JS expression evaluated before every shot);
 // NG_LANG=ru_RU NG_LOCALE=ru-RU for the Russian UI
 import { chromium } from 'playwright';
 import fs from 'node:fs';
@@ -23,6 +24,8 @@ const SCREENS = (opt('screens', 'home,side,games,settings,about,exit')).split(',
 // home screen once per set (font-<name>.png), same page and data, so only the typeface changes
 const FONTSETS = opt('fontsets') ? path.resolve(opt('fontsets')) : null;
 const PROBE = opt('probe') ? fs.readFileSync(path.resolve(opt('probe')), 'utf8') : null;
+// --pre f.js: a JS expression evaluated right before every shot (e.g. to simulate DOM states the lab cannot reach), then 0.4 s settle
+const PRE = opt('pre') ? fs.readFileSync(path.resolve(opt('pre')), 'utf8') : null;
 const W = path.join(OUT, '.app');
 fs.rmSync(W, { recursive: true, force: true });
 for (const d of ['ar', 'root', 'stub/webos-service']) fs.mkdirSync(path.join(W, d), { recursive: true });
@@ -79,7 +82,8 @@ await page.waitForURL(/\/release\/index\.html\?sttv_webos_launch=/, { timeout: 1
 await page.waitForFunction(() => window.TwitchNG, null, { timeout: 15000 }).catch(() => {});
 await page.waitForFunction(() => { const d = document.getElementById('welcome_dialog'); return d && !d.classList.contains('hide'); }, null, { timeout: 30000 }).catch(() => {});
 await page.waitForTimeout(1200);
-const shot = async (n) => { await page.screenshot({ path: path.join(OUT, n + '.png') }); console.log('shot ' + n);
+const shot = async (n) => { if (PRE) { await page.evaluate(PRE).catch((e) => console.log('pre ' + n + ': ' + e)); await page.waitForTimeout(400); }
+  await page.screenshot({ path: path.join(OUT, n + '.png') }); console.log('shot ' + n);
   if (PROBE) fs.writeFileSync(path.join(OUT, 'probe-' + n + '.json'), JSON.stringify(await page.evaluate(PROBE).catch((e) => ({ error: String(e) })), null, 1));
   if (DUMP) fs.writeFileSync(path.join(OUT, 'dom-' + n + '.html'), (await page.content()).replace(/(src|onerror)="(data:|this\.onerror)[^"]*"/g, '$1="…"')); };
 const key = async (k, n = 1, ms = 650) => { for (let i = 0; i < n; i++) { await page.keyboard.press(k); await page.waitForTimeout(ms); } await page.waitForTimeout(700); };

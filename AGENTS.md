@@ -19,7 +19,7 @@ Canonical instructions for AI coding agents (Codex, Claude Code, Gemini CLI, ...
 | `sttv-speed/sttv-speed.js` | engine, ES5, `VERSION` here (e.g. `1.3.8`) |
 | `sttv-speed/sttv-v2b.js` | v2b MSE hook, ES2015, GPL-3.0-only; `sttv-hls.min.js` vendored hls.js (do not edit) |
 | `brand/twitchng/web/twitchng.{js,css}` | Twitch NG layer, ES5: intro, OLED preset, About, What's new; `PRE_N` here |
-| `brand/twitchng/web/ng-ui.{css,js}`, `ng-icons.css`, `fonts/` | Next-Gen UI redesign (concept, not in the build yet): `DESIGN.md`; generators `tools/make-ng-{icons.mjs,fonts.py}`, screenshots `tools/ui-lab.mjs` |
+| `brand/twitchng/web/ng-ui.{css,js}`, `ng-icons.css`, `fonts/` | Next-Gen UI (in the build since pre-release 06, on by default with the OLED preset; `TWITCHNG_UI='0'` = off): `DESIGN.md`; generators `tools/make-ng-{icons.mjs,fonts.py}` (Onest, Lucide sharp), screenshots `tools/ui-lab.mjs` |
 | `brand/twitchng/src/` | brand generator: `make_assets.py` (SVG + generated blocks) and `render.mjs` (PNG) |
 | `build/build-app.mjs` | builds the IPK from a SmartTwitchWebOSTV checkout (exact `main.js` patches with count checks) |
 | `deploy/` | `install.sh` / `rollback.sh` (patch the stock app over SSH), `service/sttv_media_fetch.js` (Luna media fetch) |
@@ -63,9 +63,23 @@ A single suite: `node tests/unit.mjs`, `node tests/app/twitchng.mjs <ipk>`, ... 
    destinations or telemetry. The media fetch allowlists (service + proxy) stay https-only and tested.
 8. **Nothing private in the repo or in reports**: no TV / LAN addresses (use `$TV_HOST`, `<lan-host>`,
    `192.0.2.x`), local paths, e-mail, tokens, cookies, heap snapshots. The TV address lives in `tv.env`
-   (git-ignored, copy `tv.env.example`).
+   (git-ignored, copy `tv.env.example`). The git history ships with the project archive (owner rule below): a
+   commit with private data cannot be taken back, so `node tests/hygiene.mjs` before every commit, and the archive
+   is checked commit by commit before it is handed over.
 9. **Honest status**: sandbox tests (Chromium) are not TV results. Say what was checked where, and what needs the
    TV or a person (sound, pitch, lip-sync, how the icon looks).
+
+## Owner rules
+
+Decisions of the project owner; they win over defaults and habits.
+
+1. **Every reply to the owner attaches all project files**, not only what changed: the project archive **with the git
+   history** (a zip that contains `.git`, or a `git bundle` of all commits), the IPK with its SHA-256, the kit zip when
+   there is one, and the other files of that reply (screenshots, reports). Commit first, so the archive holds the
+   state the reply describes. (pre-release 06)
+2. The Russian texts of the app may be fixed freely: counted `main.js` patches in `build/build-app.mjs` (checked by
+   `tests/app/twitchng.mjs`) or the `ng-ui.js` text layer. (pre-release 06)
+3. Next-Gen UI: font Onest, icons Lucide with sharp corners (variant B); details and rules in `DESIGN.md`. (pre-release 06)
 
 ## Working with the TV
 

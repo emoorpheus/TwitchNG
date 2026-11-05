@@ -72,10 +72,13 @@ ok(sp && sp[1] === '!1' && sp[2] === '!0' && sp[3] === '!0' && sp[4] === '!1' &&
 const brandLeft = ['SmartTV Client for Twitch', 'Cliente SmartTV para Twitch', 'SmartTV Client для Twitch', 'Twitch için SmartTV'].filter((k) => main.indexOf(k) >= 0);
 ok(brandLeft.length === 0 && (main.match(/Twitch NG/g) || []).length >= 12, 'main.js brand strings -> Twitch NG (en/fr/es/pt/ru/uk/tr)', { left: brandLeft, ng: (main.match(/Twitch NG/g) || []).length });
 ok(main.indexOf('["rgba(0,0,0,1)","rgba(255,255,255,1)","rgba(145,70,255,1)","rgba(145,70,255,1)"]') >= 0, 'main.js default focus style: purple border + watched bar');
-const ruBad = ['Ужерживайте', 'Врмемя', '"Удерж. ОК"', 'Удерж. влево для доп. опций', '"Акт. каналы"', '"На главной странице"', '"Май","Июнь"'].filter((k) => main.indexOf(k) >= 0);
+const ruBad = ['Ужерживайте', 'Врмемя', '"Удерж. ОК"', 'Удерж. влево для доп. опций', '"Акт. каналы"', '"На главной странице"', '"Май","Июнь"',
+  'интерфейса,цветовой', 'контента,сортировка', 'Резервное копирование и Восстановление', 'запуска Видео', 'плей,пауза', 'Прямая трансляция,Клип'].filter((k) => main.indexOf(k) >= 0)
+  .concat(/[Зз]рел(ый|ого|ом|ые)\s/.test(main) ? ['"зрелый контент"'] : []);
 const ruNew = ['ho="удерживайте вверх"', 'ru="Время ожидания"', 'vt="удерживайте ОК"', 'hs="Опции: удерживайте влево"', 'qi="Сейчас в эфире"', 'jt="Рекомендуемые"',
-  '"апр","мая","июн","июл"', 'TwitchNG.aboutLabel(U)'].filter((k) => main.split(k).length !== 2);
-ok(ruBad.length === 0 && ruNew.length === 0, 'main.js Russian copy: typos / cut words fixed ("удерживайте ОК", "Сейчас в эфире", "Рекомендуемые", "5 мая"), About label from the app layer', { bad: ruBad, missing: ruNew });
+  '"апр","мая","июн","июл"', 'TwitchNG.aboutLabel(U)', '"Настройка интерфейса, цветовой стиль, анимация и т. п."', '"Синхронизация, резервное копирование и восстановление"',
+  '"Диалог запуска видео"', '"Контент для взрослых"', '(воспроизведение, пауза, стоп, перемотка и т. д.)'].filter((k) => main.split(k).length !== 2);
+ok(ruBad.length === 0 && ruNew.length === 0, 'main.js Russian copy: typos / cut words fixed ("удерживайте ОК", "Сейчас в эфире", "Рекомендуемые", "5 мая", settings entries, "Контент для взрослых"), About label from the app layer', { bad: ruBad, missing: ruNew });
 const ngFiles = ['githubio/css/ng-ui.css', 'githubio/css/ng-icons.css', 'githubio/js/ng-ui.js', 'githubio/css/fonts/ng-sans-400.woff2', 'githubio/css/fonts/ng-sans-600.woff2',
   'githubio/css/fonts/ng-sans-700.woff2', 'githubio/css/fonts/ng-sans-900.woff2', 'githubio/css/fonts/OFL-Onest.txt'].filter((f) => !fs.existsSync(path.join(REL, f)));
 ok(ngFiles.length === 0 && /<link[^>]+ng-ui\.css\?v=1\.0\.0" id="ng-ui-css">/.test(html) && /<script[^>]+ng-ui\.js\?v=1\.0\.0"/.test(html) && pos(/<script[^>]+ng-ui\.js/) > iNg && pos(/<script[^>]+ng-ui\.js/) < iMain,
@@ -213,6 +216,23 @@ ok(ngui.cards.length >= 3 && ngui.cards.every(cardOk), 'NG UI live cards: viewer
   ngui.cards.filter((c) => !cardOk(c)).concat(ngui.cards.length < 3 ? [{ cards: ngui.cards.length }] : []).slice(0, 3));
 ok(ngui.icons && ['ng-ico-settings', 'ng-ico-about', 'ng-ico-controls', 'ng-ico-exit', 'ng-ico-news'].every((c, i) => ngui.bottom[i].indexOf(c) >= 0) && ngui.clock &&
   /^(updated (just now|.* ago))?$/.test(ngui.refresh || ''), 'NG UI chrome: outline icons in the side menu (bottom entries too), clock date + time, "updated ... ago"', { bottom: ngui.bottom, clock: ngui.clock, refresh: ngui.refresh });
+// history cards (user history screens, not reachable without a user): upstream markup = single-line title class + a "watched on"
+// line after the uptime line (Screens.js createCellLive with Extra_when) - simulated on a live card, then restored
+const hist = await page.evaluate(async () => {
+  const c = [...document.querySelectorAll('#screens_holder .ng-live')].find((x) => x.offsetParent !== null), th = c && c.querySelector('.stream_text_holder');
+  if (!th) return { card: false };
+  const t = th.querySelector('.stream_info_live_title'), w = document.createElement('div'), up = th.querySelector('[id*="_since_"]').parentNode;
+  const fs0 = getComputedStyle(t).fontSize, top0 = up.getBoundingClientRect().top;
+  t.className = 'stream_info_live_title_single_line'; w.className = 'stream_info_live'; w.textContent = 'Watched on Nov 5, 14:02 until 01:12:40'; th.appendChild(w);
+  await new Promise((r) => setTimeout(r, 120)); NgUi.run();
+  const cs = getComputedStyle(w), r = { card: true, up: up.classList.contains('ng-up'), seen: w.classList.contains('ng-seen'), titleFs: [fs0, getComputedStyle(t).fontSize],
+    upLine: Math.abs(up.getBoundingClientRect().top - top0) < 1, seenFont: cs.fontFamily, seenBelow: w.getBoundingClientRect().top >= up.getBoundingClientRect().bottom - 1,
+    upDot: getComputedStyle(up, '::before').content, seenDot: getComputedStyle(w, '::before').content };
+  w.remove(); t.className = 'stream_info_live_title'; NgUi.run();
+  return r;
+});
+ok(hist.card && hist.up && hist.seen && hist.titleFs[0] === hist.titleFs[1] && hist.upLine && /NG Sans/.test(hist.seenFont) && hist.seenBelow && /\u00b7|·/.test(hist.upDot) &&
+  (hist.seenDot === 'none' || hist.seenDot === 'normal'), 'NG UI history cards: "watched on" line below "game · uptime" (own line, no dot), single-line title styled as the title', hist);
 const uiOff = await page.evaluate(() => { const ui = document.getElementById('ng-ui-css'), r = [TwitchNG.ui(false), localStorage.getItem('TWITCHNG_UI'), document.documentElement.classList.contains('ng-ui'), ui.disabled];
   TwitchNG.oled(false); r.push(document.documentElement.classList.contains('ng-ui'), ui.disabled); TwitchNG.oled(null);
   r.push(TwitchNG.ui(null), localStorage.getItem('TWITCHNG_UI'), document.documentElement.classList.contains('ng-ui'), ui.disabled); return r; });
