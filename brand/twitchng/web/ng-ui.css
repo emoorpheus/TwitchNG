@@ -1,0 +1,143 @@
+/*
+ * ng-ui.css - Twitch NG "Next-Gen UI" (concept, stage 1: design system + live grid + side menu). Scoped to html.ng-ui
+ * (set by ng-ui.js); classic look = without the class. Sizes in vh (px at 1920 x 1080 in comments) so 720p panels scale.
+ * Upstream builds the DOM in main.js and sets focus styles with !important -> html-prefixed selectors + !important here.
+ */
+
+/* ---------------------------------------------------------------- tokens */
+html.ng-ui {
+    --ng-bg: #08070d;          /* night - the splash backdrop */
+    --ng-surface: #14111f;     /* ink - placeholders, panels */
+    --ng-raised: #1e1830;      /* haze - raised surfaces */
+    --ng-line: rgba(255, 255, 255, .08);
+    --ng-accent: #9146ff;      /* Twitch purple */
+    --ng-accent-2: #bf94ff;    /* lavender - focus ring, active */
+    --ng-text: #f5f3fa;        /* snow */
+    --ng-text-2: #c9c3d6;      /* secondary */
+    --ng-mute: #8e87a2;        /* mist - meta */
+    --ng-dim: #625c75;         /* hints, counters */
+    --ng-live: #ff3b4e;
+    --ng-r: 1.48vh;            /* 16px radius */
+    --ng-font: 'NG Sans', Roboto, sans-serif;
+}
+
+/* ---------------------------------------------------------------- type: NG Sans (Source Sans 3 subset, the splash wordmark letterforms)
+ * own family for new elements + the upstream families remapped for the covered ranges (unicode-range): every Roboto / Roboto-Bold
+ * text in main.js switches without touching its selectors, other scripts still fall back to Roboto / the system fonts */
+@font-face { font-family: 'NG Sans'; src: url('fonts/ng-sans-400.woff2') format('woff2'); font-weight: 400; font-style: normal; }
+@font-face { font-family: 'NG Sans'; src: url('fonts/ng-sans-600.woff2') format('woff2'); font-weight: 600; font-style: normal; }
+@font-face { font-family: 'NG Sans'; src: url('fonts/ng-sans-700.woff2') format('woff2'); font-weight: 700; font-style: normal; }
+@font-face { font-family: 'NG Sans'; src: url('fonts/ng-sans-900.woff2') format('woff2'); font-weight: 900; font-style: normal; }
+@font-face { font-family: 'Roboto'; src: url('fonts/ng-sans-400.woff2') format('woff2'); font-weight: normal; font-style: normal;
+    unicode-range: U+0000-024F, U+0370-03FF, U+0400-045F, U+2000-206F, U+20AC, U+2116, U+2122; }
+@font-face { font-family: 'Roboto-Bold'; src: url('fonts/ng-sans-700.woff2') format('woff2'); font-weight: normal; font-style: normal;
+    unicode-range: U+0000-024F, U+0370-03FF, U+0400-045F, U+2000-206F, U+20AC, U+2116, U+2122; }
+
+html.ng-ui body, html.ng-ui .screens, html.ng-ui .screen_size { letter-spacing: 0 !important; font-kerning: normal !important; -webkit-text-stroke: 0 !important; }
+
+/* ---------------------------------------------------------------- canvas: the splash night + a faint purple haze (static, dark: OLED-safe) */
+html.ng-ui #scene1 { background: radial-gradient(ellipse 70vw 46vh at 50% -8vh, rgba(145, 70, 255, .16), rgba(145, 70, 255, .05) 55%, rgba(145, 70, 255, 0) 100%),
+    var(--ng-bg) !important; }
+html.ng-ui .topbar { background: transparent !important; }
+html.ng-ui #side_panel_fix > div, html.ng-ui #side_panel_fix [style*="background-color"] { background: transparent !important; }
+
+/* ---------------------------------------------------------------- header: big left title (like the splash wordmark), quiet clock */
+html.ng-ui #scene1 .top_lable { text-align: left !important; width: auto !important; left: 1.2vh; top: 3.4vh !important; font-family: var(--ng-font) !important;
+    font-weight: 900; font-size: 4.26vh !important; line-height: 1 !important; color: var(--ng-text) !important; letter-spacing: -.01em !important; }
+html.ng-ui #clock_holder { top: 3.9vh !important; right: 7.9vh !important; }
+html.ng-ui #label_clock { font-family: var(--ng-font) !important; font-size: 2.3vh !important; color: var(--ng-mute) !important; font-weight: 400; }
+html.ng-ui #label_clock .ng-clock-time { color: var(--ng-text); font-weight: 700; margin-left: .9vh; font-feature-settings: 'tnum'; }
+/* hints: out of the top-left corner, a quiet line in the header, left of the clock */
+html.ng-ui #controls_div { position: absolute !important; float: none !important; right: 29vh; top: 4.15vh !important; padding: 0 !important; white-space: nowrap; }
+html.ng-ui #controls_div .icon_top_label, html.ng-ui #controls_div #top_lable_etc { display: inline-block !important; margin: 0 0 0 3.2vh !important; height: auto !important;
+    font-family: var(--ng-font) !important; font-weight: 600; font-size: 1.85vh !important; line-height: 1 !important; color: var(--ng-dim) !important; }
+html.ng-ui #controls_div i { color: var(--ng-dim) !important; font-size: 1.1em; margin-right: .5vh; }
+html.ng-ui #controls_div [id$="_icondiv"], html.ng-ui #controls_div [id$="_icontext"], html.ng-ui #label_last_refresh { transform: none !important; }
+html.ng-ui #controls_div #label_last_refresh { margin-left: 0 !important; font-weight: 400 !important; }
+html.ng-ui #controls_div #label_last_refresh::before { content: '\00b7'; margin: 0 .8vh; }
+html.ng-ui #dialog_counter { right: 7.9vh !important; bottom: 1.6vh !important; }
+html.ng-ui #dialog_counter > div { background: none !important; }
+html.ng-ui #dialog_counter_text { font-family: var(--ng-font) !important; font-weight: 600; font-size: 1.85vh !important; color: var(--ng-dim) !important; font-feature-settings: 'tnum'; }
+
+/* ---------------------------------------------------------------- live grid: 3 columns, wider gutters (room for the focus lift)
+ * rows sit at 17em steps (main.js translateY) -> moving the holder down keeps the scroll math; 2 rows fit in 1080 with ~40 px left */
+html.ng-ui #screens_holder > .screen_holder { top: 9.6% !important; }
+html.ng-ui #screens_holder .stream_thumbnail_live_holder { width: 30.6% !important; padding: 0 .9% 0 !important; vertical-align: top; }
+html.ng-ui #screens_holder .stream_thumbnail_live { padding-bottom: 77% !important; border: 0 !important; background: transparent !important;
+    transform: scale(1); transform-origin: 50% 36%; transition: transform .2s cubic-bezier(.2, .7, .3, 1) !important; }
+html.ng-ui #screens_holder .stream_thumbnail_live_img { border-radius: var(--ng-r); overflow: hidden; background: var(--ng-surface) !important;
+    box-shadow: 0 0 0 1px var(--ng-line); transition: box-shadow .2s ease-out; }
+html.ng-ui #screens_holder img.stream_img { border-radius: var(--ng-r); }
+/* focus = the one bold thing: lift + lavender ring + the splash glow */
+html.ng-ui #screens_holder .stream_thumbnail_live[class*="stream_thumbnail_focused"] { transform: scale(1.05); z-index: 2; background: transparent !important; }
+html.ng-ui #screens_holder [class*="stream_thumbnail_focused"] .stream_thumbnail_live_img { box-shadow: 0 0 0 .37vh var(--ng-accent-2), 0 0 4.2vh .6vh rgba(145, 70, 255, .55),
+    0 1.6vh 3.4vh rgba(0, 0, 0, .55); }
+/* viewers badge on the picture (ng-ui.js) */
+html.ng-ui .ng-badge { position: absolute; left: 1.1vh; bottom: 1.1vh; z-index: 1; padding: .45vh .95vh .5vh .85vh; border-radius: .85vh; background: rgba(8, 7, 13, .78);
+    color: var(--ng-text); font: 700 2vh/1 var(--ng-font); font-feature-settings: 'tnum'; letter-spacing: 0; white-space: nowrap; }
+html.ng-ui .ng-badge::before { content: ''; display: inline-block; width: .95vh; height: .95vh; margin-right: .7vh; border-radius: 50%; background: var(--ng-live);
+    vertical-align: .12vh; }
+/* text: name (bold) / title / game · uptime */
+html.ng-ui #screens_holder .stream_thumbnail_live_text_holder { height: auto !important; padding: 1.5vh .4vh 0 !important; margin: 0 !important; font-size: 100% !important; }
+html.ng-ui #screens_holder .stream_thumbnail_live .stream_text_holder { top: 0 !important; transform: none !important; display: flex; flex-wrap: wrap; align-items: baseline; }
+html.ng-ui #screens_holder .stream_text_holder > div:first-child { flex: 0 0 100%; display: flex; align-items: center; line-height: 1.2 !important; min-width: 0; }
+html.ng-ui #screens_holder .stream_info_live_name { flex: 1 1 auto; width: auto !important; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font: 700 2.96vh/1.2 var(--ng-font) !important; color: var(--ng-text) !important; }
+html.ng-ui #screens_holder .stream_info_live_name .live_icon { display: none !important; }
+html.ng-ui #screens_holder .stream_text_holder > div:first-child > .stream_info_live { flex: none; width: auto !important; float: none !important; margin-left: 1.2vh;
+    padding: .3vh .65vh; border-radius: .6vh; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16); font: 600 1.6vh/1 var(--ng-font) !important; color: var(--ng-mute) !important; }
+html.ng-ui #screens_holder .stream_info_live_title { flex: 0 0 100%; max-height: 1.3em !important; margin-top: .55vh; white-space: nowrap !important; overflow: hidden;
+    text-overflow: ellipsis; font: 400 2.3vh/1.3 var(--ng-font) !important; color: var(--ng-text-2) !important; }
+html.ng-ui #screens_holder .stream_info_live_title span { font-size: .92em !important; }
+html.ng-ui #screens_holder .stream_text_holder > [id*="_game_"] { flex: 0 1 auto; width: auto !important; min-width: 0; max-width: 72%; margin-top: .55vh;
+    font: 600 2.13vh/1.3 var(--ng-font) !important; color: var(--ng-mute) !important; }
+html.ng-ui #screens_holder .stream_text_holder > .stream_info_live:last-child { flex: none; width: auto !important; margin-top: .55vh; font: 400 2.13vh/1.3 var(--ng-font) !important;
+    color: var(--ng-mute) !important; }
+html.ng-ui #screens_holder .stream_text_holder > .stream_info_live:last-child::before { content: '\00b7'; margin: 0 .8vh; color: var(--ng-dim); }
+html.ng-ui #screens_holder [id*="_views_"] { display: none !important; }
+html.ng-ui #screens_holder [class*="stream_thumbnail_focused"] .stream_info_live_name { color: #fff !important; }
+html.ng-ui #screens_holder [class*="stream_thumbnail_focused"] .stream_info_live_title { color: var(--ng-text) !important; }
+
+/* ---------------------------------------------------------------- side rail (collapsed): outline icons, current section = lavender chip */
+html.ng-ui #side_panel_fix .side_panel_new_icons { color: var(--ng-mute) !important; border: 0 !important; border-image: none !important; background: none !important;
+    text-shadow: none !important; }
+html.ng-ui #side_panel_fix .side_panel_new_icons i { color: inherit !important; font-size: 3.1vh !important; top: 0 !important; display: inline-flex; align-items: center; justify-content: center;
+    width: 5.8vh; height: 4.4vh; border-radius: 1.3vh; vertical-align: middle; }
+html.ng-ui #side_panel_fix .side_panel_new_icons_start { color: var(--ng-accent-2) !important; }
+html.ng-ui #side_panel_fix .side_panel_new_icons_start i { background: rgba(145, 70, 255, .2); box-shadow: inset 0 0 0 1px rgba(191, 148, 255, .28); }
+html.ng-ui #side_panel_fix .side_panel_new_img { box-shadow: 0 0 0 .28vh var(--ng-raised); }
+html.ng-ui #side_panel_movel[style*="translateX(5%)"] ~ #side_panel_fix .side_panel_new_icons_start i { background: none; box-shadow: none; }
+html.ng-ui #side_panel_movel[style*="translateX(5%)"] ~ #side_panel_fix .side_panel_new_icons { color: var(--ng-mute) !important; }
+html.ng-ui #side_panel_movel[style*="translateX(5%)"] ~ #side_panel_fix .side_panel_new_icons_start { color: var(--ng-accent-2) !important; }
+html.ng-ui #side_panel_movel[style*="translateX(5%)"] ~ #side_panel_fix .ng-row-focus { color: #fff !important; }
+
+/* ---------------------------------------------------------------- side menu (open): night panel + scrim, the focused row = a purple pill */
+html.ng-ui #side_panel_movel { background: transparent !important; }
+html.ng-ui #side_panel_movel[style*="translateX(5%)"] { background: linear-gradient(90deg, #0c0a14 0%, #0f0c19 100%) !important;
+    box-shadow: 0 0 0 200vw rgba(5, 4, 9, .62), 1px 0 0 var(--ng-line) !important; }
+html.ng-ui #side_panel_movel .side_panel_new_icons_text_holder, html.ng-ui #side_panel_movel .side_panel_new_text_options { border: 0 !important; border-image: none !important;
+    background: none !important; text-shadow: none !important; }
+html.ng-ui #side_panel_movel .side_panel_new_icons_text_holder { display: flex; align-items: center; margin-left: 1vh; margin-right: 2.4vh; padding-left: 7.4vh !important;
+    border-radius: 1.4vh; font-family: var(--ng-font) !important; font-weight: 600; font-size: 3vh !important; color: var(--ng-text-2) !important; }
+html.ng-ui #side_panel_movel_new_0 { flex-direction: column; align-items: flex-start !important; justify-content: center; line-height: 1.15; }
+html.ng-ui #side_panel_movel_new_0 br { display: none; }
+html.ng-ui #side_panel_movel_new_0 > div { transform: none !important; font-size: 1.8vh !important; font-weight: 400; color: var(--ng-mute); margin-top: .3vh; }
+html.ng-ui #side_panel_movel .side_panel_new_icons_text, html.ng-ui #side_panel_movel .side_panel_new_icons_text_botton,
+html.ng-ui #side_panel_movel .side_panel_div_focused { background: linear-gradient(90deg, #9146ff, #7a2ff0) !important; color: #fff !important;
+    box-shadow: 0 .8vh 3vh rgba(145, 70, 255, .38) !important; }
+html.ng-ui #side_panel_movel .side_panel_new_icons_text > div { color: rgba(255, 255, 255, .78) !important; }
+html.ng-ui #side_panel_movel .ng-row-active:not(.side_panel_new_icons_text) { color: var(--ng-accent-2) !important; }
+html.ng-ui #side_panel_fix .side_panel_new_icons_text, html.ng-ui #side_panel_fix .side_panel_new_icons_text_botton { color: #fff !important; }
+html.ng-ui #side_panel_fix .side_panel_new_icons_text i, html.ng-ui #side_panel_fix .side_panel_new_icons_text_botton i { background: none !important; box-shadow: none !important; }
+/* top hint ("< live channels") */
+html.ng-ui #side_panel_top_text { left: 2.2vh !important; padding-top: 2.4vh !important; font-family: var(--ng-font) !important; font-weight: 600; font-size: 1.85vh !important;
+    color: var(--ng-dim) !important; }
+html.ng-ui #side_panel_top_text i { color: var(--ng-dim) !important; margin-right: .4vh; }
+/* bottom group: small rows with icons */
+html.ng-ui .side_panel_movel_bottom_holder { padding-top: .4vh !important; padding-left: 1vh !important; text-shadow: none !important; }
+html.ng-ui .side_panel_movel_bottom_text { height: auto !important; margin-bottom: .35vh; }
+html.ng-ui .side_panel_new_text_options { display: inline-flex !important; align-items: center; padding: .6vh 1.8vh .6vh 1.3vh !important; border-radius: 1.1vh;
+    font-family: var(--ng-font) !important; font-weight: 600; font-size: 2.3vh !important; line-height: 1.2; color: var(--ng-mute) !important; }
+html.ng-ui .side_panel_new_text_options::before { font-size: 2.5vh; margin-right: 1.3vh; }
+html.ng-ui #side_panel_movel .side_panel_new_text_options.side_panel_new_icons_text_botton,
+html.ng-ui #side_panel_movel .side_panel_new_text_options.side_panel_new_icons_text { color: #fff !important; }
