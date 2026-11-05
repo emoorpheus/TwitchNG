@@ -1,0 +1,124 @@
+2.6s mark P0 native 1x
+pipe {"pipe":"native","blob":"hls","src":"blob:https://sttv.test/04088db6-83d3-425d-8091-40863e925095"}
+(node:8718) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+5.6s mark P1a 1.5x pre-flight + takeover
+13.9s mark P1 v2b 1.5x
+28.9s mark P2a seek +60
+29.3s mark P2 after seek
+37.3s mark P3a 2x respeed
+40.5s mark P3 v2b 2x
+55.5s mark P4a 1.25x respeed
+58.7s mark P4 v2b 1.25x
+66.7s mark P4b 0.25x respeed
+69.9s mark P4c v2b 0.25x
+80.0s mark P4d 0.75x respeed
+83.2s mark P4e v2b 0.75x
+91.2s mark P4f 1.25x respeed
+92.0s mark P4g v2b 1.25x again
+96.0s mark P4h burst 8 requests in 2.4 s
+98.8s mark P4i v2b 0.75x after burst
+101.8s mark P4j burst 4 requests, 700 ms apart
+105.3s mark P4k v2b 1.5x after 5 switch stalls
+109.9s mark P4l v2b 1.25x
+112.9s mark P5a paused
+116.1s mark P5 resumed
+122.1s mark P6a quality change (external src)
+125.9s mark P6 re-engaged 480p
+133.9s mark P7a restore 1x
+134.6s mark P7 native 1x
+141.4s mark P8 v2b 1.5x (cached caps)
+149.4s mark P8a 5 stalls outside the grace window -> fuse
+149.6s mark P8b user request after the fuse -> retry
+150.9s mark P8c v2b 1.5x after the retry
+155.9s mark P9a seek to end-25s
+172.9s mark P9 ended
+175.9s mark P10 stop
+┌─────────┬─────────────────────────────────────────────────┬──────────┬───────┬─────────┬─────────┬───────┬─────────┬───────┬────────────┬───────────┬─────────┬──────────┬───────┬─────────┬──────────┬───────────┬───────────┬──────────┬──────────┐
+│ (index) │ phase                                           │ v2b      │ speed │ content │ element │ fps   │ dropFps │ syncN │ syncMeanMs │ syncP95Ms │ anchPct │ outDbP50 │ guard │ elMuted │ dur      │ durNative │ durMaxErr │ seekEnd  │ ctMax    │
+├─────────┼─────────────────────────────────────────────────┼──────────┼───────┼─────────┼─────────┼───────┼─────────┼───────┼────────────┼───────────┼─────────┼──────────┼───────┼─────────┼──────────┼───────────┼───────────┼──────────┼──────────┤
+│ 0       │ 'P0 native 1x'                                  │ 'idle'   │ 1     │ 1       │ 1       │ null  │ null    │ 0     │ null       │ null      │ 0       │ null     │ '-'   │ '-'     │ 53591.2  │ 53591.2   │ 0         │ 53591.2  │ 1004.09  │
+│ 1       │ 'P1a 1.5x pre-flight + takeover'                │ 'active' │ 1.5   │ 1.096   │ -71.092 │ -1.3  │ 0       │ 0     │ null       │ null      │ 1       │ -120     │ '-'   │ '-'     │ 53591.2  │ 53591.2   │ 0         │ 53591.2  │ 1013.35  │
+│ 2       │ 'P1 v2b 1.5x'                                   │ 'active' │ 1.5   │ 1.5     │ 1       │ 45    │ 0       │ 270   │ 7.8        │ 9.9       │ 100     │ -28.4    │ '-'   │ '-'     │ 53591.2  │ 35727.47  │ 0         │ 53591.2  │ 1035.85  │
+│ 3       │ 'P2a seek +60'                                  │ null     │ null  │ null    │ null    │ null  │ null    │ 0     │ null       │ null      │ null    │ null     │ '-'   │ '-'     │ null     │ null      │ null      │ null     │ null     │
+│ 4       │ 'P2 after seek'                                 │ 'active' │ 1.5   │ 1.5     │ 1       │ 45    │ 0       │ 130   │ 7.6        │ 9.7       │ 100     │ -25.6    │ '-'   │ '-'     │ 53591.2  │ 35727.47  │ 0         │ 53591.2  │ 1108.13  │
+│ 5       │ 'P3a 2x respeed'                                │ 'active' │ 2     │ 2       │ 1       │ null  │ null    │ 0     │ null       │ null      │ 6       │ -120     │ '-'   │ '-'     │ 53591.2  │ 26795.6   │ 0         │ 53591.2  │ 1113.91  │
+│ 6       │ 'P3 v2b 2x'                                     │ 'active' │ 2     │ 2       │ 1       │ 60    │ 0       │ 271   │ 14.6       │ 17.5      │ 100     │ -24.1    │ '-'   │ '-'     │ 53591.2  │ 26795.6   │ 0         │ 53591.2  │ 1144.01  │
+│ 7       │ 'P4a 1.25x respeed'                             │ 'active' │ 1.25  │ 1.25    │ 1       │ null  │ null    │ 0     │ null       │ null      │ 3       │ -120     │ '-'   │ '-'     │ 53591.2  │ 42872.96  │ 0         │ 53591.2  │ 1147.94  │
+│ 8       │ 'P4 v2b 1.25x'                                  │ 'active' │ 1.25  │ 1.25    │ 1       │ 37.5  │ 0       │ 130   │ 4.6        │ 7.5       │ 100     │ -28.4    │ '-'   │ '-'     │ 53591.2  │ 42872.96  │ 0         │ 53591.2  │ 1157.94  │
+│ 9       │ 'P4b 0.25x respeed'                             │ 'active' │ 0.25  │ 0.25    │ 1       │ null  │ null    │ 0     │ null       │ null      │ 6       │ -120     │ '-'   │ '-'     │ 53591.2  │ 214364.8  │ 0         │ 53591.2  │ 1159.06  │
+│ 10      │ 'P4c v2b 0.25x'                                 │ 'active' │ 0.25  │ 0.25    │ 1       │ 7.5   │ 0       │ 170   │ 1.7        │ 2.2       │ 100     │ -28.3    │ '-'   │ '-'     │ 53591.2  │ 214364.8  │ 0         │ 53591.2  │ 1161.56  │
+│ 11      │ 'P4d 0.75x respeed'                             │ 'active' │ 0.75  │ 0.75    │ 1       │ null  │ null    │ 0     │ null       │ null      │ 3       │ -120     │ '-'   │ '-'     │ 53591.2  │ 71454.93  │ 0         │ 53591.2  │ 1163.57  │
+│ 12      │ 'P4e v2b 0.75x'                                 │ 'active' │ 0.75  │ 0.75    │ 1       │ 22.5  │ 0       │ 130   │ 4.5        │ 5.6       │ 100     │ -23.3    │ '-'   │ '-'     │ 53591.2  │ 71454.93  │ 0         │ 53591.2  │ 1169.6   │
+│ 13      │ 'P4f 1.25x respeed'                             │ null     │ null  │ null    │ null    │ null  │ null    │ 0     │ null       │ null      │ null    │ null     │ '-'   │ '-'     │ null     │ null      │ null      │ null     │ null     │
+│ 14      │ 'P4g v2b 1.25x again'                           │ 'active' │ 1.25  │ 1.25    │ 1       │ 37.6  │ 0       │ 50    │ 7          │ 9.1       │ 100     │ -22.8    │ '-'   │ '-'     │ 53591.2  │ 42872.96  │ 0         │ 53591.2  │ 1175.07  │
+│ 15      │ 'P4h burst 8 requests in 2.4 s'                 │ 'active' │ 0.75  │ 1.091   │ 481.595 │ null  │ null    │ 24    │ 42.6       │ 234.7     │ 96      │ -22.9    │ '-'   │ '-'     │ 53591.2  │ 42872.96  │ 0         │ 53591.2  │ 1178.37  │
+│ 16      │ 'P4i v2b 0.75x after burst'                     │ 'active' │ 0.75  │ 0.75    │ 1       │ null  │ null    │ 30    │ 4.5        │ 5.5       │ 100     │ -26.4    │ '-'   │ '-'     │ 53591.2  │ 71454.93  │ 0         │ 53591.2  │ 1180.62  │
+│ 17      │ 'P4j burst 4 requests, 700 ms apart'            │ 'active' │ 1.5   │ 0.669   │ -300.41 │ null  │ null    │ 11    │ 22.5       │ 127.9     │ 52      │ -26.8    │ '-'   │ '-'     │ 53591.2  │ 42872.96  │ 0         │ 53591.2  │ 1183.65  │
+│ 18      │ 'P4k v2b 1.5x after 5 switch stalls'            │ 'active' │ 1.5   │ 1.483   │ 20.515  │ -35.4 │ 0       │ 59    │ 13.7       │ 10.8      │ 97      │ -26      │ '-'   │ '-'     │ 53591.2  │ 35727.47  │ 0         │ 53591.2  │ 1190.39  │
+│ 19      │ 'P4l v2b 1.25x'                                 │ 'active' │ 1.25  │ 1.25    │ 1       │ null  │ null    │ 30    │ 7.4        │ 9         │ 100     │ -41.6    │ '-'   │ '-'     │ 53591.2  │ 42872.96  │ 0         │ 53591.2  │ 1194.14  │
+│ 20      │ 'P5a paused'                                    │ 'active' │ 1.25  │ null    │ null    │ null  │ null    │ 0     │ null       │ null      │ 50      │ -120     │ '-'   │ '-'     │ 53591.2  │ 42872.96  │ 0         │ 53591.2  │ 1194.39  │
+│ 21      │ 'P5 resumed'                                    │ 'active' │ 1.25  │ 1.25    │ 1       │ 37.5  │ 0       │ 90    │ 8.3        │ 10.1      │ 100     │ -35.1    │ '-'   │ '-'     │ 53591.2  │ 42872.96  │ 0         │ 53591.2  │ 1201.89  │
+│ 22      │ 'P6a quality change (external src)'             │ 'active' │ 1.25  │ 0.931   │ -86.212 │ -24.3 │ 0       │ 0     │ null       │ null      │ 5       │ -120     │ '-'   │ '-'     │ 53591.2  │ 53591.2   │ 0         │ 53591.2  │ 1205.25  │
+│ 23      │ 'P6 re-engaged 480p'                            │ 'active' │ 1.25  │ 1.25    │ 1       │ 37.5  │ 0       │ 130   │ 2.8        │ 4.4       │ 100     │ -22.9    │ '-'   │ '-'     │ 53591.2  │ 42872.96  │ 0         │ 53591.2  │ 1215.25  │
+│ 24      │ 'P7a restore 1x'                                │ null     │ null  │ null    │ null    │ null  │ null    │ 0     │ null       │ null      │ null    │ null     │ '-'   │ '-'     │ null     │ null      │ null      │ null     │ null     │
+│ 25      │ 'P7 native 1x'                                  │ 'active' │ 1     │ 0.981   │ -32.106 │ -5.8  │ 0.2     │ 0     │ null       │ null      │ 0       │ null     │ '-'   │ '-'     │ 53591.2  │ 53591.2   │ 0         │ 53591.2  │ 1222.25  │
+│ 26      │ 'P8 v2b 1.5x (cached caps)'                     │ 'active' │ 1.5   │ 1.5     │ 1       │ 45    │ 0       │ 130   │ -0.4       │ 2.3       │ 100     │ -24.4    │ '-'   │ '-'     │ 53591.2  │ 35727.47  │ 0         │ 53591.2  │ 1234.25  │
+│ 27      │ 'P8a 5 stalls outside the grace window -> fuse' │ null     │ null  │ null    │ null    │ null  │ null    │ 0     │ null       │ null      │ null    │ null     │ '-'   │ '-'     │ null     │ null      │ null      │ null     │ null     │
+│ 28      │ 'P8b user request after the fuse -> retry'      │ null     │ null  │ null    │ null    │ null  │ null    │ 0     │ null       │ null      │ null    │ null     │ '-'   │ '-'     │ null     │ null      │ null      │ null     │ null     │
+│ 29      │ 'P8c v2b 1.5x after the retry'                  │ 'active' │ 1.5   │ 1.5     │ 1       │ 44.9  │ 0       │ 70    │ 7.6        │ 10.4      │ 100     │ -24.7    │ '-'   │ '-'     │ 53591.2  │ 35727.47  │ 0         │ 53591.2  │ 1242.8   │
+│ 30      │ 'P9a seek to end-25s'                           │ 'active' │ 1.5   │ 1.5     │ 1       │ 44.8  │ 0       │ 305   │ 6.9        │ 9         │ 99      │ -25.3    │ '-'   │ '-'     │ 53591.23 │ 35727.49  │ 0.03      │ 53591.23 │ 53591.19 │
+│ 31      │ 'P9 ended'                                      │ null     │ null  │ null    │ null    │ null  │ null    │ 0     │ null       │ null      │ null    │ null     │ '-'   │ '-'     │ null     │ null      │ null      │ null     │ null     │
+│ 32      │ 'P10 stop'                                      │ null     │ null  │ null    │ null    │ null  │ null    │ 0     │ null       │ null      │ null    │ null     │ '-'   │ '-'     │ null     │ null      │ null      │ null     │ null     │
+└─────────┴─────────────────────────────────────────────────┴──────────┴───────┴─────────┴─────────┴───────┴─────────┴───────┴────────────┴───────────┴─────────┴──────────┴───────┴─────────┴──────────┴───────────┴───────────┴──────────┴──────────┘
+events: {"hooked":2,"installed":1,"set_speed":24,"audio_context":5,"engine_start":5,"source_open":5,"base_ref":5,"engine_ready":5,"pcm_ready":5,"rate_verify":7,"rate_strike":2,"rate_cap":6,"engine_fail":1,"engine_stop":5,"v2b_engage":4,"toast":26,"v2b_libs":1,"v2b_prefetched":4,"v2b_switch":17,"v2b_active":17,"audio_context_closed":4,"rate_ok":5,"anchor":19,"audio_rendering":4,"unanchor":16,"v2b_rate_request":21,"v2b_respeed":13,"engine_speed":13,"v2b_hold":6,"v2b_stall_switch":5,"v2b_external":1,"v2b_release":2,"anchor_wait_data":3,"v2b_restore":2,"v2b_restored":2,"v2b_restore_ok":1,"rate_hold":2,"v2b_stall":5,"v2b_fail":1,"v2b_retry":1}
+v2b_engage {"mode":"takeover","speed":1.5,"ct":1009.27,"src":"blob:https://sttv.test/04088db6-83d3-425d-8091-40863e925095"} | {"mode":"takeover","speed":1.25,"ct":1204.6,"src":"blob:https://sttv.test/9635492b-8607-42f0-bb52-cd0605ff72e4"} | {"mode":"takeover","speed":1.5,"ct":1221.72,"src":"blob:https://sttv.test/9635492b-8607-42f0-bb52-cd0605ff72e4"} | {"mode":"takeover","speed":1.25,"ct":1234.31,"src":"blob:https://sttv.test/9635492b-8607-42f0-bb52-cd0605ff72e4"}
+v2b_prefetched {"n":1,"kb":801,"ms":55} | {"n":2,"kb":3513,"ms":249} | {"n":1,"kb":1826,"ms":1} | {"n":2,"kb":3227,"ms":2}
+v2b_switch {"pos":1009.42,"speed":1.5,"prepMs":154} | {"pos":1108.71,"speed":2,"prepMs":7} | {"pos":1144.72,"speed":1.25,"prepMs":5} | {"pos":1158.41,"speed":0.25,"prepMs":5} | {"pos":1161.65,"speed":0.75,"prepMs":3} | {"pos":1169.87,"speed":1.25,"prepMs":4}
+v2b_active {"speed":1.5,"ms":501,"switchMs":348,"ct":1009.42,"dur":53591.2} | {"speed":2,"ms":215,"switchMs":208,"ct":1108.72,"dur":53591.2} | {"speed":1.25,"ms":266,"switchMs":261,"ct":1144.72,"dur":53591.2} | {"speed":0.25,"ms":238,"switchMs":233,"ct":1158.41,"dur":53591.2} | {"speed":0.75,"ms":267,"switchMs":264,"ct":1161.65,"dur":53591.2} | {"speed":1.25,"ms":289,"switchMs":285,"ct":1169.87,"dur":53591.2}
+v2b_respeed {"from":1.5,"to":2,"pos":1108.71} | {"from":2,"to":1.25,"pos":1144.72} | {"from":1.25,"to":0.25,"pos":1158.41} | {"from":0.25,"to":0.75,"pos":1161.65} | {"from":0.75,"to":1.25,"pos":1169.87} | {"from":1.25,"to":0.75,"pos":1178.19}
+v2b_release "external_src" | "stop_video"
+v2b_restore {"reason":"speed_1","pos":1215.27,"mode":"takeover"} | {"reason":"fail:stalls","pos":1234.29,"mode":"takeover"}
+v2b_restored {"pos":1215.27,"ms":59,"attempt":1} | {"pos":1234.29,"ms":96,"attempt":1}
+v2b_fail "stalls"
+base_ref {"pts":72.033,"src":"video_vpts"} | {"pts":72.033,"src":"hlsjs_initpts"} | {"pts":72.033,"src":"hlsjs_initpts"} | {"pts":72.033,"src":"hlsjs_initpts"} | {"pts":72.033,"src":"hlsjs_initpts"}
+rate_ok {"ratio":1.5,"speed":1.5,"pipe":"v2b"} | {"ratio":2,"speed":2,"pipe":"v2b"} | {"ratio":1.25,"speed":1.25,"pipe":"v2b"} | {"ratio":0.25,"speed":0.25,"pipe":"v2b"} | {"ratio":0.75,"speed":0.75,"pipe":"v2b"}
+rate_cap {"pipe":"native","v":"ignored","sp":[1.5],"ratio":1} | {"pipe":"v2b","v":"ok","sp":[1.5],"ratio":1.5} | {"pipe":"v2b","v":"ok","sp":[1.5,2],"ratio":2} | {"pipe":"v2b","v":"ok","sp":[1.5,2,1.25],"ratio":1.25} | {"pipe":"v2b","v":"ok","sp":[1.5,2,1.25,0.25],"ratio":0.25} | {"pipe":"v2b","v":"ok","sp":[1.5,2,1.25,0.25,0.75],"ratio":0.75}
+engine_fail "rate_ignored"
+v2b_stall 1 | 2 | 3 | 4 | 5
+v2b_external "src"
+quality-change: ct before 1201.92 | restore 1x: before 1215.27 after 1215.71 src blob: bridge resumeSeeks 2 -> 2
+bridge {"retries":0,"stallReloads":0,"srcWrites":2,"resumeSeeks":2} luna calls 252 MB 53.1 blocked direct 0 
+v2b status {"cfg":"auto","cfgDefault":"off","maxH":null,"worker":true,"state":"idle","mode":"takeover","speed":1.5,"speeds":[0.25,0.5,0.75,1.25,1.5,1.75,2],"libs":"hls.js 1.5.20","base":"https://sttv.test/","takeovers":4,"failures":1,"fail":null,"lastError":null,"lastRestore":{"reason":"stop_video","at":175897,"released":true},"want":null,"engageMs":264,"frags":13,"stalls60s":0,"switchStalls":5,"respeeds":13,"coalesced":7,"pending":null,"retries":1,"lastBlock":null,"hold":null,"holds":54,"holdMaxMs":167,"bufferAheadS":null,"level":null,"variant":{"h":480,"bw":1441461,"video":"480p30","from":"element"},"levelInfo":{"frags":5360,"total":53591,"end":53591.201,"live":false},"net":{"bwEstMbps":136.47,"samples":30,"needMbps":2.16,"idleMs":21138,"kicks":0,"absorbed":0,"netRecovers":0,"stepDowns":0,"downCap":null},"restoreNudges":0,"engineRetries":0,"initPts":72.033,"quality":null,"fetchedMB":36.6,"netErrors":0,"cache":{"n":18,"mb":23.8},"appHls":null,"timeline":{"checks":150,"mismatches":0,"last":{"dur":53591.23,"end":53591.201,"native":35727.49,"speed":1.5},"hook":{"sessions":17,"rebased":17,"errors":0,"lastRebase":{"from":53591.201,"to":35727.467333333334,"speed":1.5}}}}
+rateCap {"native":{"v":"ignored","sp":[1.5],"ratio":1,"at":1793658032372},"mse":null,"v2b":{"v":"ok","sp":[1.5,2,1.25,0.25,0.75],"ratio":0.75,"at":1793658104726},"gate":true}
+page errors 0 []
+audio-out {"anchoredSamples":2588,"outDbP10":-48.9,"outDbP50":-25.4,"guardOnInV2b":0,"elementMutedInV2b":0,"rendering":4,"silent":[],"ctx":[{"opts":"default","owner":"native","why":"first","sr":44100,"base":0.01,"out":0,"state":"running"},{"opts":"default","owner":"v2b","why":"v2b_start","sr":44100,"base":0.01,"out":0,"state":"running"},{"opts":"default","owner":"v2b","why":"v2b_start","sr":44100,"base":0.01,"out":0,"state":"running"},{"opts":"default","owner":"v2b","why":"v2b_start","sr":44100,"base":0.01,"out":0,"state":"running"},{"opts":"default","owner":"v2b","why":"v2b_start","sr":44100,"base":0.01,"out":0,"state":"running"}]}
+timeline {"ref":53591.201,"rows":[["P0",53591.2,53591.2,0,53591.2],["P1a",53591.2,53591.2,0,53591.2],["P1",53591.2,35727.47,0,53591.2],["P2",53591.2,35727.47,0,53591.2],["P3a",53591.2,26795.6,0,53591.2],["P3",53591.2,26795.6,0,53591.2],["P4a",53591.2,42872.96,0,53591.2],["P4",53591.2,42872.96,0,53591.2],["P4b",53591.2,214364.8,0,53591.2],["P4c",53591.2,214364.8,0,53591.2],["P4d",53591.2,71454.93,0,53591.2],["P4e",53591.2,71454.93,0,53591.2],["P4g",53591.2,42872.96,0,53591.2],["P4h",53591.2,42872.96,0,53591.2],["P4i",53591.2,71454.93,0,53591.2],["P4j",53591.2,42872.96,0,53591.2],["P4k",53591.2,35727.47,0,53591.2],["P4l",53591.2,42872.96,0,53591.2],["P5a",53591.2,42872.96,0,53591.2],["P5",53591.2,42872.96,0,53591.2],["P6a",53591.2,53591.2,0,53591.2],["P6",53591.2,42872.96,0,53591.2],["P7",53591.2,53591.2,0,53591.2],["P8",53591.2,35727.47,0,53591.2],["P8c",53591.2,35727.47,0,53591.2],["P9a",53591.23,35727.49,0.03,53591.23]],"end":{"ct":53591.232999,"dur":53591.232999,"ended":true,"v2b":"active","speed":1.5,"eng":"alive"},"ok":true,"seekOk":true,"ctOk":true,"endOk":true,"selfCheck":{"mismatchEvents":0,"timeline":{"checks":150,"mismatches":0,"last":{"dur":53591.23,"end":53591.201,"native":35727.49,"speed":1.5},"hook":{"sessions":17,"rebased":17,"errors":0,"lastRebase":{"from":53591.201,"to":35727.467333333334,"speed":1.5}}}},"selfOk":true}
+PASS video.duration = playlist total 53591.201 s in every phase (native and v2b, max |err| <= 1 s)
+PASS seekable end = playlist total in v2b phases
+PASS currentTime never beyond the end
+PASS VOD end at 1.5x: 'ended' with currentTime = duration = total {"ct":53591.232999,"dur":53591.232999,"ended":true,"v2b":"active","speed":1.5,"eng":"alive"}
+PASS engine self-check: no v2b_timeline_mismatch, checks ran {"mismatchEvents":0,"timeline":{"checks":150,"mismatches":0,"last":{"dur":53591.23,"end":53591.201,"native":35727.49,"speed":1.5},"hook":{"sessions":17,"rebased":17,"errors":0,"lastRebase":{"from":53591.201,"to":35727.467333333334,"speed":1.5}}}}
+PASS phase P1 speed 1.5 : content slope 1.5 (=speed +-3%), element 1 (=1), sync p95 9.9 ms (<=40), anchored 100%
+PASS phase P2 speed 1.5 : content slope 1.5 (=speed +-3%), element 1 (=1), sync p95 9.7 ms (<=40), anchored 100%
+PASS phase P3 speed 2 : content slope 2 (=speed +-3%), element 1 (=1), sync p95 17.5 ms (<=40), anchored 100%
+PASS phase P4 speed 1.25 : content slope 1.25 (=speed +-3%), element 1 (=1), sync p95 7.5 ms (<=40), anchored 100%
+PASS phase P4c speed 0.25 : content slope 0.25 (=speed +-3%), element 1 (=1), sync p95 2.2 ms (<=40), anchored 100%
+PASS phase P4e speed 0.75 : content slope 0.75 (=speed +-3%), element 1 (=1), sync p95 5.6 ms (<=40), anchored 100%
+PASS phase P4g speed 1.25 : content slope 1.25 (=speed +-3%), element 1 (=1), sync p95 9.1 ms (<=40), anchored 100%
+PASS phase P4i speed 0.75 : content slope 0.75 (=speed +-3%), element 1 (=1), sync p95 5.5 ms (<=40), anchored 100%
+PASS phase P5 speed 1.25 : content slope 1.25 (=speed +-3%), element 1 (=1), sync p95 10.1 ms (<=40), anchored 100%
+PASS phase P6 speed 1.25 : content slope 1.25 (=speed +-3%), element 1 (=1), sync p95 4.4 ms (<=40), anchored 100%
+PASS phase P8 speed 1.5 : content slope 1.5 (=speed +-3%), element 1 (=1), sync p95 2.3 ms (<=40), anchored 100%
+PASS phase P8c speed 1.5 : content slope 1.5 (=speed +-3%), element 1 (=1), sync p95 10.4 ms (<=40), anchored 100%
+PASS v1.3.3: 0.25x and 0.75x run through v2b (no unsupported_speed) [{"reason":"speed_1","pos":1215.27,"mode":"takeover"},{"reason":"fail:stalls","pos":1234.29,"mode":"takeover"}]
+rapid {"b1":1,"c1":7,"b2":4,"fails":0,"ct0":1175.09,"ct2":1180.63,"raw1":0,"app1":1175.15,"st1":1175.15,"raw2":0,"app2":1180.66,"st2":1180.66,"graceStalls":5,"overlap":0}
+PASS v1.3.4 burst of 8 requests in 2.4 s -> <= 2 pipeline switches, ends at the last speed (0.75x) {"switches":1,"coalesced":7}
+PASS v1.3.4 requests 700 ms apart: never a new switch while one attaches, ends at 1.25x {"switches":4,"overlap":0}
+PASS v1.3.4 app position (gettime/getsavedtime/progress bar) never jumps back during bursts (no 00:00) {"before1":1175.09,"app1":1175.15,"bar1":1175.15,"before2":1180.63,"app2":1180.66,"bar2":1180.66}
+INFO raw element currentTime minimum during bursts (re-attach reads 0, hidden from the app by the hold) {"raw1":0,"raw2":0}
+PASS v1.3.4 app position holds during the native restore to 1x and the hold is released after it {"before":1215.27,"app":1215.27,"bar":1215.27,"raw":0,"holds":3,"holdMaxMs":167,"left":null}
+PASS v1.3.4 stalls right after a switch are not counted (no fuse during the bursts) {"failures":0,"switchStalls":5}
+PASS v1.3.4 fuse still trips on 5 stalls outside the grace window -> restore 1x {"fail":"stalls","failures":[0,1]}
+PASS v1.3.4 the next user request retries v2b once (no "TV does not apply" toast) {"retry":["stalls"],"gate":[]}
+exit=0

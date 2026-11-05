@@ -1,0 +1,31 @@
+== layout root / service inline
+PASS install rc=0 (root)
+PASS tag once after bridge
+PASS 3 js files
+PASS one hook line
+PASS hook after use strict (line 2)
+PASS ping=pong, others untouched
+PASS no pristine over a v1.1 leftover
+PASS re-install idempotent
+PASS bridge backed up, untouched, reported
+PASS --bridge-status sees the hand edit
+PASS --bridge-status lists copies in /media/developer/backups
+PASS --bridge restores only the bridge, saves the edited one
+PASS rollback clean
+PASS restore first backup = original files
+== layout release / service module
+PASS install rc=0 (release)
+PASS tag once after bridge
+PASS 3 js files
+PASS one hook line
+PASS ping=pong, others untouched
+PASS backup + pristine
+PASS re-install idempotent
+PASS bridge backed up, untouched, reported
+PASS --bridge-status sees the hand edit
+PASS --bridge-status lists copies in /media/developer/backups
+PASS --bridge restores only the bridge, saves the edited one
+PASS rollback clean
+PASS restore first backup = original files
+failures: 0
+exit=0

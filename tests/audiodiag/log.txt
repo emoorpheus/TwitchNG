@@ -1,0 +1,18 @@
+PASS 6 tests in order  ["engine_ctx","fresh_default_video_unmuted","fresh_default_video_muted","fresh_48k_playback","mediastream_to_audio_element","wav_in_audio_element"]
+PASS test 1 skipped without an engine
+PASS test 2 (fresh_default_video_unmuted) rendered the beeps, clock runs  {"db":-13.5,"clock":1.008,"ctx":{"state":"running","sr":44100,"base":0.01,"out":0.032}}
+PASS test 3 (fresh_default_video_muted) rendered the beeps, clock runs  {"db":-13.5,"clock":1.007,"ctx":{"state":"running","sr":44100,"base":0.01,"out":0.032}}
+PASS test 4 (fresh_48k_playback) rendered the beeps, clock runs  {"db":-13.5,"clock":1.013,"ctx":{"state":"running","sr":48000,"base":0.0213,"out":0.064}}
+PASS test 5 (mediastream_to_audio_element) rendered the beeps, clock runs  {"db":-13.5,"clock":1.005,"ctx":{"state":"running","sr":44100,"base":0.01,"out":0.032}}
+PASS test 2 = default context, test 4 = 1.2 options (48 kHz)  {"t2":"default","t4":"48000/playback"}
+PASS element mute: unmuted in 2, muted in 3, restored after  {"before":true,"t2":false,"t3":true,"after":true}
+PASS test 5: MediaStream <audio> playing  {"paused":false,"err":null}
+PASS test 6: WAV <audio> advanced  {"ct":2.65,"err":null}
+PASS codec caps collected  {"webcodecsDecoder":true,"mse":{"audio/mp4; codecs=\"mp4a.40.2\"":true,"audio/mp4; codecs=\"opus\"":true,"audio/webm; codecs=\"opus\"":true,"audio/mp4; codecs=\"flac\"":true},"encoder":{"opus":true,"aac":false},"setSinkId":true,"mediaStreamDest":true,"devices":0}
+PASS one numbered toast per test  ["Audio test 1/6 · engine context · 1 beep — listen","Audio test 2/6 · new AudioContext · 2 beeps — listen","Audio test 3/6 · new AudioContext, video muted · 3 beeps — listen","Audio test 4/6 · AudioContext as in 1.2 (48k/playback) · 4 beeps — listen","Audio test 5/6 · WebAudio → <audio> · 5 beeps — listen","Audio test 6/6 · WAV in <audio> (TV media player) · 6 beeps — listen"]
+PASS beep(2) through a fresh default context  {"opts":"default","ctx":{"state":"running","sr":44100,"base":0.01,"out":0.032},"renderedDb":-13.5,"clock":1.008}
+PASS STTVSpeed.audio().lastDiag persisted
+PASS diag duration  22.89
+PASS no page errors  []
+AUDIODIAG SANDBOX OK
+exit 0

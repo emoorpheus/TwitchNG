@@ -1,0 +1,703 @@
+{
+ "version": "1.3.4",
+ "engineDir": "<1.3.4 kit>/sttv-speed/",
+ "results": [
+  {
+   "name": "S0 VOD plays natively at 1x from the resume point",
+   "ok": true
+  },
+  {
+   "name": "S1 v2b active at 2x, content 2x",
+   "ok": true,
+   "info": {
+    "n": 80,
+    "slope": 2,
+    "ct0": 1014.69,
+    "ct1": 1030.49,
+    "minCt": 1014.69,
+    "frozenMs": 0,
+    "rrMax": 1,
+    "rrMin": 1,
+    "v2b": "active",
+    "mse": true
+   }
+  },
+  {
+   "name": "S1 no native rate write != 1 (before / during the takeover)",
+   "ok": false,
+   "info": [
+    {
+     "t": 4752.5999999996275,
+     "rate": 2,
+     "why": "rate",
+     "ct": 1003.18,
+     "src": "blob:https://sttv.test/32e93874-6ee0-401"
+    }
+   ]
+  },
+  {
+   "name": "S2 restored native element: no playbackRate != 1 written (report T5/T6: froze at 0.25-2x)",
+   "ok": false,
+   "info": [
+    {
+     "t": 22213.700000000186,
+     "rate": 2,
+     "why": "rate",
+     "ct": 1036.61,
+     "src": "blob:https://sttv.test/32e93874-6ee0-401"
+    }
+   ]
+  },
+  {
+   "name": "S2 native 1x plays on (content slope 1, frozen < 2 s)",
+   "ok": false,
+   "info": {
+    "n": 140,
+    "slope": 0,
+    "ct0": 1036.61,
+    "ct1": 1036.61,
+    "minCt": 1036.61,
+    "frozenMs": 13900,
+    "rrMax": 0,
+    "rrMin": 0,
+    "v2b": "idle",
+    "mse": false
+   }
+  },
+  {
+   "name": "S2 no jump back, no Play_PannelEndStart, no bridge reload",
+   "ok": true,
+   "info": {
+    "pos2": 1036.599968,
+    "minCt": 1036.61,
+    "end": [],
+    "reloads": 0,
+    "jams": 0
+   }
+  },
+  {
+   "name": "S9 clip at 2x: no native write != 1 (report: 2x crawled at 1.08x without sound / 1.5x froze)",
+   "ok": false,
+   "info": [
+    {
+     "t": 38953.59999999963,
+     "rate": 2,
+     "why": "rate",
+     "ct": 1.09,
+     "src": "https://sttv.test/clip.mp4"
+    }
+   ]
+  },
+  {
+   "name": "S9 clip keeps playing at 1x (no freeze, no end)",
+   "ok": false,
+   "info": {
+    "w9": {
+     "n": 90,
+     "slope": 0,
+     "ct0": 1.09,
+     "ct1": 1.09,
+     "minCt": 1.09,
+     "frozenMs": 8800,
+     "rrMax": 0,
+     "rrMin": 0,
+     "v2b": "idle",
+     "mse": false
+    },
+    "end": [
+     {
+      "at": 48155,
+      "why": "decoder_jam",
+      "ct": 1.09,
+      "type": 3
+     }
+    ]
+   }
+  },
+  {
+   "name": "page errors 0",
+   "ok": true,
+   "info": []
+  }
+ ],
+ "marks": [
+  {
+   "name": "S0 native 1x",
+   "p": 2747.5
+  },
+  {
+   "name": "S1 2x",
+   "p": 4749.5
+  },
+  {
+   "name": "S2 5 stalls -> fuse -> restore 1x",
+   "p": 22010
+  },
+  {
+   "name": "S9 clip 2x",
+   "p": 38952.59999999963
+  }
+ ],
+ "fin": {
+  "status": {
+   "version": "1.3.4",
+   "app": {
+    "id": null,
+    "name": null,
+    "version": null
+   },
+   "mode": "auto",
+   "speed": 2,
+   "offsetMs": 0,
+   "hooked": true,
+   "stream": {
+    "t": 3,
+    "key": "u:https://sttv.test/clip.mp4|3",
+    "inferred": false
+   },
+   "video": {
+    "rate": 2,
+    "defaultRate": 2,
+    "preservesPitch": true,
+    "muted": false,
+    "realMuted": false,
+    "volume": 1,
+    "ct": 1.095,
+    "paused": false,
+    "src": "https://sttv.test/clip.mp4"
+   },
+   "engine": null,
+   "verdict": {
+    "requested": 2,
+    "pipe": "native",
+    "videoRateMeasured": 0,
+    "audio": "native",
+    "reason": "rate_ignored(cached)",
+    "summary": "2x requested; video 0.00x measured; audio native (rate_ignored(cached))"
+   },
+   "pipe": {
+    "pipe": "native",
+    "blob": null,
+    "src": "https://sttv.test/clip.mp4"
+   },
+   "v2b": {
+    "cfg": "auto",
+    "cfgDefault": "off",
+    "maxH": null,
+    "worker": true,
+    "state": "idle",
+    "mode": "takeover",
+    "speed": 2,
+    "speeds": [
+     0.25,
+     0.5,
+     0.75,
+     1.25,
+     1.5,
+     1.75,
+     2
+    ],
+    "libs": "hls.js 1.5.20",
+    "base": "https://sttv.test/",
+    "takeovers": 1,
+    "failures": 1,
+    "fail": null,
+    "lastError": null,
+    "lastRestore": {
+     "reason": "fail:stalls",
+     "at": 22019
+    },
+    "want": null,
+    "engageMs": 547,
+    "frags": 7,
+    "stalls60s": 5,
+    "switchStalls": 0,
+    "respeeds": 0,
+    "coalesced": 0,
+    "pending": null,
+    "retries": 0,
+    "lastBlock": null,
+    "hold": null,
+    "holds": 0,
+    "holdMaxMs": 0,
+    "bufferAheadS": null,
+    "level": null,
+    "variant": {
+     "h": 720,
+     "bw": 2276421,
+     "video": "720p30",
+     "from": "element"
+    },
+    "levelInfo": {
+     "frags": 5360,
+     "total": 53591,
+     "end": 53591.201,
+     "live": false
+    },
+    "initPts": 72.033,
+    "quality": null,
+    "fetchedMB": 18.9,
+    "netErrors": 0,
+    "cache": {
+     "n": 7,
+     "mb": 18.9
+    },
+    "appHls": null,
+    "timeline": {
+     "checks": 16,
+     "mismatches": 0,
+     "last": {
+      "dur": 53591.2,
+      "end": 53591.201,
+      "native": 26795.6,
+      "speed": 2
+     },
+     "hook": {
+      "sessions": 1,
+      "rebased": 1,
+      "errors": 0,
+      "lastRebase": {
+       "from": 53591.201,
+       "to": 26795.6005,
+       "speed": 2
+      }
+     }
+    }
+   },
+   "rateCap": {
+    "native": {
+     "v": "ignored",
+     "sp": [
+      2
+     ],
+     "ratio": 1,
+     "at": 1793657106954
+    },
+    "mse": null,
+    "v2b": {
+     "v": "ok",
+     "sp": [
+      2
+     ],
+     "ratio": 2,
+     "at": 1793657113733
+    },
+    "gate": true
+   },
+   "lastRate": {
+    "ratio": 2,
+    "speed": 2,
+    "pipe": "v2b",
+    "at": 20192
+   },
+   "lastFail": null,
+   "webcodecs": true,
+   "net": {
+    "mode": "auto",
+    "path": "direct",
+    "proxy": null,
+    "luna": null,
+    "blocked": 0
+   },
+   "recent": [
+    {
+     "t": 87,
+     "type": "hooked",
+     "data": {
+      "start": false,
+      "stop": false
+     }
+    },
+    {
+     "t": 95,
+     "type": "installed",
+     "data": {
+      "version": "1.3.4",
+      "mode": "auto"
+     }
+    },
+    {
+     "t": 1096,
+     "type": "hooked",
+     "data": {
+      "start": true,
+      "stop": true
+     }
+    },
+    {
+     "t": 1134,
+     "type": "rate_cap",
+     "data": {
+      "pipe": "native",
+      "v": "ignored",
+      "sp": [
+       2
+      ],
+      "ratio": 1
+     }
+    },
+    {
+     "t": 4753,
+     "type": "set_speed",
+     "data": 2
+    },
+    {
+     "t": 4753,
+     "type": "v2b_engage",
+     "data": {
+      "mode": "takeover",
+      "speed": 2,
+      "ct": 1003.18,
+      "src": "blob:https://sttv.test/32e93874-6ee0-401b-9a79-baa4be9400cb"
+     }
+    },
+    {
+     "t": 4754,
+     "type": "toast",
+     "data": "Speed 2× · preparing…"
+    },
+    {
+     "t": 4832,
+     "type": "v2b_libs",
+     "data": {
+      "hls": "1.5.20",
+      "hook": "1.3.2"
+     }
+    },
+    {
+     "t": 4890,
+     "type": "net_path",
+     "data": {
+      "path": "direct"
+     }
+    },
+    {
+     "t": 4927,
+     "type": "v2b_prefetched",
+     "data": {
+      "n": 2,
+      "kb": 5477,
+      "ms": 62
+     }
+    },
+    {
+     "t": 4937,
+     "type": "v2b_switch",
+     "data": {
+      "pos": 1003.18,
+      "speed": 2,
+      "prepMs": 178
+     }
+    },
+    {
+     "t": 5301,
+     "type": "v2b_active",
+     "data": {
+      "speed": 2,
+      "ms": 547,
+      "switchMs": 369,
+      "ct": 1003.18,
+      "dur": 53591.2
+     }
+    },
+    {
+     "t": 5301,
+     "type": "toast",
+     "data": "Speed 2× · v2b"
+    },
+    {
+     "t": 5306,
+     "type": "audio_context",
+     "data": {
+      "opts": "default",
+      "owner": "v2b",
+      "why": "v2b_start",
+      "sr": 44100,
+      "base": 0.01,
+      "out": 0,
+      "state": "running"
+     }
+    },
+    {
+     "t": 5312,
+     "type": "engine_start",
+     "data": {
+      "speed": 2,
+      "key": "vod:2915888911"
+     }
+    },
+    {
+     "t": 5365,
+     "type": "base_ref",
+     "data": {
+      "pts": 72.033,
+      "src": "hlsjs_initpts"
+     }
+    },
+    {
+     "t": 5365,
+     "type": "source_open",
+     "data": {
+      "audio": "https://d2vi6trrdongqn.cloudfront.net/fa44536e95f6efe9f2b2_gamesdonequick_321096577376_1793465395/audio_only/index-dvr.m3u8",
+      "kind": "audio_only",
+      "segs": 5360,
+      "total": 53591,
+      "fmp4": false
+     }
+    },
+    {
+     "t": 5366,
+     "type": "engine_ready",
+     "data": {
+      "decoder": "wc",
+      "ms": 65
+     }
+    },
+    {
+     "t": 5414,
+     "type": "pcm_ready",
+     "data": {
+      "rate": 48000,
+      "ch": 2,
+      "decoder": "wc"
+     }
+    },
+    {
+     "t": 5474,
+     "type": "rate_verify",
+     "data": {
+      "speed": 2,
+      "pipe": "v2b"
+     }
+    },
+    {
+     "t": 7912,
+     "type": "rate_ok",
+     "data": {
+      "ratio": 2,
+      "speed": 2,
+      "pipe": "v2b"
+     }
+    },
+    {
+     "t": 7912,
+     "type": "rate_cap",
+     "data": {
+      "pipe": "v2b",
+      "v": "ok",
+      "sp": [
+       2
+      ],
+      "ratio": 2
+     }
+    },
+    {
+     "t": 7913,
+     "type": "anchor",
+     "data": {
+      "ct": 1008.405,
+      "target": 1008.68,
+      "speed": 2,
+      "lat": 0.037
+     }
+    },
+    {
+     "t": 10072,
+     "type": "audio_rendering",
+     "data": {
+      "outDb": -37.8,
+      "pcmDb": -23.6,
+      "ctx": "default",
+      "out": 0.032,
+      "base": 0.01,
+      "guard": false,
+      "muted": false
+     }
+    },
+    {
+     "t": 10072,
+     "type": "toast",
+     "data": "Speed 2× · audio engine"
+    },
+    {
+     "t": 22011,
+     "type": "v2b_stall",
+     "data": 1
+    },
+    {
+     "t": 22011,
+     "type": "v2b_stall",
+     "data": 2
+    },
+    {
+     "t": 22012,
+     "type": "v2b_stall",
+     "data": 3
+    },
+    {
+     "t": 22012,
+     "type": "v2b_stall",
+     "data": 4
+    },
+    {
+     "t": 22012,
+     "type": "v2b_stall",
+     "data": 5
+    },
+    {
+     "t": 22012,
+     "type": "v2b_fail",
+     "data": "stalls"
+    },
+    {
+     "t": 22012,
+     "type": "v2b_restore",
+     "data": {
+      "reason": "fail:stalls",
+      "pos": 1036.61,
+      "mode": "takeover"
+     }
+    },
+    {
+     "t": 22014,
+     "type": "engine_stop",
+     "data": "v2b_restore"
+    },
+    {
+     "t": 22019,
+     "type": "toast",
+     "data": "Speed-up unavailable (stalls) · 1×"
+    },
+    {
+     "t": 22095,
+     "type": "v2b_restored",
+     "data": {
+      "pos": 1036.61,
+      "ms": 76
+     }
+    },
+    {
+     "t": 38954,
+     "type": "set_speed",
+     "data": 2
+    }
+   ]
+  },
+  "bridge": {
+   "log": [
+    "1304 loadedmetadata",
+    "37771 loadedmetadata",
+    "46955 decoder_jam soft recovery ct=1.09",
+    "48155 Play_PannelEndStart decoder_jam ct=1.09"
+   ],
+   "retries": 0,
+   "stallChecks": 1,
+   "jams": 1,
+   "hardReloads": 0,
+   "endStart": [
+    {
+     "at": 48155,
+     "why": "decoder_jam",
+     "ct": 1.09,
+     "type": 3
+    }
+   ],
+   "srcWrites": 2,
+   "resumeSeeks": 1
+  },
+  "m59": {
+   "bad": [
+    {
+     "t": 4752.5999999996275,
+     "rate": 2,
+     "why": "rate",
+     "ct": 1003.18,
+     "src": "blob:https://sttv.test/32e93874-6ee0-401"
+    },
+    {
+     "t": 22213.700000000186,
+     "rate": 2,
+     "why": "rate",
+     "ct": 1036.61,
+     "src": "blob:https://sttv.test/32e93874-6ee0-401"
+    },
+    {
+     "t": 38953.59999999963,
+     "rate": 2,
+     "why": "rate",
+     "ct": 1.09,
+     "src": "https://sttv.test/clip.mp4"
+    }
+   ],
+   "freezes": 3,
+   "stuckN": 0,
+   "unstuck": 0
+  },
+  "counts": {
+   "hooked": 2,
+   "installed": 1,
+   "rate_cap": 2,
+   "set_speed": 2,
+   "v2b_engage": 1,
+   "toast": 4,
+   "v2b_libs": 1,
+   "net_path": 1,
+   "v2b_prefetched": 1,
+   "v2b_switch": 1,
+   "v2b_active": 1,
+   "audio_context": 1,
+   "engine_start": 1,
+   "base_ref": 1,
+   "source_open": 1,
+   "engine_ready": 1,
+   "pcm_ready": 1,
+   "rate_verify": 1,
+   "rate_ok": 1,
+   "anchor": 1,
+   "audio_rendering": 1,
+   "v2b_stall": 5,
+   "v2b_fail": 1,
+   "v2b_restore": 1,
+   "engine_stop": 1,
+   "v2b_restored": 1
+  }
+ },
+ "logs": [
+  "[sttv-speed] hooked {start: false, stop: false}",
+  "[sttv-speed] installed {version: 1.3.4, mode: auto}",
+  "[sttv-speed] hooked {start: true, stop: true}",
+  "[sttv-speed] rate_cap {pipe: native, v: ignored, sp: Array(1), ratio: 1}",
+  "[sttv-speed] set_speed 2",
+  "[sttv-speed] v2b_engage {mode: takeover, speed: 2, ct: 1003.18, src: blob:https://sttv.test/32e93874-6ee0-401b-9a79-baa4be9400cb}",
+  "[sttv-speed] toast Speed 2× · preparing…",
+  "[sttv-speed] v2b_libs {hls: 1.5.20, hook: 1.3.2}",
+  "[sttv-speed] net_path {path: direct, proxy: undefined}",
+  "[sttv-speed] v2b_prefetched {n: 2, kb: 5477, ms: 62}",
+  "[sttv-speed] v2b_switch {pos: 1003.18, speed: 2, prepMs: 178}",
+  "[sttv-speed] v2b_active {speed: 2, ms: 547, switchMs: 369, ct: 1003.18, dur: 53591.2}",
+  "[sttv-speed] toast Speed 2× · v2b",
+  "[sttv-speed] audio_context {opts: default, owner: v2b, why: v2b_start, sr: 44100, base: 0.01}",
+  "[sttv-speed] engine_start {speed: 2, key: vod:2915888911}",
+  "[sttv-speed] base_ref {pts: 72.033, src: hlsjs_initpts}",
+  "[sttv-speed] source_open {audio: https://d2vi6trrdongqn.cloudfront.net/fa44536e95f6…321096577376_1793465395/audio_only/index-dvr.m3u8, kind: audio_only, segs: 5360, total: 53591, fmp4: false}",
+  "[sttv-speed] engine_ready {decoder: wc, ms: 65}",
+  "[sttv-speed] pcm_ready {rate: 48000, ch: 2, decoder: wc}",
+  "[sttv-speed] rate_verify {speed: 2, pipe: v2b}",
+  "[sttv-speed] rate_ok {ratio: 2, speed: 2, pipe: v2b}",
+  "[sttv-speed] rate_cap {pipe: v2b, v: ok, sp: Array(1), ratio: 2}",
+  "[sttv-speed] anchor {ct: 1008.405, target: 1008.68, speed: 2, lat: 0.037}",
+  "[sttv-speed] audio_rendering {outDb: -37.8, pcmDb: -23.6, ctx: default, out: 0.032, base: 0.01}",
+  "[sttv-speed] toast Speed 2× · audio engine",
+  "[sttv-speed] v2b_stall 1",
+  "[sttv-speed] v2b_stall 2",
+  "[sttv-speed] v2b_stall 3",
+  "[sttv-speed] v2b_stall 4",
+  "[sttv-speed] v2b_stall 5",
+  "[sttv-speed] v2b_fail stalls",
+  "[sttv-speed] v2b_restore {reason: fail:stalls, pos: 1036.61, mode: takeover}",
+  "[sttv-speed] engine_stop v2b_restore",
+  "[sttv-speed] toast Speed-up unavailable (stalls) · 1×",
+  "[sttv-speed] v2b_restored {pos: 1036.61, ms: 76}",
+  "[sttv-speed] set_speed 2"
+ ]
+}

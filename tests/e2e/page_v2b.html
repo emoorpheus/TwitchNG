@@ -1,0 +1,77 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>sttv-speed v2b e2e</title></head>
+<body style="margin:0;background:#000;color:#fff">
+<video id="sttv_main" style="width:640px;height:360px" playsinline></video>
+<script>
+// xenking-like webosCompatBridge emulation (the parts that matter for v2b):
+//  * native HLS from a blob: URL of the media playlist TEXT (absolutized), like createMediaPlaylistObjectUrl()
+//  * loadedmetadata -> seek to the StartAuto resume point (VOD) + play + applyAudio
+//  * error -> retry (writes src again); waiting/seeking -> 8 s stall timer -> hard reload mv.load()
+//  * canplay/playing/loadeddata clear the stall timer; setPlaybackSpeed -> mv.playbackRate
+(function () {
+  var mv = document.getElementById('sttv_main'), ms = { resume: 0, type: 0, url: '', pl: '', u: '' }, stallT = 0, retries = 0;
+  var B = window.__bridge = { log: [], retries: 0, stallReloads: 0, srcWrites: 0, resumeSeeks: 0 };
+  function log(x) { B.log.push(Math.round(performance.now()) + ' ' + x); if (B.log.length > 300) B.log.shift(); }
+  function pickVariant(pl, base, want) {
+    var lines = String(pl).split(/\r?\n/), first = null;
+    for (var i = 0; i < lines.length; i++) {
+      var l = lines[i].trim();
+      if (l && l.charAt(0) !== '#') { var u = new URL(l, base).href; if (!first && !/audio_only/.test(u)) first = u; if (u.indexOf('/' + want + '/') > 0) return u; }
+    }
+    return first;
+  }
+  function mediaBlob(uri) {
+    return fetch(uri).then(function (r) { return r.text(); }).then(function (t) {
+      var b = uri.replace(/[^\/]*$/, '');
+      var abs = t.split(/\r?\n/).map(function (l) { return (l && l.charAt(0) !== '#' && !/^https?:/.test(l)) ? b + l : l; }).join('\n');
+      return URL.createObjectURL(new Blob([abs], { type: 'application/vnd.apple.mpegurl' }));
+    });
+  }
+  function tryPlay() { var p = mv.play(); if (p && p.catch) p.catch(function () {}); }
+  function setMain(url) { B.srcWrites++; mv.src = url; tryPlay(); }
+  function applyAudio() { if (mv.muted) mv.muted = false; mv.volume = 1; }
+  mv.addEventListener('loadedmetadata', function () {
+    log('loadedmetadata');
+    if (ms.type === 2 && ms.resume > 0) { B.resumeSeeks++; mv.currentTime = ms.resume / 1000; }
+    tryPlay(); applyAudio();
+  });
+  mv.addEventListener('error', function () {
+    log('error ' + (mv.error && mv.error.code));
+    if (retries++ < 3 && ms.url) { B.retries++; setTimeout(function () { setMain(ms.url); }, 500); }
+  });
+  function stallArm() { clearTimeout(stallT); stallT = setTimeout(function () { log('stall_reload'); B.stallReloads++; mv.load(); tryPlay(); }, 8000); }
+  ['waiting', 'seeking'].forEach(function (n) { mv.addEventListener(n, stallArm); });
+  ['canplay', 'playing', 'loadeddata'].forEach(function (n) { mv.addEventListener(n, function () { clearTimeout(stallT); }); });
+  var A = {
+    StartAuto: function (u, pl, t, rs, player) {
+      if (player > 0) return;
+      ms = { resume: rs || 0, type: t, url: '', pl: pl, u: u }; retries = 0;
+      mediaBlob(pickVariant(pl, u, window.__variant || '360p30')).then(function (bu) { ms.url = bu; setMain(bu); });
+    },
+    setPlaybackSpeed: function (sp) { var s = parseFloat(sp); if (!isFinite(s) || s <= 0) s = 1; mv.playbackRate = s; },
+    stopVideo: function () { clearTimeout(stallT); ms.url = ''; mv.removeAttribute('src'); mv.load(); },
+    mseekTo: function (x) { mv.currentTime = x / 1000; },
+    // like the real bridge: gettime = getsavedtime = video.currentTime in ms (0 while (re)attaching), and the status
+    // payload pushed to the app's Play_ShowVideoStatus export carries the progress-bar position as value[9]
+    gettime: function () { var t = mv.currentTime; return !isFinite(t) || t <= 0 ? 0 : Math.floor(t * 1000); },
+    getVideoStatus: function (sl, wc) {
+      var f = window.smartTwitchTV && window.smartTwitchTV.Play_ShowVideoStatus, t = mv.currentTime, d = mv.duration;
+      if (f) f(!!sl, wc | 0, JSON.stringify(['', '', 0, 0, '', '', '', 0, isFinite(d) && d > 0 ? Math.floor(d * 1000) : 0, !isFinite(t) || t <= 0 ? 0 : Math.floor(t * 1000)]));
+    },
+    // test helper: quality change inside the same VOD = a new blob for another variant (external src write)
+    __switchVariant: function (want) {
+      // the real bridge keeps the position in ms.resume when it switches quality
+      ms.resume = Math.round(mv.currentTime * 1000);
+      mediaBlob(pickVariant(ms.pl, ms.u, want)).then(function (bu) { ms.url = bu; setMain(bu); });
+    }
+  };
+  A.getsavedtime = A.gettime;
+  // main.js exports (loaded after the bridge in the real app)
+  setTimeout(function () { window.smartTwitchTV = { Play_ShowVideoStatus: function (sl, wc, s) { window.__statusPos = JSON.parse(s)[9]; } }; }, 600);
+  window.Android = { setPlaybackSpeed: function () {}, early: true };
+  setTimeout(function () { window.Android = A; }, 300);
+  setInterval(applyAudio, 500);
+})();
+</script>
+<script src="sttv-speed.js?v=1.2.0"></script>
+</body></html>

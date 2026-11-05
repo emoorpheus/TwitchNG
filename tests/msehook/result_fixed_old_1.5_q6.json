@@ -1,0 +1,41 @@
+{
+ "hook": "fixed",
+ "handler": "old",
+ "speed": 1.5,
+ "quota": 6,
+ "quotaThrows": 283,
+ "contentRate_4_12s": 0,
+ "contentRate_19_27s": 0,
+ "posAfter": 1000,
+ "paused": false,
+ "readyState": 1,
+ "loadstart": 284,
+ "hlsErrors": {
+  "mediaError/bufferFullError": 283
+ },
+ "playRejects": 1,
+ "playReject0": "AbortError: The play() request was interrupted by a new load request. https://goo.",
+ "speedErrors": [],
+ "reloadsTo1x": 0,
+ "engines": 284,
+ "finalSpeed": 1.5,
+ "audio": {
+  "cfg": {
+   "codec": "mp4a.40.5",
+   "sampleRate": 48000,
+   "ch": 2
+  },
+  "out": {
+   "sampleRate": 48000,
+   "frames": 1024,
+   "durUs": 21333
+  }
+ },
+ "drift_ms": {
+  "n": 1,
+  "mean": -0.3,
+  "sd": 0,
+  "p95abs": 0.3
+ },
+ "logs": []
+}

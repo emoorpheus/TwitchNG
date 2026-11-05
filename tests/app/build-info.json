@@ -1,0 +1,96 @@
+{
+  "kit": "1.3.4",
+  "builtAt": "2026-11-02T14:15:39.116Z",
+  "node": "v24.22.1",
+  "base": {
+    "source": "local checkout (--repo)",
+    "ref": null,
+    "commit": "439860b950216cb8e6a92baa803bfb3c8b261f16",
+    "tags": [
+      "dev-6",
+      "dev-7",
+      "v1.1.0"
+    ],
+    "dirty": false,
+    "app": {
+      "id": "com.tbsniller.smarttwitchwebostv",
+      "version": "1.1.0",
+      "title": "SmartTwitchTV"
+    },
+    "upstreamWeb": {
+      "WebVersion": "January 27 2026",
+      "WebTag": 727
+    },
+    "bridgeSha256": "4ac896dd4fbaa499ba408ba97f552885ab1d71faf0b9fa371e1e45958edaa43e"
+  },
+  "app": {
+    "id": "com.tbsniller.smarttwitchwebostv.speed",
+    "version": "1.3.4",
+    "title": "SmartTwitchTV Speed",
+    "mode": "local",
+    "target": "release/index.html",
+    "serviceId": "com.tbsniller.smarttwitchwebostv.speed.hls",
+    "v2bDefault": "auto",
+    "brand": "none",
+    "engine": "1.3.4"
+  },
+  "brand": null,
+  "injected": {
+    "tag": "<script src=\"githubio/js/sttv-speed.js?v=1.3.4\" data-v2b=\"auto\"></script>",
+    "hook": "try { require('./sttv_media_fetch').hookService(require('webos-service')); } catch (e) {} // sttv-speed",
+    "files": {
+      "sttv-speed.js": "d0f525b6ab6517e0a9e312fb00e722a4eb03ba0ce9ee7a4b33dcfad2d2acfc13",
+      "sttv-v2b.js": "d6caa0c76ab7a3263a5b59fb349f55ef0f4536b8ac2976dbfcc05d3f112c53d6",
+      "sttv-hls.min.js": "3d33d81345427a0798272652ccd4c18e19823f3e00cc22ec3b88a80bfb3f4cbf",
+      "sttv_media_fetch.js": "b2796ab4dc94408740dddf6813eb607861317e62a17080085b04f7b358eacf8d"
+    }
+  },
+  "pruned": [
+    {
+      "path": "githubio/temp",
+      "bytes": 31075109
+    },
+    {
+      "path": "scripts",
+      "bytes": 35381
+    },
+    {
+      "path": "githubio/js/main_uncompressed.js",
+      "bytes": 2400382
+    },
+    {
+      "path": "githubio/images/banner_store.xcf",
+      "bytes": 2418905
+    },
+    {
+      "path": "githubio/images/icon.xcf",
+      "bytes": 239252
+    },
+    {
+      "path": "githubio/images/icon_512.xcf",
+      "bytes": 180524
+    },
+    {
+      "path": "githubio/images/icon_black.xcf",
+      "bytes": 253446
+    },
+    {
+      "path": "githubio/images/icon_black_round_corner.xcf",
+      "bytes": 371382
+    },
+    {
+      "path": "githubio/images/icon_circle.xcf",
+      "bytes": 1330286
+    }
+  ],
+  "license": "GPL-3.0-or-later (LICENSE in the app dir)",
+  "pages": null,
+  "ipk": {
+    "file": "com.tbsniller.smarttwitchwebostv.speed_1.3.4_all.ipk",
+    "bytes": 5950292,
+    "sha256": "3976006a0aa9f40e92eec6960462742fee4d41bba379a6f6f37be5a6b8fbb4b9",
+    "files": 65,
+    "unpackedBytes": 23569920,
+    "ares": "Version: 3.2.6"
+  }
+}

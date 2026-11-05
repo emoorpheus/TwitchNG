@@ -1,0 +1,108 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>mse-hook integration</title></head>
+<body style="margin:0;background:#000">
+<video id="v" style="width:640px;height:360px" playsinline></video>
+<script src="/hls.min.js"></script>
+<script src="/hls-recover-fix.js"></script>
+<script type="module">
+// ?mode=hls|muxed &hook=orig|fixed &handler=old|fixed &speed=1.5
+const q = new URLSearchParams(location.search);
+const mode = q.get('mode') || 'hls', hookV = q.get('hook') || 'orig', handler = q.get('handler') || 'old';
+let speed = +(q.get('speed') || 1.5);
+const base = '/speed-' + hookV + '/';
+const v = document.getElementById('v');
+const st = (window.__st = { errors: [], loadstart: 0, playRejects: [], speedErrors: [], engines: 0, reloads: 0, samples: [], audio: null, done: false });
+const nativeTime = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'currentTime').get;
+v.addEventListener('loadstart', () => st.loadstart++);
+const play = () => { const p = v.play(); if (p && p.catch) p.catch((e) => st.playRejects.push(e.name + ': ' + String(e.message).slice(0, 70))); };
+
+if (mode === 'muxed') {
+  // Raw MSE, no hook: what the native buffer reports for a muxed A/V init rewritten by each rewriteInitTimescale().
+  const cont = await import(base + 'containers.js');
+  const U = await import('/mp4box.mjs');
+  const get = async (u) => new Uint8Array(await (await fetch(u)).arrayBuffer());
+  const file = await get('/media/muxed.mp4');
+  const bs = U.boxes(file), moov = bs.find((b) => b.type === 'moov');
+  const init = file.slice(0, moov.end), frags = [];
+  for (let i = 0; i < bs.length; i++) if (bs[i].type === 'moof') frags.push(file.slice(bs[i].start, bs[i + 1].end));
+  const ms = new MediaSource();
+  v.src = URL.createObjectURL(ms);
+  await new Promise((r) => ms.addEventListener('sourceopen', r, { once: true }));
+  const sb = ms.addSourceBuffer('video/mp4; codecs="avc1.42c01e,mp4a.40.2"');
+  const app = (d) => new Promise((r, j) => { sb.addEventListener('updateend', r, { once: true }); sb.addEventListener('error', () => j(new Error('append error')), { once: true }); sb.appendBuffer(d); });
+  try {
+    await app(cont.rewriteInitTimescale(init, speed).data);
+    for (const f of frags) await app(U.shiftFrag(init, f, 1000));     // fragments at content t=1000 s (a VOD seek)
+    const r = []; for (let i = 0; i < sb.buffered.length; i++) r.push([+sb.buffered.start(i).toFixed(3), +sb.buffered.end(i).toFixed(3)]);
+    st.muxed = { buffered: r, expected: [+(1000 / speed).toFixed(3), +(1006 / speed).toFixed(3)] };
+    v.currentTime = 1000 / speed + 0.5;
+    const t0 = performance.now();
+    const ok = await new Promise((res) => { const to = setTimeout(() => res(false), 4000); v.addEventListener('canplay', () => { clearTimeout(to); res(true); }, { once: true }); });
+    st.muxed.canplayAfterSeek = ok; st.muxed.readyState = v.readyState; st.muxed.ms = Math.round(performance.now() - t0);
+  } catch (e) { st.muxed = { error: String(e) }; }
+  st.done = true;
+} else {
+  // ?quota=N: TV-like SourceBuffer memory limit, emulated as "at most N s (element time) buffered ahead"
+  // -> QuotaExceededError from appendBuffer, which hls.js handles itself (non-fatal BUFFER_FULL_ERROR).
+  const quota = +(q.get('quota') || 0);
+  st.quotaThrows = 0;
+  if (quota) {
+    const origAB = SourceBuffer.prototype.appendBuffer;
+    const bufGet = Object.getOwnPropertyDescriptor(SourceBuffer.prototype, 'buffered').get;
+    SourceBuffer.prototype.appendBuffer = function (d) {
+      const b = bufGet.call(this);
+      if (b.length && b.end(b.length - 1) - nativeTime.call(v) > quota) { st.quotaThrows++; throw new DOMException('emulated TV quota', 'QuotaExceededError'); }
+      return origAB.call(this, d);
+    };
+  }
+  const { installMseHook } = await import(base + 'mse-hook.js');
+  const { AudioEngine } = await import(base + 'audio-engine.js');
+  let hls = null, active = null;
+  const release = () => { if (active) { active.destroy(); active = null; } };
+  installMseHook(window, {
+    getSpeed: () => speed,
+    createAudioSink: ({ speed: s, element }) => {
+      release();
+      const e = new AudioEngine({ win: window, speed: s, onError: onSpeedError });
+      st.engines++;
+      const od = e.onAudioData.bind(e);
+      e.onAudioData = (d) => { if (!st.audio) st.audio = { cfg: e.cfg && { codec: e.cfg.codec, sampleRate: e.cfg.sampleRate, ch: e.cfg.numberOfChannels }, out: { sampleRate: d.sampleRate, frames: d.numberOfFrames, durUs: d.duration } }; od(d); };
+      if (element) { e.attachVideo(element); e.setVolume(element.volume, element.muted); }
+      active = e; window.__eng = e; return e;
+    },
+    onRateRequest() {},
+    onError: onSpeedError,
+    onNativeAudio: release
+  });
+  // Same contract as the PR's playback-speed.js: on a speed failure fall back to 1x and reload.
+  function onSpeedError(e) {
+    st.speedErrors.push(String((e && e.message) || e).slice(0, 90));
+    if (speed !== 1) { speed = 1; st.reloads++; const t = v.currentTime; start(t); }
+  }
+  function start(pos) {
+    if (hls) hls.destroy();
+    hls = new Hls({ startPosition: pos, maxBufferLength: 20 });
+    hls.on(Hls.Events.ERROR, (ev, d) => st.errors.push({ t: Math.round(performance.now()), type: d.type, details: d.details, fatal: !!d.fatal }));
+    if (handler === 'old') {
+      // webosCompatBridge.js of the prototype
+      hls.on(Hls.Events.ERROR, (ev, d) => { if (d.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError(); });
+    } else {
+      STTVHlsRecovery.attach(hls, v, { onGiveUp: () => st.errors.push({ giveUp: true }) });
+    }
+    hls.loadSource(window.__variantUrl);
+    hls.attachMedia(v);
+    play();
+  }
+  v.addEventListener('loadedmetadata', play);
+  window.__seek = (d) => { v.currentTime = v.currentTime + d; };
+  setInterval(() => {
+    const e = window.__eng;
+    let drift = null;
+    if (e && !e.failed && !e.anchorPending && !v.paused && e.ctx && e.ctx.state === 'running' && e.nextWhen > e.ctx.currentTime)
+      drift = e.outContent - (v.currentTime + (e.nextWhen - e.ctx.currentTime) * e.speed);
+    st.samples.push({ p: performance.now(), ct: v.currentTime, nt: nativeTime.call(v), paused: v.paused, rs: v.readyState, drift, speed });
+  }, 100);
+  start(1000);
+}
+</script>
+</body></html>

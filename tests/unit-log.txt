@@ -1,0 +1,140 @@
+PASS master variants + single audio_only  {"n":7,"ao":["audio_only/index-dvr.m3u8"]}
+PASS pickSources prefers audio_only, keeps playing video
+PASS deriveAudioOnly(360p) == master audio_only  "https://d2vi6trrdongqn.cloudfront.net/fa44536e95f6efe9f2b2_gamesdonequick_321096577376_1793465395/audio_only/index-dvr.m3u8"
+PASS deriveAudioOnly ignores non-Twitch layout
+PASS streamKey from usher url
+PASS audio playlist parse  {"segs":5360,"total":53591.179}
+PASS segment uri resolution
+PASS segAt
+PASS demuxTS a100.ts: frames/PTS match ffprobe  {"frames":469,"ffprobe":469,"maxPtsDiff":0,"ms":2,"vpts":-1}
+PASS demuxTS a101.ts: frames/PTS match ffprobe  {"frames":469,"ffprobe":469,"maxPtsDiff":0,"ms":1.6,"vpts":-1}
+PASS demuxTS v100.ts: frames/PTS match ffprobe  {"frames":469,"ffprobe":469,"maxPtsDiff":0,"ms":1.4,"vpts":96482970}
+INFO head a0_head.ts {
+  firstAudio: 72.00033333333333,
+  firstVideo: -0.000011111111111111112,
+  frames: 16
+}
+INFO head v0_head.ts { firstAudio: -0.000011111111111111112, firstVideo: 72.033, frames: 0 }
+PASS content time of audio seg100 ~ EXTINF start  {"ct":1000.01,"extinf":1000,"base":72.033}
+PASS unwrapPts
+PASS ASC for AAC-LC 48k stereo = 11 90  [17,144]
+PASS adtsWrap reproduces ADTS frames (length-wise)
+PASS ffmpeg decodes re-wrapped ADTS to expected length  {"samples":480256,"expect":480256}
+PASS store snaps 1-sample gaps; covered() exact  [[0.021,0.064],[1.458,1.479]]
+PASS store read with zero-filled holes; overlap kept first data
+PASS store multi-block write/read exact  {"blocks":4}
+PASS store prune drops whole old blocks only
+PASS mono input duplicated to both channels
+PASS VClock estimate with coarse 240ms updates  {"err":0.03,"gran":0.2400000000000002}
+PASS VClock: no systematic lag with async 200 ms currentTime steps (v1.0: -31 ms)  {"meanMs":-0.1}
+PASS RateMeter: 2.5 s window resolves 1.00x on a 200 ms stepped clock  {"ratio":0.997}
+PASS RateMeter: backwards jump (seek) resets the window
+PASS LatTracker: 40 ms report jitter -> applied latency spread < 12 ms  {"spreadMs":4.8,"appliedMs":158.1}
+PASS LatTracker: small step -> slewed <= 5 ms/s with feed-forward, no re-anchor  {"ffMax":0.005,"appliedMs":174.7}
+PASS LatTracker: +160 ms sustained (BT) -> immediate jump + re-anchor  {"appliedMs":342.7,"jumps":1}
+PASS cap: native=ignored read back, mse unknown
+PASS cap: firmware/UA change invalidates the cache
+PASS cap: 30-day expiry
+PASS cap v1.2: v1.1 entry (no s:2) dropped
+PASS pipeKind: https m3u8 -> native
+PASS pipeKind: blob of m3u8 text (xenking createMediaPlaylistObjectUrl) -> native, not mse
+PASS pipeKind: blob of a MediaSource -> mse
+PASS pipeKind: unknown blobs probed once (m3u8 text -> native, unreadable -> mse)  {"first":["unknown","unknown"]}
+PASS v1.3 defaults: actx default, mute auto, fresh v2b context
+PASS ctxOptions: platform defaults first (1.3), 48k/playback = 1.2
+PASS newContext(default) = new AudioContext() without options  "default"
+PASS newContext(48k) falls back when sampleRate is rejected  "playback"
+PASS audioConf reads STTV_SPEED_ACTX / _MUTE / _ACTX_FRESH
+PASS STTVSpeed.audio() back to defaults removes the keys
+PASS mute policy: auto = hardware mute only outside v2b, hw = 1.2, off = never
+PASS meter classes: rendering / graph_silent / pcm_silent / quiet
+PASS db()
+PASS wavBlob: 48 kHz mono 16-bit, 3 beeps x 0.22 s at -10.5 dBFS  {"n":69600,"mx":9830,"toneS":0.646}
+PASS no data-v2b: default off (= 1.3)
+PASS data-v2b="auto": cfg auto, BASE from the tag src  "file:///media/developer/apps/usr/palm/applications/x/release/githubio/js/"
+PASS v2b('off') with build default auto is stored (sticks)  "off"
+PASS v2b('force') stored normalized
+PASS v2b(build default) removes the key
+PASS localStorage wins over data-v2b
+PASS invalid data-v2b -> off
+PASS window.STTV_SPEED_BUILD.v2b fallback
+PASS build default off: v2b('auto') stored as before (1.3 behaviour)
+PASS build default off: v2b('off') removes the key
+PASS v2bLevelInfo: end = fragments[0].start + totalduration  {"frags":2,"total":53591,"end":53591.201,"live":false}
+PASS timeline check: correct duration -> no mismatch, NaN (re-attach) skipped  {"checks":5,"bad":0,"mismatches":0,"noted":-1,"last":{"dur":53591.2,"end":53591.201,"native":0,"speed":2}}
+PASS timeline check: 2 bad samples are not enough (transient)
+PASS timeline check: S x duration -> one v2b_timeline_mismatch per engagement (ratio 2)  {"dur":107182.4,"end":53591.201,"native":0,"speed":2,"ratio":2,"hook":null}
+PASS timeline check: live playlists skipped
+PASS meter buckets: rendering 1.5 + quiet 0.5 + silent 1.5 + starting 0.5 + unanchored 0.5 = 4.5 s metered  {"okS":1.5,"quietS":0.5,"silentTotalS":1.5,"startS":0.5,"unanchS":0.5}
+PASS silentS is the current streak (0.5 s after the reset), total silence kept in silentTotalS  {"silentS":0.5}
+PASS v2b speeds 0.25-2 (0.25 new), engine minimum 0.25  {"speeds":[0.25,0.5,0.75,1.25,1.5,1.75,2],"min":0.25}
+PASS status().v2b.speeds lists them
+PASS rate cap unknown: native element gets the requested speed (measured as before)
+PASS native known to ignore playbackRate: speeds v2b cannot take keep the element at 1.0
+PASS 1.3.5: v2b speeds are held at 1.0 on the native element too (v2b sets its own rate)
+PASS v2b off + native ignored: 1.5x also held at 1.0
+PASS STTV_SPEED_RATEGATE=off: no hold
+PASS applyNative(nativeRate(1.15)) on an ignoring pipeline writes nothing (rate already 1.0)  []
+PASS hook wraps Android.setPlaybackSpeed
+PASS rate cap unknown: the bridge gets 1.15 (first measurement as before)  [1.15]
+PASS native known to ignore the rate: the bridge is called with 1, the element never sees 1.2  {"got":[1.15,1,1],"writes":[1]}
+PASS rate_hold event, engine keeps the user speed 1.2 (status/toast)  [{"speed":1.2,"pipe":"native"}]
+PASS 1.3.5: v2b speeds reach the bridge as 1 too (the native element never runs at them)
+PASS v2b owns the element: the bridge write passes (the hook shims playbackRate)
+PASS no hook errors  []
+PASS hook wraps gettime / getsavedtime / mseekTo and the app export Play_ShowVideoStatus
+PASS element reads 0 while attaching -> app sees the switch position (gettime, getsavedtime, progress bar)
+PASS element back at the position -> raw time, hold released
+PASS no hold -> the bridge value passes through unchanged
+PASS a user seek (mseekTo) drops the hold
+PASS stopVideo drops the hold
+PASS live streams are never held (bridge reports a seekable-window position there)
+PASS v2b_hold event logged, no hook errors  []
+PASS toast fills every %s from an argument array  "Speed 2× · network too slow, quality 720p60"
+PASS 1.3.5: clip at 2x on a pipeline known to ignore the rate: element stays 1.0, toast "cannot change the speed of clips"  {"writes":[],"toasts":["This TV cannot change the speed of clips · 2× has no effect"]}
+PASS 1.3.5: clip measured at 1.04x while 2x requested -> element back to 1.0, rate cap native=ignored, toast  {"rate":1,"cap":{"v":"ignored","sp":[2],"ratio":1.04,"at":1793656876929}}
+PASS clipRateCheck leaves VODs alone (the engine pre-flight measures those)
+PASS 1.3.5: pcm_silent (content silence) -> audio_silent event with ct, no toast  {"cause":"pcm_silent","pcmDb":-120,"outDb":-120,"fade":1,"vol":1,"muted":false,"appMuted":false,"volume":0,"guard":false,"ct":12.5}
+PASS graph_silent (PCM present, output silent) still toasts  {"cause":"graph_silent","pcmDb":-20,"outDb":-120,"fade":1,"vol":1,"muted":false,"appMuted":false,"volume":0,"guard":false,"ct":12.5}
+PASS 1.3.5: counted stall at 2x, link 12 Mbit/s < 13 needed -> step down chunked -> 720p60 (3.0 x 2 x 1.25 <= 12), new pipeline at the same speed  {"why":"stall","speed":2,"from":"1080p","to":"720p60","needMbps":12.99,"bwEstMbps":12,"ahead":30,"pos":1500,"n":1}
+PASS step-down keeps position and speed, remembers the bandwidth cap for this VOD  {"start":1500,"cap":{"key":"vod:1","bps":6068762}}
+PASS toast: "Speed 2× · network too slow, quality 720p60"
+PASS no fallback to 1x
+PASS stall with 60 Mbit/s measured (need 6 at 720p60 x 2): counted as before, no step-down  {"stalls":1}
+PASS bandwidth unknown -> next lower variant (720p60 -> 720p30)  "720p30"
+PASS second step 720p30 -> 480p30
+PASS at most 3 step-downs per VOD (then the stalls fuse decides)  {"key":"vod:1","n":3}
+PASS stall at 0.5x: no step-down
+PASS v2bPickVariant with a bandwidth cap (step-down memory): chunked -> 720p60  "720p60"
+PASS no cap -> the element variant as before
+PASS variantName: chunked -> 1080p
+PASS low buffer noticed, not acted on at once
+PASS 1.3.5: 5 s of draining buffer with 11 Mbit/s < 13 needed -> step-down before any stall  {"why":"low_buffer","speed":2,"from":"1080p","to":"720p60","needMbps":12.99,"bwEstMbps":11,"ahead":5,"pos":1500,"n":1}
+PASS stalled + 10 s without bytes -> kick (stopLoad + startLoad)
+PASS three bridge mv.load() in a minute are absorbed
+PASS each = hls.stopLoad + startLoad(content position), v2b stays active  {"stops":3,"starts":[1500,1500,1500]}
+PASS the 4th falls back to the release path
+PASS 8 s into a switch with no bytes for 6 s -> one kick
+PASS 20 s but bytes 2 s ago (slow link) -> still engaging (1.3.4 failed at 15 s)
+PASS 16 s with 11 s of silence -> timeout  [{"sinceMs":16000,"idleMs":11000,"frags":0,"kicked":true}]
+PASS hard limit 40 s even with bytes arriving
+PASS 4 fatal network errors in one outage -> 4 recoveries, no fallback (1.3.4 restored native offline)
+PASS startLoad again after 2-8 s  "2000,4000,6000,8000"
+PASS more than 90 s into the outage -> v2b_fail
+PASS bytes arrived since the last error -> a new episode, no fallback
+PASS manifest load error -> fail at once
+PASS 1.3.5: engine source:timeout / net in v2b -> retried twice  [{"reason":"source:timeout","n":1},{"reason":"net","n":2}]
+PASS third -> v2b_fail engine:source:timeout
+PASS non-network engine failure -> fail at once
+PASS 1.3.5: restored element frozen 3.5 s -> rate 1, seek to the position, play  {"step":1,"ct":1500,"pos":1500,"rate":2,"rs":4,"paused":false}
+PASS still frozen at 8 s -> one more native load (attempt 2, shielded)  {"step":2,"ct":1500.05,"pos":1500,"rate":1,"rs":4,"paused":false}
+PASS restore that plays -> v2b_restore_ok, no nudge
+PASS paused by the user (Android.PlayPause(false)) -> no nudge
+PASS 1.3.5: v2b audio segment errors: no engine failure for 45 s (5 errors), then net  {"tries":6,"failed":"net"}
+PASS segment retry backoff capped at 8 s (v2b)
+PASS native pipe: engine fails after 4 tries as before  {"tries":6}
+PASS segment retry backoff capped at 8 s (native)
+PASS 1.3.5: playlist timeout -> one retry (TV report T7 engine:source:timeout)  {"requests":2}
+PASS second open within 5 min comes from the cache (every v2b engagement = a new engine)
+
+ALL UNIT TESTS PASSED

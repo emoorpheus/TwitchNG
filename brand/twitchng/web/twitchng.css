@@ -1,0 +1,113 @@
+/*
+ * twitchng.css 1.0.0 (pre-release) - Twitch NG app layer: intro, About, What's new, OLED preset. NG = Next-Gen.
+ * OLED preset = default (html:not(.ng-classic)); classic look = html.ng-classic (localStorage TWITCHNG_OLED = '0').
+ * The app sets most colours inline / in its own sheet and the thumbnail focus with !important (focus_class_holder):
+ * every rule here carries the html prefix (+ specificity) and !important. Player overlays on top of the video are kept.
+ */
+/* ---------------------------------------------------------------- intro (first-run welcome dialog) - always
+ * continues the launch splash (assets/splash.png, brand/twitchng/src/make_assets.py): backdrop #08070d + the same soft
+ * purple glow, the hero (mark above "Twitch Next-Gen") at the splash position: viewBox = ink box + 4 px, so at 1920 x 1080 the
+ * SVG box is top 340 px, height 380 px (31.48vh / 35.19vh) and the ink lands on the splash pixels */
+html #welcome_dialog.ng-intro-host, html:not(.ng-classic) #scene1 #welcome_dialog.ng-intro-host { background: #08070d !important; }   /* > OLED backdrop rule */
+#welcome_dialog.ng-intro-host > .about_dialogs { top: 0 !important; transform: none !important; width: 100% !important; height: 100% !important;
+    margin: 0 !important; background: #08070d !important; border: 0 !important; border-radius: 0 !important; }
+#welcome_dialog_text.ng-intro-text { width: 100% !important; height: 100% !important; margin: 0 !important; font-size: 100% !important; text-shadow: none !important; }
+.ng-intro { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; font-family: Roboto, sans-serif; color: #fff; letter-spacing: .02em; -webkit-text-stroke: 0;
+    background: radial-gradient(ellipse 46.875vw 51.67vh at 50% 40.4%, rgba(145, 70, 255, .42), rgba(122, 58, 230, .2) 28%,
+        rgba(91, 42, 168, .07) 62%, rgba(58, 26, 112, 0) 100%) #08070d; }
+.ng-intro .ng-logo { height: 12vh; width: auto; display: block; }
+.ng-intro .ng-hero { height: 35.19vh; width: auto; display: block; flex: none; }
+.ng-intro.ng-has-hero { justify-content: flex-start; padding-top: 31.48vh; box-sizing: border-box; }
+.ng-intro .ng-sub { margin-top: 3.4vh; font-size: 2.5vh; color: #8c8c8c; }
+.ng-intro .ng-go { margin-top: 8vh; font-size: 2.3vh; color: #d6d6d6; }
+.ng-intro .ng-key { display: inline-block; min-width: 2.4em; padding: .12em .55em; margin-right: .7em; border: .12em solid #9146FF; border-radius: .45em;
+    color: #fff; font-family: Roboto-Bold, Roboto, sans-serif; text-align: center; }
+.ng-intro .ng-foot { position: absolute; bottom: 4vh; left: 0; width: 100%; text-align: center; font-size: 1.6vh; color: #555; }
+/* lockup for --icon B / C or a custom --title: mark (SVG) + the app name in the app's own Roboto-Bold */
+.ng-lockup { display: flex; align-items: center; justify-content: center; }
+.ng-lockup .ng-mark { height: 1.25em; width: 1.25em; display: block; margin-right: .32em; }
+.ng-lockup .ng-word { font-family: Roboto-Bold, Roboto, sans-serif; color: #fff; letter-spacing: .01em; white-space: nowrap; }
+.ng-intro .ng-lockup { font-size: 9vh; }
+
+/* ---------------------------------------------------------------- About / What's new (both looks) */
+.ng-about { padding: 2.2vh 3vw 1.6vh; text-align: center; font-family: Roboto, sans-serif; color: #d8d8d8; font-size: 2.1vh; line-height: 1.45;
+    text-shadow: none; -webkit-text-stroke: 0; }
+.ng-about .ng-logo { height: 8.5vh; width: auto; display: block; margin: 0 auto; }
+.ng-about .ng-lockup { font-size: 6.5vh; }
+.ng-about-ver { margin-top: 2vh; font-size: 2.4vh; color: #fff; }
+.ng-about-desc { margin: 1.6vh auto 0; max-width: 62em; }
+.ng-about-dim { margin-top: .8vh; color: #8c8c8c; font-size: 1.9vh; }
+.ng-about-legal { margin: 2.4vh auto 0; max-width: 70em; color: #8c8c8c; font-size: 1.7vh; }
+.ng-about-legal b { color: #bdbdbd; font-weight: normal; font-family: Roboto-Bold, Roboto, sans-serif; }
+.ng-about-close { margin-top: 2.4vh; color: #fff; font-size: 2vh; }
+.ng-news { padding: 1vh 2.5vw; text-align: left; font-family: Roboto, sans-serif; color: #d8d8d8; font-size: 2.3vh; line-height: 1.5; }
+.ng-news-title { text-align: center; color: #fff; font-family: Roboto-Bold, Roboto, sans-serif; font-size: 2.8vh; margin-bottom: 1.4vh; }
+.ng-news ul { margin: 0 0 0 1.2em; padding: 0; }
+.ng-news li { margin: .5vh 0; }
+.ng-news-note { margin-top: 1.4vh; color: #8c8c8c; font-size: 2vh; text-align: center; }
+.ng-news .ng-about-close { text-align: center; }
+/* no upstream update check / changelog download: the update dialog only shows What's new + the app's close hint */
+html.ng #update_dialog_upbutton, html.ng #update_dialog_changebutton { display: none !important; }
+
+/* ---------------------------------------------------------------- OLED preset */
+/* menu dialogs: the backdrop (inline rgba(0,0,0,.75)) and the panels (#101010) become true black */
+html:not(.ng-classic) #scene1 .screens[style*="rgba(0,0,0,.75)"],
+html:not(.ng-classic) #scene1 .screens[style*="rgba(0, 0, 0, 0.75)"],
+html:not(.ng-classic) #dialog_about,
+html:not(.ng-classic) #update_dialog { background: #000 !important; }
+html:not(.ng-classic) .about_dialogs,
+html:not(.ng-classic) .dialog_exit,
+html:not(.ng-classic) .dialog_period { background-color: #000 !important; }
+html:not(.ng-classic) .about_dialogs { border-color: rgba(145, 70, 255, .45) !important; }
+html:not(.ng-classic) .dialog_exit,
+html:not(.ng-classic) .dialog_period { border-image: linear-gradient(to right, #000 15%, #9146FF, #000 85%) 1 !important; }
+html:not(.ng-classic) .about_text,
+html:not(.ng-classic) .exit_text,
+html:not(.ng-classic) .controls_text { text-shadow: none !important; }
+
+/* focus: no grey fills - the app's own thin top/bottom lines, in purple */
+/* (+ a faint purple glow in the middle of the focused row: visible from the sofa, still ~black) */
+html:not(.ng-classic) .settings_div_focus,
+html:not(.ng-classic) .settings_value_focus { background: linear-gradient(to right, rgba(145, 70, 255, 0) 5%, rgba(145, 70, 255, .13), rgba(145, 70, 255, 0) 95%) !important;
+    border-image: linear-gradient(to right, #000 8%, #9146FF, #000 92%) 1 !important; }
+html:not(.ng-classic) .side_panel_new_icons_text,
+html:not(.ng-classic) .side_panel_new_icons_text_botton,
+html:not(.ng-classic) .side_panel_new_icons_start,
+html:not(.ng-classic) .side_panel_div_focused { background: linear-gradient(to right, rgba(145, 70, 255, 0) 5%, rgba(145, 70, 255, .13), rgba(145, 70, 255, 0) 95%) !important;
+    border-image: linear-gradient(to right, #000 4%, #9146FF, #000 96%) 1 !important; }
+html:not(.ng-classic) .side_panel_new_icons_start i,
+html:not(.ng-classic) .side_panel_new_icons_text i,
+html:not(.ng-classic) .side_panel_new_icons_text_botton i { color: #9146FF !important; }
+html:not(.ng-classic) .button_dialog_focused,
+html:not(.ng-classic) .button_dialog:hover,
+html:not(.ng-classic) .button_search_focused,
+html:not(.ng-classic) .button_search:hover { background-color: rgba(145, 70, 255, .22) !important;
+    border-image: linear-gradient(to right, #000 6%, #9146FF, #000 94%) 1 !important; }
+html:not(.ng-classic) .dialog_end_icons_focus { background-color: rgba(145, 70, 255, .3) !important; border-color: #9146FF !important; }
+html:not(.ng-classic) .stream_switch_focused { background-color: transparent !important; border-color: #9146FF !important; }
+html:not(.ng-classic) .feed_end_name_focus { background-color: #000 !important; border-color: #9146FF !important; }
+html:not(.ng-classic) .side_panel_feed_img_focus { box-shadow: 0 0 0 .1em #000, 0 0 0 .2em #9146FF !important; }
+html:not(.ng-classic) .cavas_holder_focused { border-color: #9146FF !important; }
+
+/* inputs and chat buttons: light fills -> black with a purple frame */
+html:not(.ng-classic) .input_class,
+html:not(.ng-classic) .chat_input_class { background-color: #000 !important; color: #fff !important; border-color: #9146FF !important;
+    box-shadow: none !important; caret-color: #9146FF; }
+html:not(.ng-classic) .chat_input_class_focus { background-color: #000 !important; color: #fff !important; border-color: #9146FF !important; box-shadow: none !important; }
+html:not(.ng-classic) .chat_input_class_block { background-color: #000 !important; box-shadow: none !important; }
+html:not(.ng-classic) .button_chat { background-color: #000 !important; border-color: #3a3a3a !important; }
+html:not(.ng-classic) .button_chat_focused { background-color: rgba(145, 70, 255, .3) !important; box-shadow: inset 0 0 0 .1em #9146FF !important; color: #fff !important; }
+
+/* spinner */
+html:not(.ng-classic) .loading { background-color: transparent !important; }
+html:not(.ng-classic) .loading div { border-color: #9146FF transparent transparent transparent !important; }
+
+/* static chrome (always at the same place: burn-in) dimmed; the screen title a bit */
+html:not(.ng-classic) #scene1 .icon_top_label { color: #7d7d7d !important; }
+html:not(.ng-classic) #scene1 .top_lable { color: #d2d2d2 !important; }
+html:not(.ng-classic) #side_panel_fix .side_panel_new_icons { color: #8c8c8c !important; }
+html:not(.ng-classic) #side_panel_fix .side_panel_new_icons_start { color: #fff !important; }
+
+/* sttv-speed toast */
+html:not(.ng-classic) #sttv_speed_toast { background: #000 !important; border: 1px solid rgba(145, 70, 255, .55) !important; }

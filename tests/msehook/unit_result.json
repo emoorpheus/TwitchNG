@@ -1,0 +1,226 @@
+{
+ "orig": {
+  "muxed_init_x1_5": {
+   "mvhd": 1000,
+   "tracks": [
+    {
+     "handler": "vide",
+     "mdhd": 23040
+    },
+    {
+     "handler": "soun",
+     "mdhd": 48000
+    }
+   ]
+  },
+  "single_init_x1_5": {
+   "mvhd": 1000,
+   "tracks": [
+    {
+     "handler": "soun",
+     "mdhd": 72000
+    }
+   ]
+  },
+  "after_3_frags": {
+   "buffered": [
+    [
+     1000,
+     1003.008
+    ]
+   ],
+   "sinkStoredS": 3.01,
+   "phantomS": 0
+  },
+  "after_changeType": {
+   "buffered": [
+    [
+     1000,
+     1003.008
+    ]
+   ],
+   "sinkStoredS": 0,
+   "phantomS": 3
+  },
+  "after_same_init_again": {
+   "buffered": [
+    [
+     1000,
+     1004.011
+    ]
+   ],
+   "sinkStoredS": 1,
+   "phantomS": 3
+  },
+  "media_without_new_init": {
+   "buffered": [
+    [
+     1000,
+     1004.011
+    ]
+   ],
+   "sinkStoredS": 0,
+   "phantomS": 4.02
+  },
+  "media_without_init_x400": {
+   "appends": 338,
+   "errors": [
+    "unparsable audio data"
+   ]
+  },
+  "after_codec_change": {
+   "buffered": [
+    [
+     1000,
+     1004.011
+    ],
+    [
+     1006,
+     1007.022
+    ]
+   ],
+   "sinkRates": [
+    44100
+   ],
+   "resets": 3,
+   "phantomS": 4.02
+  },
+  "video_quota": {
+   "nativeAppendCalls": 2,
+   "thrownToPlayer": null,
+   "reportedAsSpeedFailure": [
+    "QuotaExceededError"
+   ]
+  },
+  "removeSourceBuffer_fake": {
+   "result": "TypeError: Failed to execute 'removeSourceBuffer' on 'MediaSource': par",
+   "sinkDestroyed": false,
+   "sourceBuffersLength": 2
+  },
+  "muxed_sourcebuffer": {
+   "appendedInit": {
+    "mvhd": 1000,
+    "tracks": [
+     {
+      "handler": "vide",
+      "mdhd": 23040
+     },
+     {
+      "handler": "soun",
+      "mdhd": 48000
+     }
+    ]
+   },
+   "errors": []
+  }
+ },
+ "fixed": {
+  "muxed_init_x1_5": {
+   "mvhd": 1500,
+   "tracks": [
+    {
+     "handler": "vide",
+     "mdhd": 23040
+    },
+    {
+     "handler": "soun",
+     "mdhd": 72000
+    }
+   ]
+  },
+  "single_init_x1_5": {
+   "mvhd": 1500,
+   "tracks": [
+    {
+     "handler": "soun",
+     "mdhd": 72000
+    }
+   ]
+  },
+  "after_3_frags": {
+   "buffered": [
+    [
+     1000,
+     1003.008
+    ]
+   ],
+   "sinkStoredS": 3.01,
+   "phantomS": 0
+  },
+  "after_changeType": {
+   "buffered": [
+    [
+     1000,
+     1003.008
+    ]
+   ],
+   "sinkStoredS": 3.01,
+   "phantomS": 0
+  },
+  "after_same_init_again": {
+   "buffered": [
+    [
+     1000,
+     1004.011
+    ]
+   ],
+   "sinkStoredS": 4.01,
+   "phantomS": 0
+  },
+  "media_without_new_init": {
+   "buffered": [
+    [
+     1000,
+     1005.013
+    ]
+   ],
+   "sinkStoredS": 5.01,
+   "phantomS": 0
+  },
+  "media_without_init_x400": {
+   "appends": 400,
+   "errors": []
+  },
+  "after_codec_change": {
+   "buffered": [
+    [
+     1006,
+     1007.022
+    ]
+   ],
+   "sinkRates": [
+    44100
+   ],
+   "resets": 1,
+   "phantomS": 0
+  },
+  "video_quota": {
+   "nativeAppendCalls": 1,
+   "thrownToPlayer": "QuotaExceededError",
+   "reportedAsSpeedFailure": []
+  },
+  "removeSourceBuffer_fake": {
+   "result": "ok",
+   "sinkDestroyed": true,
+   "sourceBuffersLength": 1
+  },
+  "muxed_sourcebuffer": {
+   "appendedInit": {
+    "mvhd": 1000,
+    "tracks": [
+     {
+      "handler": "vide",
+      "mdhd": 15360
+     },
+     {
+      "handler": "soun",
+      "mdhd": 48000
+     }
+    ]
+   },
+   "errors": [
+    "muxed audio/video SourceBuffer: video/mp4; codecs=\"avc1.42c01e,mp4a.40.2\""
+   ]
+  }
+ }
+}

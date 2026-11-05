@@ -1,0 +1,35 @@
+engine 1.3.5 sttv-speed/
+PASS S0 VOD plays natively at 1x from the resume point
+2.5s mark S0 native 1x
+4.5s mark S1 2x
+PASS S1 v2b active at 2x, content 2x {"n":80,"slope":2,"ct0":1014.65,"ct1":1030.45,"minCt":1014.65,"frozenMs":0,"rrMax":1,"rrMin":1,"v2b":"active","mse":true}
+PASS S1 no native rate write != 1 (before / during the takeover) []
+21.8s mark S2 5 stalls -> fuse -> restore 1x
+PASS S2 restored native element: no playbackRate != 1 written (report T5/T6: froze at 0.25-2x) []
+PASS S2 native 1x plays on (content slope 1, frozen < 2 s) {"n":140,"slope":1,"ct0":1036.69,"ct1":1050.59,"minCt":1036.69,"frozenMs":0,"rrMax":1,"rrMin":1,"v2b":"idle","mse":false}
+PASS S2 no jump back, no Play_PannelEndStart, no bridge reload {"pos2":1036.670234,"minCt":1036.69,"end":[],"reloads":0,"jams":0}
+PASS S2 v2b_restore_ok [["v2b_restore",{"reason":"fail:stalls","pos":1036.68,"mode":"takeover"}],["v2b_restored",{"pos":1036.68,"ms":72,"attempt":1}],["v2b_restore_ok",{"ms":1072,"nudges":0,"attempt":1}]]
+36.0s mark S3 retry 1.5x -> 2x
+PASS S3 user request after the fuse -> v2b again at 2x, no native write {"ok":true,"bad":0}
+45.9s mark S4 quality change 480p30
+PASS S4 quality change: v2b re-engaged at 2x on 480p30 (report T7) {"w4":{"n":60,"slope":2,"ct0":1075.15,"ct1":1086.95,"minCt":1075.15,"frozenMs":0,"rrMax":1,"rrMin":1,"v2b":"active","mse":true},"var4":{"h":480,"bw":1441461,"video":"480p30","from":"element"}}
+PASS S4 no native write != 1, no end / reload, no jump back {"bad":[],"end":[],"reloads":0,"pre4":1067.504226,"min4":1067.529518}
+59.7s mark S5 mv.load() while active
+PASS S5 bridge mv.load() absorbed: v2b stays, still 2x (report T10) {"w5":{"n":50,"slope":2,"ct0":1097.15,"ct1":1106.95,"minCt":1097.15,"frozenMs":0,"rrMax":1,"rrMin":1,"v2b":"active","mse":true},"ev":[["v2b_absorb_load",{"n":1,"state":"active","ahead":39,"rs":4}],["v2b_kick",{"why":"bridge_load","state":"active","pos":1091.05,"idleMs":355,"ahead":39}]]}
+69.7s mark S6 step-down (bwEst 2 Mbit/s + stall)
+PASS S6 step-down 480p30 -> 360p30 at 2x, plays on at 2x, toast {"sd":{"why":"stall","speed":2,"from":"480p30","to":"360p30","needMbps":2.88,"bwEstMbps":2,"ahead":38.9,"pos":1111.07,"n":1},"toast":"Speed 2× · network too slow, quality 360p30","w6":{"n":60,"slope":2,"ct0":1115.64,"ct1":1127.44,"minCt":1115.64,"frozenMs":0,"rrMax":1,"rrMin":1,"v2b":"active","mse":true}}
+81.1s mark S7 WAN off 25 s
+106.1s mark S7 WAN back
+PASS S7 WAN outage: v2b keeps the VOD (no fail / release / end), 2x again, no jump back {"w7":{"n":60,"slope":2,"ct0":1176.19,"ct1":1187.99,"minCt":1176.19,"frozenMs":0,"rrMax":1,"rrMin":1,"v2b":"active","mse":true},"pre7":1133.600778,"min7":1133.6401,"end":[],"net":[["v2b_hls_warn","fragLoadError"],["v2b_hls_warn","fragLoadError"],["v2b_hls_warn","fragLoadError"],["v2b_hls_warn","fragLoadError"],["v2b_net_recover",{"details":"fragLoadError","n
+119.0s mark S8 1x restore, stuck native pipeline
+PASS S8 stuck restore: v2b_restore_stuck -> nudge -> v2b_restore_ok, native 1x plays, no end {"stuck":{"stuckN":1,"unstuck":1},"w8":{"n":60,"slope":1,"ct0":1192.88,"ct1":1198.78,"minCt":1192.88,"frozenMs":0,"rrMax":1,"rrMin":1,"v2b":"idle","mse":false},"ev":[["v2b_restore",{"reason":"speed_1","pos":1192.21,"mode":"takeover"}],["v2b_restored",{"pos":1192.21,"ms":65,"attempt":1}],["v2b_restore_stuck",{"step":1,"ct":1192.21,"pos":1192.21,"rate":1,"rs":
+PASS S10 webOSRelaunch -> event relaunch {speed, v2b, engine} ["relaunch",{"speed":1,"v2b":"idle","v2bSpeed":2,"engine":null,"ct":1198.8,"paused":false}]
+132.4s mark S9 clip 2x
+PASS S9 clip at 2x: no native write != 1 (report: 2x crawled at 1.08x without sound / 1.5x froze) []
+PASS S9 clip keeps playing at 1x (no freeze, no end) {"w9":{"n":90,"slope":1,"ct0":2.61,"ct1":11.51,"minCt":2.61,"frozenMs":0,"rrMax":1,"rrMin":1,"v2b":"idle","mse":false},"end":[]}
+PASS S9 toast: clips do not change speed on this TV [["rate_hold",{"speed":2,"pipe":"native"}],["toast","This TV cannot change the speed of clips · 2× has no effect"]]
+PASS page errors 0 []
+v2b status {"cfg":"auto","cfgDefault":"off","maxH":null,"worker":true,"state":"idle","mode":"takeover","speed":2,"speeds":[0.25,0.5,0.75,1.25,1.5,1.75,2],"libs":"hls.js 1.5.20","base":"https://sttv.test/","takeovers":3,"failures":1,"fail":null,"lastError":{"type":"networkError","details":"fragLoadError","at":105516},"lastRestore":{"reason":"speed_1","at":118969},"want":null,"engageMs":314,"frags":20,"stalls60s":1,"switchStalls":0,"respeeds":1,"coalesced":0,"pending":null,"retries":1,"lastBlock":null,"hold":null,"holds":0,"holdMaxMs":0,"bufferAheadS":null,"level":null,"variant":{"h":360,"bw":672139,"video":"360p30","from":"step_down:stall"},"levelInfo":{"frags":5360,"total":53591,"end":53591.201,"live":false},"net":{"bwEstMbps":2,"samples":5,"needMbps":1.34,"idleMs":25001,"kicks":2,"absorbed":1,"netRecovers":4,"stepDowns":1,"downCap":{"key":"vod:2915888911","mbps":1.34}},"restoreNudges":1,"engineRet
+events {"hooked":2,"installed":1,"rate_cap":3,"set_speed":5,"rate_hold":3,"v2b_engage":3,"toast":14,"v2b_libs":1,"net_path":1,"v2b_prefetched":3,"v2b_switch":5,"v2b_active":5,"audio_context":3,"engine_start":3,"base_ref":3,"source_open":3,"engine_ready":3,"pcm_ready":3,"rate_verify":2,"rate_ok":2,"anchor":6,"audio_rendering":3,"v2b_stall":7,"v2b_fail":1,"v2b_restore":2,"engine_stop":3,"v2b_restored":2,"v2b_restore_ok":2,"v2b_retry":1,"audio_context_closed":2,"v2b_rate_request":2,"v2b_respeed":1,"engine_speed":1,"unanchor":3,"v2b_external":1,"v2b_release":1,"v2b_absorb_load":1,"v2b_kick":2,"v2b_step_down":1,"seg_error":17,"v2b_hls_warn":16,"anchor_wait_data":1,"v2b_net_recover":4,"v2b_restore_stuck":1,"relaunch":1}
+bridge log tail ["1249 loadedmetadata","33376 stall check: transient","45973 loadedmetadata","131240 loadedmetadata"]
+RESULT 1.3.5: 19/19 PASS

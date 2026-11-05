@@ -1,0 +1,20 @@
+hook 1.3.2 from sttv-speed/sttv-v2b.js
+PASS S=2 pre=3600 post=0: video.duration = 3600 (content time)  {"el":3600,"native":1800,"ms":3600,"msNative":1800}
+PASS S=2: native element duration = 1800.000 (element time)  {"native":1800}
+PASS S=2: seekable end = 3600  {"seekEnd":3600}
+PASS S=1.5 pre=53591.201 post=0: video.duration = 53591.201 (content time)  {"el":53591.201,"native":35727.467333333334,"ms":53591.201,"msNative":35727.467333333334}
+PASS S=1.5: native element duration = 35727.467 (element time)  {"native":35727.467333333334}
+PASS S=1.5: seekable end = 53591.201  {"seekEnd":53591.201}
+PASS S=1.25 pre=0 post=7200: video.duration = 7200 (content time)  {"el":7200,"native":5760,"ms":7200}
+PASS S=1.25: native element duration = 5760.000 (element time)  {"native":5760}
+PASS S=1.25: seekable end = 7200  {"seekEnd":7200}
+PASS S=2 pre=3600 post=3700: video.duration = 3700 (content time)  {"el":3700,"native":1850,"ms":3700}
+PASS S=2: native element duration = 1850.000 (element time)  {"native":1850}
+PASS S=2: seekable end = 3700  {"seekEnd":3700}
+PASS S=2: a longer playlist still grows the duration (hls.js rule)  {"grow":true}
+PASS S=1 pre=3600 post=0: video.duration = 3600 (content time)  {"el":3600,"native":3600,"ms":3600,"msNative":3600}
+PASS S=1: native element duration = 3600.000 (element time)  {"native":3600}
+PASS S=1: seekable end = 3600  {"seekEnd":3600}
+PASS hook stats: 4 sessions, 3 rebased, 0 errors  {"sessions":4,"durationRebased":3,"rebaseErrors":0,"lastRebase":{"from":3600,"to":1800,"speed":2}}
+PASS no hook errors  []
+ALL 18 V2B HOOK TIMELINE CHECKS PASS

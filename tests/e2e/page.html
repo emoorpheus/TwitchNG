@@ -1,0 +1,39 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>sttv-speed e2e</title></head>
+<body style="margin:0;background:#000;color:#fff">
+<video id="sttv_main" style="width:640px;height:360px" playsinline></video>
+<video id="sttv_preview" style="display:none"></video>
+<script src="hls.min.js"></script>
+<script>
+// Minimal fake of webosCompatBridge: same element ids, same Android method semantics, same "unmute main" habit.
+(function () {
+  var mv = document.getElementById('sttv_main'), hls = null;
+  function pickVariant(pl, base) {
+    var lines = String(pl).split(/\r?\n/), want = window.__variant || '360p30', first = null;
+    for (var i = 0; i < lines.length; i++) {
+      var l = lines[i].trim();
+      if (l && l.charAt(0) !== '#') { var u = new URL(l, base).href; if (!first && !/audio_only/.test(u)) first = u; if (u.indexOf('/' + want + '/') > 0) return u; }
+    }
+    return first;
+  }
+  var A = {
+    StartAuto: function (u, pl, t, rs, player) {
+      if (player > 0) return;
+      var uri = pickVariant(pl, u);
+      if (hls) { hls.destroy(); hls = null; }
+      window.__mainUri = uri;
+      if (window.__native) { mv.src = uri; mv.load(); if (rs) mv.currentTime = rs / 1000; }
+      else { hls = new Hls({ startPosition: (rs || 0) / 1000, maxBufferLength: 20 }); hls.loadSource(uri); hls.attachMedia(mv); }
+      var p = mv.play(); if (p && p.catch) p.catch(function () {});
+    },
+    setPlaybackSpeed: function (sp) { var s = parseFloat(sp); if (!isFinite(s) || s <= 0) s = 1; mv.playbackRate = s; },
+    stopVideo: function () { if (hls) hls.destroy(); hls = null; mv.removeAttribute('src'); mv.load(); },
+    mseekTo: function (ms) { mv.currentTime = ms / 1000; }
+  };
+  window.Android = { setPlaybackSpeed: function () {}, early: true };      // early shim, replaced later (like the bridge)
+  setTimeout(function () { window.Android = A; }, 300);
+  setInterval(function () { if (mv.muted) mv.muted = false; mv.volume = 1; }, 500);   // bridge-like applyAudio()
+})();
+</script>
+<script src="sttv-speed.js"></script>
+</body></html>

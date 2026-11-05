@@ -1,0 +1,18 @@
+engine 1.3.4 <1.3.4 kit>/sttv-speed/
+PASS S0 VOD plays natively at 1x from the resume point
+2.8s mark S0 native 1x
+4.8s mark S1 2x
+PASS S1 v2b active at 2x, content 2x {"n":80,"slope":2,"ct0":1014.69,"ct1":1030.49,"minCt":1014.69,"frozenMs":0,"rrMax":1,"rrMin":1,"v2b":"active","mse":true}
+FAIL S1 no native rate write != 1 (before / during the takeover) [{"t":4752.5999999996275,"rate":2,"why":"rate","ct":1003.18,"src":"blob:https://sttv.test/32e93874-6ee0-401"}]
+22.0s mark S2 5 stalls -> fuse -> restore 1x
+FAIL S2 restored native element: no playbackRate != 1 written (report T5/T6: froze at 0.25-2x) [{"t":22213.700000000186,"rate":2,"why":"rate","ct":1036.61,"src":"blob:https://sttv.test/32e93874-6ee0-401"}]
+FAIL S2 native 1x plays on (content slope 1, frozen < 2 s) {"n":140,"slope":0,"ct0":1036.61,"ct1":1036.61,"minCt":1036.61,"frozenMs":13900,"rrMax":0,"rrMin":0,"v2b":"idle","mse":false}
+PASS S2 no jump back, no Play_PannelEndStart, no bridge reload {"pos2":1036.599968,"minCt":1036.61,"end":[],"reloads":0,"jams":0}
+39.0s mark S9 clip 2x
+FAIL S9 clip at 2x: no native write != 1 (report: 2x crawled at 1.08x without sound / 1.5x froze) [{"t":38953.59999999963,"rate":2,"why":"rate","ct":1.09,"src":"https://sttv.test/clip.mp4"}]
+FAIL S9 clip keeps playing at 1x (no freeze, no end) {"w9":{"n":90,"slope":0,"ct0":1.09,"ct1":1.09,"minCt":1.09,"frozenMs":8800,"rrMax":0,"rrMin":0,"v2b":"idle","mse":false},"end":[{"at":48155,"why":"decoder_jam","ct":1.09,"type":3}]}
+PASS page errors 0 []
+v2b status {"cfg":"auto","cfgDefault":"off","maxH":null,"worker":true,"state":"idle","mode":"takeover","speed":2,"speeds":[0.25,0.5,0.75,1.25,1.5,1.75,2],"libs":"hls.js 1.5.20","base":"https://sttv.test/","takeovers":1,"failures":1,"fail":null,"lastError":null,"lastRestore":{"reason":"fail:stalls","at":22019},"want":null,"engageMs":547,"frags":7,"stalls60s":5,"switchStalls":0,"respeeds":0,"coalesced":0,"pending":null,"retries":0,"lastBlock":null,"hold":null,"holds":0,"holdMaxMs":0,"bufferAheadS":null,"level":null,"variant":{"h":720,"bw":2276421,"video":"720p30","from":"element"},"levelInfo":{"frags":5360,"total":53591,"end":53591.201,"live":false},"initPts":72.033,"quality":null,"fetchedMB":18.9,"netErrors":0,"cache":{"n":7,"mb":18.9},"appHls":null,"timeline":{"checks":16,"mismatches":0,"last":{"dur":53591.2,"end":53591.201,"native":26795.6,"speed":2},"hook":{"sessions":1,"rebased":1,"errors":0,"la
+events {"hooked":2,"installed":1,"rate_cap":2,"set_speed":2,"v2b_engage":1,"toast":4,"v2b_libs":1,"net_path":1,"v2b_prefetched":1,"v2b_switch":1,"v2b_active":1,"audio_context":1,"engine_start":1,"base_ref":1,"source_open":1,"engine_ready":1,"pcm_ready":1,"rate_verify":1,"rate_ok":1,"anchor":1,"audio_rendering":1,"v2b_stall":5,"v2b_fail":1,"v2b_restore":1,"engine_stop":1,"v2b_restored":1}
+bridge log tail ["1304 loadedmetadata","37771 loadedmetadata","46955 decoder_jam soft recovery ct=1.09","48155 Play_PannelEndStart decoder_jam ct=1.09"]
+RESULT 1.3.4: 4/9 PASS

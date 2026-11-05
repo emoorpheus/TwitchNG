@@ -1,0 +1,11 @@
+PASS list: the app target is visible
+PASS check: engine 1.3.5, app id, BASE, pre-release 02, TwitchNG 1.0.0 L3 -> exit 0  ["PASS engine 1.3.5","PASS app id com.twitchng.tv","PASS BASE inside com.twitchng.tv","PASS TwitchNG 1.0.0 variant L3","PASS TwitchNG pre-release 02","CHECK OK"]
+PASS check: pre-release 01 expected on a 02 build -> FAIL + exit 4  {"code":4}
+PASS check: wrong expectations -> FAIL lines + exit 4  {"code":4}
+PASS key: down right enter back 5 -> trusted keyCodes 40 39 13 461 53 reach the page  [40,39,13,461,53]
+PASS shot: 1920-wide PNG of the page  [1920,1080]
+PASS watch: samples with app, engine, uiMs, heap, hold, net  {"samples":18,"keys":["at","tvNow","up","app","engine","speed","v2b","ct","paused","rate","uiMs","durMs","hold","holds","holdMaxMs","aheadS","q","lvl","stalls60s","fails","variant","net","restoreNudges","engineRetries","heapMB","ev"]}
+PASS watch: events are streamed once (first sample has the backlog, later ones only new events)  {"firstEv":2}
+PASS watch: survives a page reload (pageReloaded flag / reconnect)  ["connect","reloaded"]
+ALL CDP CLI TESTS PASSED
+exit=0

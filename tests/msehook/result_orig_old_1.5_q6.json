@@ -1,0 +1,38 @@
+{
+ "hook": "orig",
+ "handler": "old",
+ "speed": 1.5,
+ "quota": 6,
+ "quotaThrows": 275,
+ "contentRate_4_12s": 124.904,
+ "contentRate_19_27s": 0,
+ "posAfter": 0,
+ "paused": true,
+ "readyState": 0,
+ "loadstart": 276,
+ "hlsErrors": {
+  "mediaError/bufferFullError": 274
+ },
+ "playRejects": 7,
+ "playReject0": "AbortError: The play() request was interrupted by a new load request. https://goo.",
+ "speedErrors": [
+  "emulated TV quota"
+ ],
+ "reloadsTo1x": 1,
+ "engines": 1,
+ "finalSpeed": 1,
+ "audio": {
+  "cfg": {
+   "codec": "mp4a.40.5",
+   "sampleRate": 48000,
+   "ch": 2
+  },
+  "out": {
+   "sampleRate": 48000,
+   "frames": 1024,
+   "durUs": 21333
+  }
+ },
+ "drift_ms": null,
+ "logs": []
+}

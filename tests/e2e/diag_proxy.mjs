@@ -1,0 +1,24 @@
+import { chromium } from 'playwright';
+import fs from 'node:fs';
+import { KIT, TD } from '../_paths.mjs';
+const DIR = KIT + 'tests/e2e/';
+const browser = await chromium.launch({ executablePath: '/usr/local/bin/chromium', headless: true, args: ['--autoplay-policy=no-user-gesture-required', '--no-sandbox'] });
+const ctx = await browser.newContext();
+await ctx.route('https://sttv.test/**', route => {
+  const f = DIR + new URL(route.request().url()).pathname.slice(1);
+  if (!fs.existsSync(f)) return route.fulfill({ status: 404, body: 'nf' });
+  route.fulfill({ status: 200, body: fs.readFileSync(f), contentType: f.endsWith('.html') ? 'text/html' : 'application/javascript' });
+});
+await ctx.addInitScript(() => { window.__native = true; localStorage.setItem('STTV_SPEED_PROXY', 'http://127.0.0.1:8787/'); });
+const page = await ctx.newPage();
+page.on('console', m => { const t = m.text(); if (!/sttv-speed\] (tick|anchor)/.test(t)) console.log('console:', t.slice(0, 600)); });
+page.on('requestfailed', r => console.log('reqfailed', r.url().slice(0, 100), r.failure() && r.failure().errorText));
+await page.goto('https://sttv.test/page.html');
+await page.waitForFunction(() => window.Android && window.Android.StartAuto && !window.Android.early, null, { timeout: 15000 });
+const master = fs.readFileSync(TD + 'master.m3u8', 'utf8');
+await page.evaluate(([u, pl]) => window.Android.StartAuto(u, pl, 2, 1000000, 0), ['https://usher.ttvnw.net/vod/2915888911.m3u8', master]);
+await page.waitForFunction(() => { const v = document.getElementById('sttv_main'); return v.currentTime > 1001 && !v.paused; }, null, { timeout: 45000 });
+await page.evaluate(() => window.Android.setPlaybackSpeed(1.5));
+await new Promise(r => setTimeout(r, 8000));
+console.log(JSON.stringify(await page.evaluate(() => ({ ev: STTVSpeed.events(30).map(e => e.type + ' ' + JSON.stringify(e.data || '').slice(0, 160)), net: STTVSpeed.status().net })), null, 1));
+await page.close(); await browser.close(); process.exit(0);

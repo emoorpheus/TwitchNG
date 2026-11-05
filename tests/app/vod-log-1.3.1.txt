@@ -1,0 +1,39 @@
+ipk com.tbsniller.smarttwitchwebostv.speed_1.3.1_all.ipk app com.tbsniller.smarttwitchwebostv.speed ref duration 53591.201 s
+0.0s StartAuto VOD @1000 s
+PASS native 1x: UI duration (getDuration + getVideoStatus) = 53591.201 s  {"getDuration":53591201,"status":53591201,"ratio":1}
+PASS native 1x: UI position (gettime) = video.currentTime  {"gettime":1003246,"ct":1003.24669}
+3.5s speed 2
+FAIL v2b 2x: UI duration (getDuration + getVideoStatus) = 53591.201 s  {"getDuration":107182402,"status":107182402,"ratio":2}
+PASS v2b 2x: UI position (gettime) = video.currentTime  {"gettime":1029901,"ct":1029.90192}
+PASS v2b 2x: UI position advances 2 s per second (content time)  {"slope":2.003}
+19.8s seek +60 s
+FAIL v2b 2x after seek +60: UI duration (getDuration + getVideoStatus) = 53591.201 s  {"getDuration":107182402,"status":107182402,"ratio":2}
+PASS v2b 2x after seek +60: UI position (gettime) = video.currentTime  {"gettime":1096276,"ct":1096.27623}
+PASS seek +60 s lands +60 s in content time  {"delta":66367}
+23.1s speed 1.5
+FAIL v2b 1.5x: UI duration (getDuration + getVideoStatus) = 53591.201 s  {"getDuration":80386801,"status":80386801,"ratio":1.5}
+PASS v2b 1.5x: UI position (gettime) = video.currentTime  {"gettime":1106224,"ct":1106.2241355}
+29.8s speed 1
+PASS native 1x restored: UI duration (getDuration + getVideoStatus) = 53591.201 s  {"getDuration":53591201,"status":53591201,"ratio":1}
+PASS native 1x restored: UI position (gettime) = video.currentTime  {"gettime":1109287,"ct":1109.28764}
+33.1s speed 2 (cached caps)
+FAIL v2b 2x again: UI duration (getDuration + getVideoStatus) = 53591.201 s  {"getDuration":107182402,"status":107182402,"ratio":2}
+PASS v2b 2x again: UI position (gettime) = video.currentTime  {"gettime":1116001,"ct":1116.001852}
+36.6s seek past the end
+PASS seek past the end: the bridge clamps to the last second  {"gettime":53591233,"refMs":53591201}
+PASS VOD end: 'ended', UI position = UI duration = total  {"gettime":53591233,"getDuration":53591233,"ended":true}
+FAIL engine self-check: no v2b_timeline_mismatch  {}
+PASS every Play_UpdateDuration call carried the real duration  [53591201]
+PASS no v2b failures, no page errors  {"v2b_fail":0,"errors":[]}
+┌─────────┬─────────────────────────┬─────┬──────────────┬────────────┬──────────┬─────────┬──────────┬───────┬───────┐
+│ (index) │ phase                   │ S   │ getDurationS │ statusDurS │ gettimeS │ ct      │ v2b      │ durOk │ posOk │
+├─────────┼─────────────────────────┼─────┼──────────────┼────────────┼──────────┼─────────┼──────────┼───────┼───────┤
+│ 0       │ 'native 1x'             │ 1   │ 53591.201    │ 53591.201  │ 1003.246 │ 1003.25 │ 'idle'   │ true  │ true  │
+│ 1       │ 'v2b 2x'                │ 2   │ 107182.402   │ 107182.402 │ 1029.901 │ 1029.9  │ 'active' │ false │ true  │
+│ 2       │ 'v2b 2x after seek +60' │ 2   │ 107182.402   │ 107182.402 │ 1096.276 │ 1096.28 │ 'active' │ false │ true  │
+│ 3       │ 'v2b 1.5x'              │ 1.5 │ 80386.801    │ 80386.801  │ 1106.224 │ 1106.22 │ 'active' │ false │ true  │
+│ 4       │ 'native 1x restored'    │ 1   │ 53591.201    │ 53591.201  │ 1109.287 │ 1109.29 │ 'idle'   │ true  │ true  │
+│ 5       │ 'v2b 2x again'          │ 2   │ 107182.402   │ 107182.402 │ 1116.001 │ 1116    │ 'active' │ false │ true  │
+└─────────┴─────────────────────────┴─────┴──────────────┴────────────┴──────────┴─────────┴──────────┴───────┴───────┘
+events {"hooked":1,"installed":1,"set_speed":4,"audio_context":3,"engine_start":3,"net_path":1,"source_open":3,"base_ref":3,"engine_ready":3,"pcm_ready":3,"rate_verify":3,"rate_strike":2,"rate_cap":3,"engine_fail":1,"engine_stop":2,"v2b_engage":2,"toast":5,"v2b_libs":1,"v2b_prefetched":2,"v2b_switch":3,"v2b_active":3,"audio_context_closed":2,"rate_ok":2,"anchor":4,"audio_rendering":2,"unanchor":3,"v2b_rate_request":2,"v2b_respeed":1,"engine_speed":1,"v2b_restore":1,"v2b_restored":1}
+5 FAILED

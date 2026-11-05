@@ -1,0 +1,379 @@
+diff --git a/src/speed/containers.js b/src/speed/containers.js
+index e09cc42..76f2d0c 100644
+--- a/src/speed/containers.js
++++ b/src/speed/containers.js
+@@ -83,6 +83,47 @@ function dfs(u8, start, end, target) {
+   return null;
+ }
+ 
++// Every box of a type, in file order (dfs() stops at the first one).
++function dfsAll(u8, start, end, target, out = []) {
++  const boxes = parseBoxes(u8, start, end);
++  for (const box of boxes) {
++    if (box.type === target) {
++      out.push(box);
++    } else if (
++      ['moov', 'trak', 'mdia', 'minf', 'stbl', 'mvex', 'moof', 'traf'].includes(
++        box.type
++      ) &&
++      !box.truncated
++    ) {
++      dfsAll(u8, box.start + box.headerSize, box.end, target, out);
++    }
++  }
++  return out;
++}
++
++// mvhd and mdhd share the layout up to the timescale: FullBox header, then
++// creation/modification times of 4 (version 0) or 8 (version 1) bytes each.
++function timescaleOffset(view, box) {
++  const version = view.getUint8(box.start + box.headerSize);
++  return box.start + box.headerSize + 4 + (version === 1 ? 16 : 8);
++}
++
++// Handler types of all tracks of an init segment ('vide', 'soun', 'text', ...).
++export function trackHandlers(u8) {
++  const view = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
++  return dfsAll(u8, 0, u8.length, 'hdlr')
++    .filter((b) => !b.truncated && b.end - b.start >= b.headerSize + 12)
++    .map((b) => {
++      const p = b.start + b.headerSize + 8; // FullBox header + pre_defined
++      return String.fromCharCode(
++        view.getUint8(p),
++        view.getUint8(p + 1),
++        view.getUint8(p + 2),
++        view.getUint8(p + 3)
++      );
++    });
++}
++
+ export function findMdhdTimescale(u8) {
+   const mdhd = dfs(u8, 0, u8.length, 'mdhd');
+   if (!mdhd || mdhd.truncated) return null;
+@@ -98,19 +139,45 @@ export function findMdhdTimescale(u8) {
+   return { offset, version, timescale };
+ }
+ 
++// Scales EVERY track's mdhd timescale, and the movie timescale (mvhd), by the
++// same factor. Rewriting only the first mdhd (as before) left any other track
++// of the init (the audio of a muxed A/V init, a metadata/text track that comes
++// first) on the original timeline: the tracks of one SourceBuffer then
++// disagree by a factor S, its buffered ranges (the intersection of the tracks)
++// shrink to nothing away from t=0, the player stalls and recovers in a loop.
++// The mvhd timescale keeps mvhd/tkhd/mehd durations and elst segment
++// durations (all in movie units) consistent; tfdt/trun/elst media_time are in
++// mdhd units and follow the track automatically.
+ export function rewriteInitTimescale(u8, speed) {
+-  const ts = findMdhdTimescale(u8);
+-  if (!ts) throw new RangeError('mdhd not found');
+-  const scaled = Math.round(ts.timescale * speed);
+   const data = new Uint8Array(u8);
+   const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
+-  view.setUint32(ts.offset, scaled);
++  const mdhds = dfsAll(data, 0, data.length, 'mdhd');
++  if (mdhds.length === 0 || mdhds.some((b) => b.truncated)) {
++    throw new RangeError('mdhd not found');
++  }
++  let relativeError = 0;
++  const scaleAt = (box, what) => {
++    const offset = timescaleOffset(view, box);
++    const original = view.getUint32(offset);
++    const exact = original * speed;
++    const scaled = Math.round(exact);
++    if (!original || scaled < 1 || scaled > 0xffffffff) {
++      throw new RangeError(`${what} timescale ${original} cannot be scaled`);
++    }
++    view.setUint32(offset, scaled);
++    relativeError = Math.max(relativeError, Math.abs(scaled - exact) / exact);
++    return { original, scaled };
++  };
++  const tracks = mdhds.map((b) => scaleAt(b, 'mdhd'));
++  const mvhd = dfs(data, 0, data.length, 'mvhd');
++  const movie = mvhd && !mvhd.truncated ? scaleAt(mvhd, 'mvhd') : null;
+   return {
+     data,
+-    original: ts.timescale,
+-    scaled,
+-    relativeError:
+-      Math.abs(scaled - ts.timescale * speed) / (ts.timescale * speed)
++    original: tracks[0].original,
++    scaled: tracks[0].scaled,
++    tracks,
++    movie,
++    relativeError
+   };
+ }
+ 
+diff --git a/src/speed/mse-hook.js b/src/speed/mse-hook.js
+index 54528ed..6aecabb 100644
+--- a/src/speed/mse-hook.js
++++ b/src/speed/mse-hook.js
+@@ -10,7 +10,8 @@ import {
+   findTimecodeScale,
+   audioConfigFromWebmInit,
+   demuxClusters,
+-  parseElements
++  parseElements,
++  trackHandlers
+ } from './containers.js';
+ 
+ export const SUPPORTED_SPEEDS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+@@ -19,6 +20,42 @@ export function isSupportedSpeed(speed) {
+   return SUPPORTED_SPEEDS.includes(speed);
+ }
+ 
++// A video/* type whose codecs also name an audio codec: one SourceBuffer for
++// both tracks (hls.js uses one 'audiovideo' buffer for muxed fMP4). Its audio
++// cannot go through the fake audio SourceBuffer, and a natively decoded audio
++// track on a timeline scaled by S plays at the wrong rate and drifts.
++export function isMuxedAudioVideo(mime) {
++  if (!/^\s*video\//i.test(mime)) return false;
++  const m = /codecs\s*=\s*"?([^";]*)/i.exec(mime);
++  if (!m) return false;
++  return m[1]
++    .split(',')
++    .some((c) => /^(mp4a|opus|ac-3|ec-3|ac-4|flac|vorbis|mp3|dts)/i.test(c.trim()));
++}
++
++function domError(name, message) {
++  const err = new Error(message || name);
++  err.name = name;
++  return err;
++}
++
++// Decoder configs as produced by audioConfigFromInit/audioConfigFromWebmInit.
++function sameAudioConfig(a, b) {
++  if (!a || !b) return false;
++  if (
++    a.codec !== b.codec ||
++    a.sampleRate !== b.sampleRate ||
++    a.numberOfChannels !== b.numberOfChannels
++  )
++    return false;
++  const da = a.description ? new Uint8Array(a.description) : null;
++  const db = b.description ? new Uint8Array(b.description) : null;
++  if (!da || !db) return da === db;
++  if (da.length !== db.length) return false;
++  for (let i = 0; i < da.length; i++) if (da[i] !== db[i]) return false;
++  return true;
++}
++
+ export class SpeedTimeMap {
+     constructor(speed) {
+     this._speed = 1;
+@@ -164,6 +201,7 @@ export function installMseHook(
+   { getSpeed, createAudioSink, onRateRequest, onError, onNativeAudio }
+ ) {
+   const origAddSourceBuffer = win.MediaSource.prototype.addSourceBuffer;
++  const origRemoveSourceBuffer = win.MediaSource.prototype.removeSourceBuffer;
+   const origCreateObjectURL = win.URL.createObjectURL;
+   const origSrcDesc = Object.getOwnPropertyDescriptor(
+     win.HTMLMediaElement.prototype,
+@@ -216,7 +254,14 @@ export function installMseHook(
+ 
+   win.MediaSource.prototype.addSourceBuffer = function (mime) {
+     if (!decided.has(this)) {
+-      decided.set(this, getSpeed());
++      let speed = getSpeed();
++      if (speed !== 1.0 && isMuxedAudioVideo(mime)) {
++        // Muxed audio+video: play this MediaSource at 1x (and say so) rather
++        // than build a timeline that its native audio track cannot follow.
++        speed = 1.0;
++        if (onError) onError(new Error(`muxed audio/video SourceBuffer: ${mime}`));
++      }
++      decided.set(this, speed);
+       // A MediaSource at 1x plays the native audio: whatever engine the previous
+       // one had must stop now, or both are heard.
+       if (decided.get(this) === 1.0 && onNativeAudio) onNativeAudio();
+@@ -262,6 +307,22 @@ export function installMseHook(
+     }
+   };
+ 
++  // The fake audio buffer is listed in ms.sourceBuffers, so players hand it
++  // back here (hls.js on detach/recoverMediaError, YouTube on format change).
++  // The native method throws a TypeError for it, and its engine kept running.
++  win.MediaSource.prototype.removeSourceBuffer = function (sb) {
++    if (sb instanceof FakeAudioSourceBuffer) {
++      const session = sessions.get(this);
++      if (!session || session.audio !== sb) {
++        throw domError('NotFoundError', 'SourceBuffer is not in this MediaSource');
++      }
++      session.audio = null;
++      sb._detach();
++      return undefined;
++    }
++    return origRemoveSourceBuffer.call(this, sb);
++  };
++
+   function patchMediaSource(ms, session) {
+     let origDurationDesc = Object.getOwnPropertyDescriptor(ms, 'duration');
+     if (!origDurationDesc) {
+@@ -341,8 +402,15 @@ export function installMseHook(
+     const isWebm = mime.includes('webm');
+ 
+     sb.appendBuffer = function (data) {
+-      const u8 = new Uint8Array(data);
++      // Only the rewrite may fail here. The native append runs exactly once,
++      // outside the try: its own errors (QuotaExceededError when the buffer is
++      // full, InvalidStateError) belong to the player, which handles them. They
++      // used to be caught, reported as a speed failure (fallback to 1x and a
++      // reload) and then the same data was appended a second time.
++      let toAppend = data;
++      let problem = null;
+       try {
++        const u8 = new Uint8Array(data);
+         let isInit = false;
+         if (isMp4) {
+           const type = classifyMp4(u8);
+@@ -353,25 +421,25 @@ export function installMseHook(
+         }
+ 
+         if (isInit) {
+-          let modified = new Uint8Array(u8);
+           if (isMp4) {
+-            modified = rewriteInitTimescale(modified, speed).data;
++            toAppend = rewriteInitTimescale(u8, speed).data;
++            if (trackHandlers(u8).includes('soun')) {
++              problem = new Error('audio track inside the video SourceBuffer');
++            }
+           } else if (isWebm) {
+-            modified = rewriteTimecodeScale(modified, speed).data;
++            toAppend = rewriteTimecodeScale(new Uint8Array(u8), speed).data;
+           }
+-          origAppendBuffer.call(this, modified.buffer || modified);
+-        } else {
+-          if (looksLikeInitStart(u8)) {
+-            // An init we cannot see whole cannot be rewritten: the video would
+-            // play at 1x while the audio is stretched. Say so; B2 falls back to 1x.
+-            throw new Error('init segment split across appends');
+-          }
+-          origAppendBuffer.call(this, data);
++        } else if (looksLikeInitStart(u8)) {
++          // An init we cannot see whole cannot be rewritten: the video would
++          // play at 1x while the audio is stretched. Say so; B2 falls back to 1x.
++          problem = new Error('init segment split across appends');
+         }
+       } catch (e) {
+-        if (onError) onError(e);
+-        origAppendBuffer.call(this, data);
++        problem = e;
++        toAppend = data;
+       }
++      if (problem && onError) onError(problem);
++      return origAppendBuffer.call(this, toAppend);
+     };
+ 
+     sb.remove = function (start, end) {
+@@ -426,6 +494,7 @@ export function installMseHook(
+ 
+   function uninstall() {
+     win.MediaSource.prototype.addSourceBuffer = origAddSourceBuffer;
++    win.MediaSource.prototype.removeSourceBuffer = origRemoveSourceBuffer;
+     win.URL.createObjectURL = origCreateObjectURL;
+     if (origSrcDesc) {
+       Object.defineProperty(win.HTMLMediaElement.prototype, 'src', origSrcDesc);
+@@ -450,6 +519,8 @@ export function installMseHook(
+       this.rest = new Uint8Array(0);
+       this.initInfo = null;
+       this.bufferedRanges = [];
++      this.removed = false;
++      this.lastCfg = null;
+ 
+       this.onupdateend = null;
+       this.onerror = null;
+@@ -502,6 +573,9 @@ export function installMseHook(
+     }
+ 
+     appendBuffer(data) {
++      if (this.removed) {
++        throw domError('InvalidStateError', 'SourceBuffer has been removed');
++      }
+       if (this.updating) {
+         const err = new Error('InvalidStateError');
+         err.name = 'InvalidStateError';
+@@ -530,7 +604,7 @@ export function installMseHook(
+               err.name = 'NotSupportedError';
+               throw err;
+             }
+-            this.sink.configure(cfg);
++            this._configure(cfg);
+             this.initInfo = parseInitInfo(u8);
+             if (type === 'init+media') {
+               const res = demuxFragments(u8, this.initInfo);
+@@ -586,7 +660,7 @@ export function installMseHook(
+               err.name = 'NotSupportedError';
+               throw err;
+             }
+-            this.sink.configure(cfg);
++            this._configure(cfg);
+             const tcScaleObj = findTimecodeScale(u8);
+             this.initInfo = {
+               timecodeScale: tcScaleObj ? tcScaleObj.value : 1000000,
+@@ -675,6 +749,20 @@ export function installMseHook(
+       this._finishLater();
+     }
+ 
++    // Every init goes through here. Same decoder config (the usual case, also
++    // after changeType() between renditions): nothing is dropped. A different
++    // one: the frames queued for the old decoder cannot be decoded by the new
++    // one, so the sink drops them, and `buffered` drops them too, so that the
++    // player fetches that range again instead of trusting audio that is gone.
++    _configure(cfg) {
++      if (this.lastCfg && !sameAudioConfig(this.lastCfg, cfg)) {
++        this.sink.reset();
++        this.bufferedRanges = [];
++      }
++      this.lastCfg = cfg;
++      this.sink.configure(cfg);
++    }
++
+     _finishLater() {
+       // Real SourceBuffers end an update asynchronously; an abort() in between
+       // ends it right away, and this late callback must then do nothing.
+@@ -690,6 +778,9 @@ export function installMseHook(
+     }
+ 
+     remove(start, end) {
++      if (this.removed) {
++        throw domError('InvalidStateError', 'SourceBuffer has been removed');
++      }
+       if (this.updating) {
+         const err = new Error('InvalidStateError');
+         err.name = 'InvalidStateError';
+@@ -732,12 +823,34 @@ export function installMseHook(
+     }
+ 
+     changeType(type) {
++      if (this.removed || this.updating) {
++        throw domError('InvalidStateError', 'changeType() not allowed now');
++      }
++      if (typeof type !== 'string' || type === '') {
++        throw new TypeError('changeType() needs a MIME type');
++      }
++      const wasMp4 = this.isMp4;
+       this.mime = type;
+       this.isMp4 = type.includes('mp4');
+       this.isWebm = type.includes('webm');
++      // MSE keeps every buffered frame across changeType() and only resets the
++      // parser: the next append starts with an init segment. This used to reset
++      // the sink too: the decoded and queued audio vanished while `buffered`
++      // still listed it, so the player never fetched it again -> silence and
++      // re-anchoring until the playhead left the stale range. The sink is now
++      // only reset by _configure(), if the next init really changes the codec.
+       this.rest = new Uint8Array(0);
+-      this.initInfo = null;
+-      this.sink.reset();
++      if (this.isMp4 !== wasMp4) this.initInfo = null;
++    }
++
++    // MediaSource.removeSourceBuffer(): stop the engine of this buffer.
++    _detach() {
++      this.abort();
++      this.removed = true;
++      this.bufferedRanges = [];
++      this.rest = new Uint8Array(0);
++      if (typeof this.sink.destroy === 'function') this.sink.destroy();
++      else this.sink.reset();
+     }
+   }
+   return { uninstall };

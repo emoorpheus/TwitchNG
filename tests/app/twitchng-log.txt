@@ -1,0 +1,47 @@
+PASS appinfo: title Twitch NG, vendor, iconColor #9146FF, version 1.0.0 (own version line)  {"id":"com.twitchng.tv","title":"Twitch NG","version":"1.0.0"}
+PASS appinfo description names only this app  "Twitch NG 1.0.0 (pre-release 02) - unofficial client for Twitch on LG webOS, pitch-preserving VOD speed"
+PASS appinfo description carries the pre-release number from twitchng.js (PRE_N)  "Twitch NG 1.0.0 (pre-release 02) - unofficial client for Twitch on LG webOS, pitch-preserving VOD speed"
+PASS LG appinfo spec: icon 80x80, largeIcon 130x130, splash 1920x1080  {"icon":[80,80],"large":[130,130],"splash":[1920,1080]}
+PASS icon background = Twitch purple  [145,70,255]
+PASS index.html: twitchng.css in head, sttv-speed < twitchng.js < main.js, title Twitch NG  {"iLink":928,"iDiv":37284,"iSp":102629,"iNg":102702,"iMain":102797}
+PASS twitchng.js + twitchng.css shipped
+PASS index.html: no Firebase / Google Analytics tags, no preconnect to the original site; twitchng.js 1.0.0 tag with name + variant
+PASS main.js: About / What's new / update check / settings / sign-in help / empty image / proxy link / icon-font fallback patched once each  []
+PASS local empty-screen image shipped, donation images dropped
+PASS main.js speed menu: 0.25 0.5 0.75 1 1.25 1.5 2, default index -> 1x  {"vals":[0.25,0.5,0.75,1,1.25,1.5,2],"def":"3"}
+PASS main.js speed menu only in VOD + clips (live / PP / multi: off)  ["!1","!0","!0","!1","!1"]
+PASS main.js brand strings -> Twitch NG (en/fr/es/pt/ru/uk/tr)  {"left":[],"ng":12}
+PASS main.js default focus style: purple border + watched bar
+PASS TwitchNG API: 1.0.0 pre-release 02, variant L3 (default icon), OLED preset on by default, css + logo  {"name":"Twitch NG","version":"1.0.0","preRelease":true,"preReleaseN":"02","variant":"L3","lang":"en","engine":"1.3.5","oled":true,"classic":false,"intro":1,"about":1,"news":2,"auth":1,"logo":true,"css":true,"platform":"OLED65M59LA · webOS 10.3.0 · firmware 33.30.97 · Chromium 120","sys":{"model":"OLED65M59LA","sdk":"10.3.0","fw":"33.30.97"}}
+PASS STTVSpeed.status().app = this app 1.0.0  {"id":"com.twitchng.tv","name":"Twitch NG","version":"1.0.0"}
+PASS document.title  "Twitch NG"
+PASS first run: minimal Twitch NG intro (L3 TV logo, no Glitch, 1.0.0 pre-release, no names of the original projects, true black)  {"text":"Unofficial Twitch client for LG webOS OKContinue Twitch NG 1.0.0 · pre-release 02 · not affiliated with Twitch Interactive","logo":true,"glitch":false,"old":false}
+light (pictures hidden): classic -> OLED
+  intro     meanY 3.04 -> 3.04  lit 1.96% -> 1.96%  (0% less light)
+PASS OK closes the intro (app handler unchanged)
+  home      meanY 8.02 -> 7.56  lit 4.15% -> 4.08%  (5.7% less light)
+  side      meanY 7.41 -> 6.96  lit 4% -> 3.67%  (6.1% less light)
+PASS exit dialog names Twitch NG  {"item":{"i":13,"text":"Exit"},"text":"Are you sure you want to exit Twitch NG?"}
+  exit      meanY 5.32 -> 1.51  lit 4.08% -> 0.72%  (71.6% less light)
+PASS About: Twitch NG 1.0.0 pre-release 02, engine, device (webOS 10.3.0 + firmware 33.30.97 from getSystemInfo, report T3), run time, GPL + no-warranty notice  "Version 1.0.0 · pre-release 02 · speed engine 1.3.5 Live streams, videos, clips and chat on LG TVs. Pitch-preserving 0.25–2× speed for videos (for clips where the TV itself applies it), OLED theme with true black. OLED65M59LA · webOS 10.3.0 · firmware 33.30.97 · Chromium 120 App running for: 0m Twitch NG is free software under the GNU GPL v3.0 and comes with absolutely no warranty; you may redistr"
+PASS About: no contact e-mail, donation, phone/tablet, upstream links or APK info  []
+  about     meanY 13.44 -> 3.88  lit 5% -> 3.04%  (71.1% less light)
+PASS side menu "What's new" -> this app's notes, no update / changelog buttons  {"side14":"What's new","item":{"i":14,"text":"What's new"},"news":{"up":true,"ng":true,"text":"What's new — Twitch NG 1.0.0 (pre-release 02) On webOS 25 a video no longer freezes or restarts from 00:00 after going back to 1×, a quality change or a speed-u","up_btn":false,"change_btn":false}}
+  news      meanY 12.68 -> 5.66  lit 5.38% -> 3.5%  (55.4% less light)
+PASS Back closes What's new
+  settings  meanY 16.95 -> 14.52  lit 13.11% -> 7.49%  (14.3% less light)
+PASS Settings: no "Updates" section (neighbours still there)  {"upd":false,"warn":true,"ui":true}
+PASS side menu: Exit / About / Settings reached by focus walk  {"exit":{"i":13,"text":"Exit"},"about":{"i":11,"text":"About"},"settings":{"i":10,"text":"Settings"}}
+PASS OLED: dialog backdrops + panels true black (exit, about)  {"exitBg":["rgb(0, 0, 0)","rgb(0, 0, 0)"],"aboutBg":["rgb(0, 0, 0)","rgb(0, 0, 0)"]}
+PASS OLED: settings screen focus = purple lines / faint glow, no grey fill  {"up":true,"focus":true,"id":"app_lang_div","bg":"linear-gradient(to right, rgba(145, 70, 255, 0) 5%, rgba(145, 70, 255,","fill":"rgba(0, 0, 0, 0)"}
+PASS OLED never brighter than classic on any screen  ["intro 0%","home 5.7%","side 6.1%","exit 71.6%","about 71.1%","news 55.4%","settings 14.3%"]
+PASS OLED: exit -30%, about -15%, settings -10% light at least  {"exit":71.6,"about":71.1,"settings":14.3}
+PASS TwitchNG.oled(false) persists TWITCHNG_OLED=0 (classic), oled(null) -> default  ["0",true,null,false]
+PASS sign-in help without a source URL: the "read this link" sentence is dropped (en, pt spacing)  {"en":"Adding a key is not demanding.<br><br>For some devices, a mouse is necessary.","pt":"mais tarde <br><br> Para alguns dispositivos"}
+PASS app language ru_RU -> Russian About / What's new  {"lang":"ru","label":"Что нового","about":true,"news":true}
+PASS network: no request to the original project site, Firebase or Google Analytics  {"requests":79,"bad":[]}
+PASS no page errors  []
+screenshots /tmp/ng-app/shots
+
+ALL TWITCHNG CHECKS PASSED
+exit=0

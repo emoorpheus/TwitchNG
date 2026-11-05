@@ -1,0 +1,215 @@
+{
+  "kit": "1.3.4",
+  "builtAt": "2026-11-02T14:23:18.376Z",
+  "node": "v24.22.1",
+  "base": {
+    "source": "local checkout (--repo)",
+    "ref": null,
+    "commit": "439860b950216cb8e6a92baa803bfb3c8b261f16",
+    "tags": [
+      "dev-6",
+      "dev-7",
+      "v1.1.0"
+    ],
+    "dirty": false,
+    "app": {
+      "id": "com.tbsniller.smarttwitchwebostv",
+      "version": "1.1.0",
+      "title": "SmartTwitchTV"
+    },
+    "upstreamWeb": {
+      "WebVersion": "January 27 2026",
+      "WebTag": 727
+    },
+    "bridgeSha256": "4ac896dd4fbaa499ba408ba97f552885ab1d71faf0b9fa371e1e45958edaa43e"
+  },
+  "app": {
+    "id": "com.twitchng.tv",
+    "version": "1.0.0",
+    "title": "Twitch NG",
+    "mode": "local",
+    "target": "release/index.html",
+    "serviceId": "com.twitchng.tv.hls",
+    "v2bDefault": "auto",
+    "brand": "twitchng",
+    "engine": "1.3.4"
+  },
+  "brand": {
+    "name": "twitchng",
+    "icon": "A",
+    "sourceUrl": null,
+    "tags": {
+      "link": "<link rel=\"stylesheet\" href=\"githubio/css/twitchng.css?v=1.0.0\">",
+      "script": "<script src=\"githubio/js/twitchng.js?v=1.0.0\" data-name=\"Twitch NG\" data-variant=\"A\"></script>"
+    },
+    "mainPatches": [
+      {
+        "what": "speed menu: VOD + clips only (no speed in live / PP / multi on this TV)",
+        "n": 1
+      },
+      {
+        "what": "speed menu: 0.25 0.5 0.75 1 1.25 1.5 2 (1x stays index 3 = defaultValue / Play_CurrentSpeed reset)",
+        "n": 1
+      },
+      {
+        "what": "app name en (exit dialog)",
+        "n": 1
+      },
+      {
+        "what": "app name en/fr",
+        "n": 2
+      },
+      {
+        "what": "app name es (exit dialog)",
+        "n": 1
+      },
+      {
+        "what": "app name es/pt",
+        "n": 3
+      },
+      {
+        "what": "app name ru/uk",
+        "n": 3
+      },
+      {
+        "what": "app name tr (exit dialog)",
+        "n": 1
+      },
+      {
+        "what": "app name tr",
+        "n": 1
+      },
+      {
+        "what": "default focus style: purple border + watched bar (Settings > style \"Default\")",
+        "n": 1
+      },
+      {
+        "what": "About: this app (TwitchNG.aboutHtml: version, platform, run time, license + no-warranty notice)",
+        "n": 1
+      },
+      {
+        "what": "update dialog: What's new of this app instead of the original version / changelog",
+        "n": 1
+      },
+      {
+        "what": "changelog view: What's new of this app",
+        "n": 1
+      },
+      {
+        "what": "side menu: \"What's new\" instead of \"Updates & Changelog\"",
+        "n": 1
+      },
+      {
+        "what": "no update check (update dialog button)",
+        "n": 1
+      },
+      {
+        "what": "settings: no \"Updates\" section",
+        "n": 1
+      },
+      {
+        "what": "sign-in help: this app's source link (--source-url) or none",
+        "n": 1
+      },
+      {
+        "what": "empty-screen banner image: local file (was loaded from the original project site)",
+        "n": 1
+      },
+      {
+        "what": "proxy info: TTV LOL home page instead of its donation page",
+        "n": 1
+      },
+      {
+        "what": "icon-font check fallback: reload the local stylesheet (was the copy on the original project site)",
+        "n": 1
+      }
+    ],
+    "indexDropped": [
+      {
+        "what": "Firebase + Google Analytics tags",
+        "n": 3
+      },
+      {
+        "what": "dns-prefetch / preconnect to the original project site",
+        "n": 2
+      }
+    ],
+    "pruned": [
+      {
+        "path": "githubio/images/bitcoin.png",
+        "bytes": 7158
+      },
+      {
+        "path": "githubio/images/paypal.png",
+        "bytes": 7181
+      }
+    ],
+    "mainSha256": "2dd05d746fd7fed613cc4a56e8c26d2d94323b3b80cf68a1943313ea8e346269",
+    "files": {
+      "web/twitchng.js": "0e2dd6f37468c1ef97489fe82f3ab07961cff3ea014a625b617b2e627e03c8d8",
+      "web/twitchng.css": "c1ad35ac8e4625e83b63cc2330b46984821a376e6abe6673b630111fef9b5d77",
+      "variants/A/icon-80.png": "7aa18114f878c36230b612e462a5ed065229625792078bc8b702397843f73eec",
+      "variants/A/icon-130.png": "c43829b28d9bbe5e0138801a82b7438affa7b3f30d30a84057498ed31db999e7",
+      "variants/A/splash.png": "3f0aed642583ffccf2a138505d97c59a7e0d35e0abb00c1e2a3d312ed3749b43",
+      "variants/A/empty.png": "71612b9254628ffa5e8a5e75d366d24ed520994e52c641e9defbff68bad17f65"
+    }
+  },
+  "injected": {
+    "tag": "<script src=\"githubio/js/sttv-speed.js?v=1.3.4\" data-v2b=\"auto\"></script>",
+    "hook": "try { require('./sttv_media_fetch').hookService(require('webos-service')); } catch (e) {} // sttv-speed",
+    "files": {
+      "sttv-speed.js": "d0f525b6ab6517e0a9e312fb00e722a4eb03ba0ce9ee7a4b33dcfad2d2acfc13",
+      "sttv-v2b.js": "d6caa0c76ab7a3263a5b59fb349f55ef0f4536b8ac2976dbfcc05d3f112c53d6",
+      "sttv-hls.min.js": "3d33d81345427a0798272652ccd4c18e19823f3e00cc22ec3b88a80bfb3f4cbf",
+      "sttv_media_fetch.js": "b2796ab4dc94408740dddf6813eb607861317e62a17080085b04f7b358eacf8d"
+    }
+  },
+  "pruned": [
+    {
+      "path": "githubio/temp",
+      "bytes": 31075109
+    },
+    {
+      "path": "scripts",
+      "bytes": 35381
+    },
+    {
+      "path": "githubio/js/main_uncompressed.js",
+      "bytes": 2400382
+    },
+    {
+      "path": "githubio/images/banner_store.xcf",
+      "bytes": 2418905
+    },
+    {
+      "path": "githubio/images/icon.xcf",
+      "bytes": 239252
+    },
+    {
+      "path": "githubio/images/icon_512.xcf",
+      "bytes": 180524
+    },
+    {
+      "path": "githubio/images/icon_black.xcf",
+      "bytes": 253446
+    },
+    {
+      "path": "githubio/images/icon_black_round_corner.xcf",
+      "bytes": 371382
+    },
+    {
+      "path": "githubio/images/icon_circle.xcf",
+      "bytes": 1330286
+    }
+  ],
+  "license": "GPL-3.0-or-later (LICENSE in the app dir)",
+  "pages": null,
+  "ipk": {
+    "file": "com.twitchng.tv_1.0.0_all.ipk",
+    "bytes": 5793786,
+    "sha256": "d2f92fca6fba9ca241cd6b5daf5c7bb29f9c9bfdfa9c6dc1eea2e38b5bfac230",
+    "files": 67,
+    "unpackedBytes": 16055963,
+    "ares": "Version: 3.2.6"
+  }
+}

@@ -1,0 +1,118 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>sttv-speed webOS 25 (M59) e2e</title></head>
+<body style="margin:0;background:#000;color:#fff">
+<video id="sttv_main" style="width:640px;height:360px" playsinline></video>
+<script>
+// 1.3.5: webosCompatBridge emulation closer to the real one (webos/bridge/webosCompatBridge.js) for the webOS 25 report:
+//  * VOD: native HLS from a blob: URL of the media playlist TEXT; clip (type 3): the MP4 URL itself
+//  * loadedmetadata -> seek to ms.resume (VOD/clip) + play + applyAudio
+//  * waiting / seeking / stalled -> 8 s stall check: progress in the last 4 s = transient; buffer < 1 s and rs < 3 =
+//    network -> retryMainPlayback (ms.resume = mtime(), mv.load(), max 2 per 30 s); else decoder jam -> pause / play,
+//    1.2 s later no progress -> handleMainPlaybackFailure -> Play_PannelEndStart (the app ends the VOD)
+//  * error -> retry (mv.load) max 2, then Play_PannelEndStart
+(function () {
+  var mv = document.getElementById('sttv_main'), ms = { resume: 0, type: 0, url: '', pl: '', u: '' }, stallT = 0, jamT = 0;
+  var lastCt = 0, lastProg = 0, lastBuf = 0, errCount = 0, hardN = 0, hardAt = 0;
+  var B = window.__bridge = { log: [], retries: 0, stallChecks: 0, jams: 0, hardReloads: 0, endStart: [], srcWrites: 0, resumeSeeks: 0 };
+  function log(x) { B.log.push(Math.round(performance.now()) + ' ' + x); if (B.log.length > 400) B.log.shift(); }
+  function ct() { var t = mv.currentTime; return isFinite(t) ? t : 0; }
+  function ahead() { var b = mv.buffered, t = ct(), i; for (i = 0; i < b.length; i++) if (t >= b.start(i) && t <= b.end(i)) return b.end(i) - t; return 0; }
+  function userPaused() { return mv.paused && !mv.ended; }
+  function pickVariant(pl, base, want) {
+    var lines = String(pl).split(/\r?\n/), first = null;
+    for (var i = 0; i < lines.length; i++) {
+      var l = lines[i].trim();
+      if (l && l.charAt(0) !== '#') { var u = new URL(l, base).href; if (!first && !/audio_only/.test(u)) first = u; if (u.indexOf('/' + want + '/') > 0) return u; }
+    }
+    return first;
+  }
+  function mediaBlob(uri) {
+    return fetch(uri).then(function (r) { return r.text(); }).then(function (t) {
+      var b = uri.replace(/[^\/]*$/, '');
+      var abs = t.split(/\r?\n/).map(function (l) { return (l && l.charAt(0) !== '#' && !/^https?:/.test(l)) ? b + l : l; }).join('\n');
+      return URL.createObjectURL(new Blob([abs], { type: 'application/vnd.apple.mpegurl' }));
+    });
+  }
+  function tryPlay() { var p = mv.play(); if (p && p.catch) p.catch(function () {}); }
+  function setMain(url) { B.srcWrites++; mv.src = url; tryPlay(); }
+  function applyAudio() { if (mv.muted) mv.muted = false; mv.volume = 1; }
+  function baseline() { lastProg = Date.now(); lastCt = ct(); lastBuf = ahead(); }
+  function clearStall() { clearTimeout(stallT); stallT = 0; }
+  function failure(why) {
+    clearStall(); clearTimeout(jamT);
+    B.endStart.push({ at: Math.round(performance.now()), why: why, ct: +ct().toFixed(2), type: ms.type });
+    log('Play_PannelEndStart ' + why + ' ct=' + ct().toFixed(2));
+  }
+  function retry() {
+    var t = Date.now();
+    if (hardAt && t - hardAt > 30000) hardN = 0;
+    if (hardN >= 2 || errCount >= 2) return false;
+    errCount++; B.retries++;
+    if (ms.type === 2 || ms.type === 3) ms.resume = Math.floor(ct() * 1000);
+    setTimeout(function () { hardN++; hardAt = Date.now(); B.hardReloads++; log('mv.load resume=' + ms.resume); try { mv.load(); } catch (e) {} tryPlay(); applyAudio(); }, 120 * errCount);
+    return true;
+  }
+  function jam() {
+    var t0 = ct(); B.jams++; log('decoder_jam soft recovery ct=' + t0.toFixed(2));
+    try { mv.pause(); } catch (e) {}
+    setTimeout(function () { tryPlay(); applyAudio(); }, 100);
+    jamT = setTimeout(function () { if (userPaused() || mv.ended) return; if (ct() > t0 + 0.1) { baseline(); log('jam recovered'); return; } failure('decoder_jam'); }, 1200);
+  }
+  function stallArm() {
+    clearStall();
+    stallT = setTimeout(function () {
+      stallT = 0; B.stallChecks++;
+      if (!(mv.currentSrc || mv.src) || userPaused() || mv.ended) return;
+      var since = Date.now() - lastProg;
+      if (since < 4000) { log('stall check: transient'); return; }
+      if (ahead() < 1 && mv.readyState < 3) { log('stall check: network rs=' + mv.readyState); if (!retry()) failure('network'); return; }
+      jam();
+    }, 8000);
+  }
+  mv.addEventListener('loadedmetadata', function () {
+    log('loadedmetadata');
+    if ((ms.type === 2 || ms.type === 3) && ms.resume > 0) { B.resumeSeeks++; mv.currentTime = ms.resume / 1000; }
+    tryPlay(); applyAudio();
+  });
+  mv.addEventListener('loadeddata', function () { errCount = 0; clearStall(); baseline(); });
+  mv.addEventListener('playing', function () { clearStall(); });
+  mv.addEventListener('canplay', function () { clearStall(); });
+  mv.addEventListener('timeupdate', function () { errCount = 0; var c = ct(); if (c > lastCt + 0.01) { lastCt = c; lastProg = Date.now(); } });
+  mv.addEventListener('progress', function () { var a = ahead(); if (a > lastBuf + 0.05) lastProg = Date.now(); lastBuf = a; });
+  ['waiting', 'seeking', 'stalled'].forEach(function (n) { mv.addEventListener(n, function () { if (n !== 'seeking' && userPaused()) { clearStall(); return; } stallArm(); }); });
+  mv.addEventListener('ended', function () { clearStall(); log('ended'); });
+  mv.addEventListener('error', function () {
+    clearStall(); log('error ' + (mv.error && mv.error.code));
+    if (!retry()) failure('error');
+  });
+  var A = {
+    StartAuto: function (u, pl, t, rs, player) {
+      if (player > 0) return;
+      ms = { resume: rs || 0, type: t, url: '', pl: pl, u: u }; errCount = 0; hardN = 0; baseline();
+      if (t === 3) { ms.url = u; setMain(u); return; }
+      mediaBlob(pickVariant(pl, u, window.__variant || '360p30')).then(function (bu) { ms.url = bu; setMain(bu); });
+    },
+    setPlaybackSpeed: function (sp) { var s = parseFloat(sp); if (!isFinite(s) || s <= 0) s = 1; mv.playbackRate = s; },
+    PlayPause: function (st) { if (st) tryPlay(); else mv.pause(); },
+    stopVideo: function () { clearStall(); clearTimeout(jamT); ms.url = ''; ms.type = 0; mv.removeAttribute('src'); mv.load(); },
+    mseekTo: function (x) { mv.currentTime = x / 1000; },
+    gettime: function () { var t = mv.currentTime; return !isFinite(t) || t <= 0 ? 0 : Math.floor(t * 1000); },
+    getVideoStatus: function (sl, wc) {
+      var f = window.smartTwitchTV && window.smartTwitchTV.Play_ShowVideoStatus, t = mv.currentTime, d = mv.duration;
+      if (f) f(!!sl, wc | 0, JSON.stringify(['', '', 0, 0, '', '', '', 0, isFinite(d) && d > 0 ? Math.floor(d * 1000) : 0, !isFinite(t) || t <= 0 ? 0 : Math.floor(t * 1000)]));
+    },
+    // quality change inside the same VOD: the real bridge keeps the position in ms.resume and writes a new blob
+    __switchVariant: function (want) {
+      ms.resume = Math.round(mv.currentTime * 1000);
+      mediaBlob(pickVariant(ms.pl, ms.u, want)).then(function (bu) { ms.url = bu; setMain(bu); });
+    }
+  };
+  A.getsavedtime = A.gettime;
+  setTimeout(function () { window.smartTwitchTV = { Play_ShowVideoStatus: function (sl, wc, s) { window.__statusPos = JSON.parse(s)[9]; } }; }, 600);
+  window.Android = { setPlaybackSpeed: function () {}, early: true };
+  setTimeout(function () { window.Android = A; }, 300);
+  setInterval(applyAudio, 500);
+})();
+</script>
+<script src="sttv-speed.js?v=1.3.5"></script>
+</body></html>

@@ -1,0 +1,275 @@
+{
+ "version": "1.2",
+ "at": "2026-11-01T19:16:51.226Z",
+ "caps": {
+  "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+  "deviceInfo": {
+   "modelName": "SANDBOX",
+   "platformVersion": "0.0.0"
+  },
+  "mse": {
+   "video/mp4; codecs=\"avc1.64002a\"": true,
+   "video/mp4; codecs=\"avc1.640028\"": true,
+   "video/mp4; codecs=\"avc1.4d401f\"": true,
+   "audio/mp4; codecs=\"mp4a.40.2\"": true,
+   "audio/mp4; codecs=\"mp4a.40.5\"": true,
+   "video/mp2t; codecs=\"avc1.64002a,mp4a.40.2\"": true,
+   "video/mp4; codecs=\"hvc1.1.6.L120.90\"": false
+  },
+  "video": {
+   "application/vnd.apple.mpegurl": "maybe",
+   "application/x-mpegURL": "maybe",
+   "video/mp4": "maybe"
+  },
+  "decoders": {
+   "avc1.64002a/prefer-hardware": false,
+   "avc1.64002a/prefer-software": true
+  },
+  "audio": {
+   "sr": 44100,
+   "base": 0.023219954648526078,
+   "out": 0.07200000000000001,
+   "state": "running",
+   "ots": 0.0744
+  },
+  "rvfc": true
+ },
+ "g1": {
+  "S": 1,
+  "rate": 1.5,
+  "touched": [],
+  "duration": 12.033,
+  "expectDuration": 12,
+  "buffered": [
+   [
+    0.033,
+    12.033
+   ]
+  ],
+  "elementRate": 1.5,
+  "contentRate": 1.5,
+  "readBack": 1.5,
+  "waiting": 0,
+  "ended": false,
+  "error": null,
+  "fps": {
+   "decoded": 90,
+   "dropped": 0
+  },
+  "fpsExpected": 90,
+  "displayHz": 60,
+  "contentFps": 60,
+  "dropsExpected": 30
+ },
+ "g2": [
+  {
+   "S": 1.5,
+   "rate": 1,
+   "touched": [
+    "mvhd:1000->1500",
+    "mdhd:15360->23040"
+   ],
+   "duration": 12.022,
+   "expectDuration": 12,
+   "buffered": [
+    [
+     0.022,
+     12.022
+    ]
+   ],
+   "elementRate": 1,
+   "contentRate": 1.5,
+   "readBack": 1,
+   "waiting": 0,
+   "ended": false,
+   "error": null,
+   "fps": {
+    "decoded": 90.1,
+    "dropped": 0
+   },
+   "fpsExpected": 90,
+   "displayHz": 60,
+   "contentFps": 60,
+   "dropsExpected": 30
+  },
+  {
+   "S": 2,
+   "rate": 1,
+   "touched": [
+    "mvhd:1000->2000",
+    "mdhd:15360->30720"
+   ],
+   "duration": 12.017,
+   "expectDuration": 12,
+   "buffered": [
+    [
+     0.017,
+     12.017
+    ]
+   ],
+   "elementRate": 1,
+   "contentRate": 2,
+   "readBack": 1,
+   "waiting": 0,
+   "ended": false,
+   "error": null,
+   "fps": {
+    "decoded": 120,
+    "dropped": 0
+   },
+   "fpsExpected": 120,
+   "displayHz": 60,
+   "contentFps": 60,
+   "dropsExpected": 60
+  }
+ ],
+ "g3": {
+  "limit": "QuotaExceededError: Failed to execute 'appendBuffer' on 'SourceBuffer': The SourceBuffer is full, and cannot free space to append additional buffers.",
+  "bytesMB": 147.3,
+  "seconds1080p60": 201,
+  "buffered": [
+   [
+    0.033,
+    201.033
+   ]
+  ],
+  "atTwitchSourceSec": {
+   "6Mbps": 206,
+   "8Mbps": 154
+  }
+ },
+ "g4": {
+  "chunks": [
+   {
+    "kb": 2048,
+    "rtt": 150,
+    "svc": 11,
+    "json": 2,
+    "b64": 14
+   },
+   {
+    "kb": 2048,
+    "rtt": 124,
+    "svc": 13,
+    "json": 2,
+    "b64": 10
+   },
+   {
+    "kb": 2048,
+    "rtt": 123,
+    "svc": 11,
+    "json": 2,
+    "b64": 10
+   },
+   {
+    "kb": 1785,
+    "rtt": 104,
+    "svc": 14,
+    "json": 1,
+    "b64": 9
+   },
+   {
+    "kb": 2048,
+    "rtt": 122,
+    "svc": 10,
+    "json": 2,
+    "b64": 10
+   },
+   {
+    "kb": 2048,
+    "rtt": 139,
+    "svc": 12,
+    "json": 2,
+    "b64": 10
+   },
+   {
+    "kb": 2048,
+    "rtt": 166,
+    "svc": 11,
+    "json": 1,
+    "b64": 13
+   },
+   {
+    "kb": 1779,
+    "rtt": 119,
+    "svc": 10,
+    "json": 1,
+    "b64": 9
+   }
+  ],
+  "variant": {
+   "uri": "d2vi6trrdongqn.cloudfront.net/…/chunked/index-dvr.m3u8",
+   "bw": 6496350,
+   "res": "1920x1080"
+  },
+  "playlistMs": 64,
+  "MBps": 13.51,
+  "MB": 15.48,
+  "secs": 1.15,
+  "netOnlyMBps": 168.26,
+  "contentSecPerWallSec": 17.45,
+  "needMBps": {
+   "1.5x": 1.16,
+   "2x": 1.55
+  },
+  "margin": {
+   "1.5x": 11.63,
+   "2x": 8.72
+  }
+ },
+ "g5": [
+  {
+   "mediaOption": null,
+   "duration": 53591.2,
+   "elementRate": 1.5,
+   "readBack": 1.5,
+   "waiting": 0,
+   "fps": {
+    "decoded": 45.2,
+    "dropped": 0
+   }
+  },
+  {
+   "mediaOption": {
+    "mediaTransportType": "HLS"
+   },
+   "duration": 53591.2,
+   "elementRate": 1.5,
+   "readBack": 1.5,
+   "waiting": 0,
+   "fps": {
+    "decoded": 45,
+    "dropped": 0
+   }
+  },
+  {
+   "mediaOption": {
+    "mediaTransportType": "URI"
+   },
+   "duration": 53591.2,
+   "elementRate": 1.5,
+   "readBack": 1.5,
+   "waiting": 0,
+   "fps": {
+    "decoded": 45.2,
+    "dropped": 0
+   }
+  }
+ ],
+ "verdict": {
+  "codes": [
+   "MSE_RATE_OK",
+   "COMPRESS_1.5x_OK",
+   "COMPRESS_2x_OK",
+   "QUOTA_147.3MB",
+   "LUNA_OK",
+   "NATIVE_RATE_OK_plain",
+   "NATIVE_RATE_OK_HLS",
+   "NATIVE_RATE_OK_URI"
+  ],
+  "next": [
+   "v2a: hls.js + current engine (playbackRate on MSE works) - no timeline compression needed",
+   "native HLS honours rate with that mediaOption: try it in the bridge first (cheapest fix)"
+  ]
+ }
+}

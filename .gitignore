@@ -1,0 +1,18 @@
+# local test media (Twitch VOD segments; not redistributed) - see tests/README or STTV_TESTDATA
+tests/testdata
+# local, per-machine settings (TV address etc.) - copy from tv.env.example
+tv.env
+*.local.env
+node_modules/
+__pycache__/
+
+# test byproducts
+tests/deploy/bin/
+tests/deploy/tvroot/
+tests/deploy/*.log
+tests/deploy/*.md5
+tests/e2e/sttv-speed.js
+tests/e2e/sttv-v2b.js
+tests/e2e/sttv-hls.min.js
+tests/e2e/hls.min.js
+tests/wav/

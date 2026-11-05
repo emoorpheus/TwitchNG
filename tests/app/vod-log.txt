@@ -1,0 +1,50 @@
+ipk com.tbsniller.smarttwitchwebostv.speed_1.3.4_all.ipk app com.tbsniller.smarttwitchwebostv.speed ref duration 53591.201 s
+0.0s StartAuto VOD @1000 s
+PASS native 1x: UI duration (getDuration + getVideoStatus) = 53591.201 s  {"getDuration":53591201,"status":53591201,"ratio":1}
+PASS native 1x: UI position (gettime) = video.currentTime  {"gettime":1003204,"ct":1003.204655}
+3.5s speed 2
+PASS v2b 2x: UI duration (getDuration + getVideoStatus) = 53591.201 s  {"getDuration":53591201,"status":53591201,"ratio":1}
+PASS v2b 2x: UI position (gettime) = video.currentTime  {"gettime":1029927,"ct":1029.927192}
+PASS v2b 2x: UI position advances 2 s per second (content time)  {"slope":2.003}
+19.8s seek +60 s
+PASS v2b 2x after seek +60: UI duration (getDuration + getVideoStatus) = 53591.201 s  {"getDuration":53591201,"status":53591201,"ratio":1}
+PASS v2b 2x after seek +60: UI position (gettime) = video.currentTime  {"gettime":1096670,"ct":1096.670282}
+PASS seek +60 s lands +60 s in content time  {"delta":66736}
+23.3s speed 1.5
+PASS v2b 1.5x: UI duration (getDuration + getVideoStatus) = 53591.201 s  {"getDuration":53591201,"status":53591201,"ratio":1}
+PASS v2b 1.5x: UI position (gettime) = video.currentTime  {"gettime":1107554,"ct":1107.5543835}
+30.9s speed 0.25
+PASS v2b 0.25x: UI duration (getDuration + getVideoStatus) = 53591.201 s  {"getDuration":53591201,"status":53591201,"ratio":1}
+PASS v2b 0.25x: UI position (gettime) = video.currentTime  {"gettime":1111535,"ct":1111.535145}
+PASS v2b 0.25x: UI position advances 0.25 s per second (content time)  {"slope":0.251}
+45.2s speed 1
+PASS native 1x restored: UI duration (getDuration + getVideoStatus) = 53591.201 s  {"getDuration":53591201,"status":53591201,"ratio":1}
+PASS native 1x restored: UI position (gettime) = video.currentTime  {"gettime":1114579,"ct":1114.579576}
+48.4s speed 1.15 (native pipeline ignores the rate)
+PASS 1.15x: element held at 1.0 (rate_hold), no v2b, playback continues  {"rate":1,"def":1,"v2b":"idle","paused":false,"ct":1117.590794,"hold":[{"speed":1.15,"pipe":"native"}],"gate":[{"pipe":"native","speed":1.15,"v2b":"auto","why":null}],"toast":"The TV does not apply the speed to this video · 1.15× has no effect"}
+PASS 1.15x: gate toast tells the user the TV does not apply it  {"toast":"The TV does not apply the speed to this video · 1.15× has no effect"}
+PASS 1.15x: position keeps going at 1x (no jump)  {"before":1114582,"after":1117591}
+51.4s speed 1
+52.5s speed 2 (cached caps)
+PASS v2b 2x again: UI duration (getDuration + getVideoStatus) = 53591.201 s  {"getDuration":53591201,"status":53591201,"ratio":1}
+PASS v2b 2x again: UI position (gettime) = video.currentTime  {"gettime":1125559,"ct":1125.55947}
+56.2s seek past the end
+PASS seek past the end: the bridge clamps to the last second  {"gettime":53591233,"refMs":53591201}
+PASS VOD end: 'ended', UI position = UI duration = total  {"gettime":53591233,"getDuration":53591233,"ended":true}
+PASS engine self-check: no v2b_timeline_mismatch  {"checks":41,"mismatches":0,"hook":{"sessions":4,"rebased":4,"errors":0,"lastRebase":{"from":53591.201,"to":26795.6005,"speed":2}}}
+PASS every Play_UpdateDuration call carried the real duration  [53591201]
+PASS no v2b failures, no page errors  {"v2b_fail":0,"errors":[]}
+┌─────────┬─────────────────────────┬──────┬──────────────┬────────────┬──────────┬─────────┬──────────┬───────┬───────┐
+│ (index) │ phase                   │ S    │ getDurationS │ statusDurS │ gettimeS │ ct      │ v2b      │ durOk │ posOk │
+├─────────┼─────────────────────────┼──────┼──────────────┼────────────┼──────────┼─────────┼──────────┼───────┼───────┤
+│ 0       │ 'native 1x'             │ 1    │ 53591.201    │ 53591.201  │ 1003.204 │ 1003.2  │ 'idle'   │ true  │ true  │
+│ 1       │ 'v2b 2x'                │ 2    │ 53591.201    │ 53591.201  │ 1029.927 │ 1029.93 │ 'active' │ true  │ true  │
+│ 2       │ 'v2b 2x after seek +60' │ 2    │ 53591.201    │ 53591.201  │ 1096.67  │ 1096.67 │ 'active' │ true  │ true  │
+│ 3       │ 'v2b 1.5x'              │ 1.5  │ 53591.201    │ 53591.201  │ 1107.554 │ 1107.55 │ 'active' │ true  │ true  │
+│ 4       │ 'v2b 0.25x'             │ 0.25 │ 53591.201    │ 53591.201  │ 1111.535 │ 1111.54 │ 'active' │ true  │ true  │
+│ 5       │ 'native 1x restored'    │ 1    │ 53591.201    │ 53591.201  │ 1114.579 │ 1114.58 │ 'idle'   │ true  │ true  │
+│ 6       │ 'v2b 2x again'          │ 2    │ 53591.201    │ 53591.201  │ 1125.559 │ 1125.56 │ 'active' │ true  │ true  │
+└─────────┴─────────────────────────┴──────┴──────────────┴────────────┴──────────┴─────────┴──────────┴───────┴───────┘
+events {"hooked":1,"installed":1,"set_speed":7,"audio_context":3,"engine_start":3,"net_path":1,"source_open":3,"base_ref":3,"engine_ready":3,"pcm_ready":3,"rate_verify":4,"rate_strike":2,"rate_cap":4,"engine_fail":1,"engine_stop":2,"v2b_engage":2,"toast":7,"v2b_libs":1,"v2b_prefetched":2,"v2b_switch":4,"v2b_active":4,"audio_context_closed":2,"rate_ok":3,"anchor":5,"audio_rendering":2,"unanchor":4,"anchor_wait_data":3,"v2b_rate_request":3,"v2b_respeed":2,"engine_speed":2,"v2b_restore":1,"v2b_restored":1,"rate_hold":1,"rate_gate":1}
+ALL APP VOD TIMELINE CHECKS PASS
+exit=0

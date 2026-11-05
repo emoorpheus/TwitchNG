@@ -1,0 +1,38 @@
+{
+ "hook": "orig",
+ "handler": "fixed",
+ "speed": 1.5,
+ "quota": 6,
+ "quotaThrows": 179,
+ "contentRate_4_12s": 1,
+ "contentRate_19_27s": 1,
+ "posAfter": 1087.3,
+ "paused": false,
+ "readyState": 4,
+ "loadstart": 2,
+ "hlsErrors": {
+  "mediaError/bufferFullError": 178
+ },
+ "playRejects": 0,
+ "playReject0": null,
+ "speedErrors": [
+  "emulated TV quota"
+ ],
+ "reloadsTo1x": 1,
+ "engines": 1,
+ "finalSpeed": 1,
+ "audio": {
+  "cfg": {
+   "codec": "mp4a.40.5",
+   "sampleRate": 48000,
+   "ch": 2
+  },
+  "out": {
+   "sampleRate": 48000,
+   "frames": 1024,
+   "durUs": 21333
+  }
+ },
+ "drift_ms": null,
+ "logs": []
+}

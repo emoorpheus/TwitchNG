@@ -1,0 +1,167 @@
+{
+ "res": {
+  "version": "1.3.2",
+  "at": "2026-11-02T06:42:26.893Z",
+  "speed": 1,
+  "v2b": "idle",
+  "pipe": "native",
+  "video": {
+   "paused": true,
+   "ct": 0,
+   "realMuted": true,
+   "appMuted": true,
+   "volume": 1
+  },
+  "engine": null,
+  "engineCtx": null,
+  "cfg": {
+   "actx": "default",
+   "mute": "auto",
+   "fresh": true
+  },
+  "tests": [
+   {
+    "id": 1,
+    "beeps": 1,
+    "name": "engine_ctx",
+    "skipped": "no_engine"
+   },
+   {
+    "id": 2,
+    "beeps": 2,
+    "name": "fresh_default_video_unmuted",
+    "opts": "default",
+    "ctx0": {
+     "state": "running",
+     "sr": 44100,
+     "base": 0.01,
+     "out": 0
+    },
+    "ctx": {
+     "state": "running",
+     "sr": 44100,
+     "base": 0.01,
+     "out": 0.032
+    },
+    "renderedDb": -13.5,
+    "clock": 1.008,
+    "elementMuted0": false,
+    "elementMuted": false
+   },
+   {
+    "id": 3,
+    "beeps": 3,
+    "name": "fresh_default_video_muted",
+    "opts": "default",
+    "ctx0": {
+     "state": "running",
+     "sr": 44100,
+     "base": 0.01,
+     "out": 0
+    },
+    "ctx": {
+     "state": "running",
+     "sr": 44100,
+     "base": 0.01,
+     "out": 0.032
+    },
+    "renderedDb": -13.5,
+    "clock": 1.007,
+    "elementMuted0": true,
+    "elementMuted": true
+   },
+   {
+    "id": 4,
+    "beeps": 4,
+    "name": "fresh_48k_playback",
+    "opts": "48000/playback",
+    "ctx0": {
+     "state": "running",
+     "sr": 48000,
+     "base": 0.0213,
+     "out": 0
+    },
+    "ctx": {
+     "state": "running",
+     "sr": 48000,
+     "base": 0.0213,
+     "out": 0.064
+    },
+    "renderedDb": -13.5,
+    "clock": 1.013,
+    "elementMuted0": true,
+    "elementMuted": true
+   },
+   {
+    "id": 5,
+    "beeps": 5,
+    "name": "mediastream_to_audio_element",
+    "ctx": {
+     "state": "running",
+     "sr": 44100,
+     "base": 0.01,
+     "out": 0.032
+    },
+    "renderedDb": -13.5,
+    "clock": 1.005,
+    "audioPaused": false,
+    "playErr": null,
+    "audioErr": null
+   },
+   {
+    "id": 6,
+    "beeps": 6,
+    "name": "wav_in_audio_element",
+    "audioCt": 2.65,
+    "audioPaused": true,
+    "ended": true,
+    "readyState": 4,
+    "audioErr": null,
+    "playErr": null
+   }
+  ],
+  "caps": {
+   "webcodecsDecoder": true,
+   "mse": {
+    "audio/mp4; codecs=\"mp4a.40.2\"": true,
+    "audio/mp4; codecs=\"opus\"": true,
+    "audio/webm; codecs=\"opus\"": true,
+    "audio/mp4; codecs=\"flac\"": true
+   },
+   "encoder": {
+    "opus": true,
+    "aac": false
+   },
+   "setSinkId": true,
+   "mediaStreamDest": true,
+   "devices": 0
+  },
+  "ask": "Which test numbers were AUDIBLE (test number = number of beeps)?",
+  "after": {
+   "paused": true,
+   "ct": 0,
+   "realMuted": true,
+   "v2b": "idle"
+  }
+ },
+ "beep": {
+  "opts": "default",
+  "ctx": {
+   "state": "running",
+   "sr": 44100,
+   "base": 0.01,
+   "out": 0.032
+  },
+  "renderedDb": -13.5,
+  "clock": 1.008
+ },
+ "secs": 22.89,
+ "toasts": [
+  "Audio test 1/6 · engine context · 1 beep — listen",
+  "Audio test 2/6 · new AudioContext · 2 beeps — listen",
+  "Audio test 3/6 · new AudioContext, video muted · 3 beeps — listen",
+  "Audio test 4/6 · AudioContext as in 1.2 (48k/playback) · 4 beeps — listen",
+  "Audio test 5/6 · WebAudio → <audio> · 5 beeps — listen",
+  "Audio test 6/6 · WAV in <audio> (TV media player) · 6 beeps — listen"
+ ]
+}

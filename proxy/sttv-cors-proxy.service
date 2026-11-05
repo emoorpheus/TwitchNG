@@ -1,0 +1,19 @@
+[Unit]
+Description=sttv-cors-proxy (SmartTwitchTV speed audio CORS proxy)
+After=network-online.target
+
+[Service]
+ExecStart=/usr/bin/env node /opt/sttv/sttv-cors-proxy.js --port 8787 --quiet
+Restart=always
+DynamicUser=yes
+# DynamicUser already implies ProtectSystem=strict, ProtectHome=read-only, PrivateTmp, NoNewPrivileges
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_INET AF_INET6
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictNamespaces=yes
+LockPersonality=yes
+
+[Install]
+WantedBy=multi-user.target
