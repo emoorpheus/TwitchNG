@@ -1,7 +1,8 @@
 // ui-lab.mjs - design lab for the Twitch NG UI (dev tool, not a test): runs a BUILT IPK in Chromium like tests/app/twitchng.mjs
 // (webOS stubs, 1920x1080, real Twitch API), optionally injects extra CSS / JS on top (iterate without rebuilding), walks the
 // main screens and saves screenshots (+ DOM dumps with --dump).
-// Usage: node tools/ui-lab.mjs <twitchng.ipk> <outDir> [--css a.css[,b.css]] [--js file.js] [--screens intro,home,home2,side,side2,side3,games,videos,exit,about,settings,player] [--dump 1]
+// Usage: node tools/ui-lab.mjs <twitchng.ipk> <outDir> [--css a.css[,b.css]] [--js file.js] [--dump 1]
+//   [--screens intro,home,home2,down,side,side2,side3,games,switch,videos,clips,featured,search,user,news,exit,about,settings,player]
 // [--fontsets DIR] (screen fonts); NG_LANG=ru_RU NG_LOCALE=ru-RU for the Russian UI
 import { chromium } from 'playwright';
 import fs from 'node:fs';
@@ -105,6 +106,8 @@ if (SCREENS.includes('fonts') && FONTSETS) {
   await page.evaluate(() => { const l = document.getElementById('ng-fontset'); if (l) l.remove(); });
 }
 if (SCREENS.includes('home2')) { await key('ArrowRight'); await shot('home2'); await key('ArrowLeft'); }
+// down: third row focused = the grid scrolled (rows above pass under the header)
+if (SCREENS.includes('down')) { await key('ArrowDown', 2); await page.waitForTimeout(1200); await shot('down'); await key('ArrowUp', 2); }
 const side = () => page.evaluate(() => { const m = document.getElementById('side_panel_movel'); let f = null;
   for (let i = 0; i < 15; i++) { const e = document.getElementById('side_panel_movel_new_' + i);
     if (e && (e.classList.contains('side_panel_new_icons_text') || e.classList.contains('side_panel_new_icons_text_botton'))) f = { i: i, text: e.innerText.trim() }; }
@@ -123,7 +126,15 @@ if (SCREENS.includes('side')) { await key('Escape'); await shot('side'); await k
 if (SCREENS.includes('side2')) { await sideGo(/^(games|категории)$/, 0, 10, false); await shot('side2'); await key('Escape'); }
 if (SCREENS.includes('side3')) { await sideGo(/(settings|настройки)/, 10, 15, false); await shot('side3'); await key('Escape'); }
 if (SCREENS.includes('games')) { await sideGo(/^(games|категории)$/); await page.waitForTimeout(3500); await shot('games'); await key('ArrowDown'); await key('Enter'); await page.waitForTimeout(3500); await shot('game-streams'); }
+// switch: the switch row of a game's live screen (Videos / Clips / Follow) focused
+if (SCREENS.includes('switch')) { if (!SCREENS.includes('games')) { await sideGo(/^(games|категории)$/); await page.waitForTimeout(3500); await key('Enter'); await page.waitForTimeout(3500); }
+  await key('ArrowUp'); await page.waitForTimeout(800); await shot('switch'); }
 if (SCREENS.includes('videos')) { await sideGo(/^(videos|видео)$/); await page.waitForTimeout(3500); await shot('videos'); }
+if (SCREENS.includes('clips')) { await sideGo(/^(clips|клипы)$/); await page.waitForTimeout(3500); await shot('clips'); }
+if (SCREENS.includes('featured')) { await sideGo(/^(featured|рекомендуемые|на главной странице)$/); await page.waitForTimeout(3500); await shot('featured'); }
+if (SCREENS.includes('search')) { await sideGo(/^(search|поиск)$/); await page.waitForTimeout(1500); await shot('search'); await key('Escape'); }
+if (SCREENS.includes('user')) { await sideGo(/(add user|аккаунт|account)/, 0, 1); await page.waitForTimeout(2000); await shot('user'); await key('Escape'); }
+if (SCREENS.includes('news')) { await sideGo(/(what.s new|что нового)/, 10); await page.waitForTimeout(1000); await shot('news'); await key('Escape'); }
 if (SCREENS.includes('exit')) { await sideGo(/(exit|выход)/, 10); await shot('exit'); await key('Escape'); }
 if (SCREENS.includes('about')) { await sideGo(/(about|описание|о приложении)/, 10); await page.waitForTimeout(1000); await shot('about'); await key('Escape'); }
 if (SCREENS.includes('settings')) { await sideGo(/(settings|настройки)/, 10); await key('ArrowDown', 2); await shot('settings'); await key('Escape'); }

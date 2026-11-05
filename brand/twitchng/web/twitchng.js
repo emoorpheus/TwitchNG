@@ -1,5 +1,5 @@
 /*
- * twitchng.js 1.0.0 pre-release 05 - Twitch NG app layer, ES5. NG = Next-Gen.
+ * twitchng.js 1.0.0 pre-release 06 - Twitch NG app layer, ES5. NG = Next-Gen.
  * Version line: the app stays 1.0.0 until the release; pre-releases are numbered (PRE_N: 01, 02, ...) and shown as
  *   "1.0.0 · pre-release 02" (appinfo.json version stays 1.0.0).
  * pre-release 02: About shows the webOS version + firmware from the system (luna systemproperty getSystemInfo; on webOS 25
@@ -9,19 +9,25 @@
  * pre-release 04: speed engine 1.3.7 (TV run 2026-11-05, T7: a quality change at 2x restarted the VOD from 00:00); What's new.
  * pre-release 05: "Twitch Next-Gen" launch screen + matching first-run intro (HEROS); speed engine 1.3.8 (memory: the v2b
  *   segment cache and the MediaSource objects no longer outlive the player); package ~1 MB instead of 6 MB; What's new.
+ * pre-release 06: Next-Gen UI stage 1 on by default (DESIGN.md: ng-ui.css / ng-icons.css / ng-ui.js, font Onest as "NG Sans",
+ *   Lucide icons in the sharp style, live grid, side menu, header); switched here (html.ng-ui + the two stylesheets);
+ *   aboutLabel (side menu "About" = "О приложении" in Russian); Russian copy fixes in main.js (build patches); What's new.
  * Loaded by release/index.html right after sttv-speed.js (build/build-app.mjs --brand twitchng), before main.js (defer).
  * Script tag attributes (set by the build): data-name (app name), data-variant (icon set L3 | L4 | A | B | C, default L3), data-source (source URL).
  *   - OLED preset (githubio/css/twitchng.css): on by default; off = html.ng-classic
  *       localStorage.TWITCHNG_OLED = '0'  (or TwitchNG.oled(false) in the console; true / null = back to the default)
+ *   - Next-Gen UI (githubio/css/ng-ui.css + ng-icons.css, js/ng-ui.js): on by default on top of the OLED preset = html.ng-ui
+ *       and both stylesheets enabled (their @font-face remaps the app's Roboto to NG Sans, so off = the links disabled);
+ *       off: localStorage.TWITCHNG_UI = '0' (or TwitchNG.ui(false)); the classic look (OLED off) also turns it off
  *   - first-run welcome dialog (#welcome_dialog_text, filled by the app) -> minimal intro; OK / Back close it as before
  *   - About, "What's new", sign-in help: HTML built here (main.js calls TwitchNG.aboutHtml / newsHtml / newsLabel /
  *     authHelp, patched in by the build); the app language (localStorage app_lang_string) picks Russian or English
- *   - window.TwitchNG = { name, version, preRelease, variant, oled(on?), state(), aboutHtml(), newsHtml(), ... }
+ *   - window.TwitchNG = { name, version, preRelease, variant, oled(on?), ui(on?), state(), aboutHtml(), newsHtml(), aboutLabel(), ... }
  * GPL-3.0. Not affiliated with Twitch Interactive.
  */
 (function (w) {
     'use strict';
-    var VERSION = '1.0.0', PRE = true, PRE_N = '05', YEAR = '2026', doc = w.document, root = doc && doc.documentElement;
+    var VERSION = '1.0.0', PRE = true, PRE_N = '06', YEAR = '2026', doc = w.document, root = doc && doc.documentElement;
     if (!root || w.TwitchNG) return;
     function lsGet(k) { try { return w.localStorage.getItem(k); } catch (e) { return null; } }
     function lsSet(k, v) { try { if (v === null) w.localStorage.removeItem(k); else w.localStorage.setItem(k, v); } catch (e) {} }
@@ -40,9 +46,24 @@
     var NAME = attr('data-name', 'Twitch NG'), VARIANT = /^(L3|L4|A|B|C)$/.test(attr('data-variant', 'L3')) ? attr('data-variant', 'L3') : 'L3';
     var SOURCE = /^https:\/\/[^\s"'<>]+$/.test(attr('data-source', '')) ? attr('data-source', '') : '';
     function oledOn() { return lsGet('TWITCHNG_OLED') !== '0'; }
+    function uiOn() { return oledOn() && lsGet('TWITCHNG_UI') !== '0'; }
+    // the stylesheets are in the head (parsed before this script runs, so they are loaded): disabled = their rules and
+    // @font-face are gone, the app's own Roboto is back
+    function uiCss() {
+        var l = doc.getElementsByTagName('link'), r = [], i;
+        for (i = 0; i < l.length; i++) if (/\/ng-(?:ui|icons)\.css(?:\?|$)/.test(l[i].getAttribute('href') || '')) r.push(l[i]);
+        return r;
+    }
+    function applyUi() {
+        var on = uiOn(), l = uiCss(), i;
+        for (i = 0; i < l.length; i++) l[i].disabled = !on;
+        setClass(root, 'ng-ui', on);
+        return on;
+    }
     setClass(root, 'ng', true);
     setClass(root, 'ng-classic', !oledOn());
     setClass(root, 'ng-v' + VARIANT, true);
+    applyUi();
 
     // <ng-logo>
     var LOGOS = {
@@ -84,7 +105,10 @@
             close: 'Нажмите «Назад» или OK, чтобы закрыть',
             newsLabel: 'Что нового',
             newsTitle: 'Что нового',
+            aboutLabel: 'О приложении',
             news: [
+                'Новый интерфейс Next-Gen (этап 1): шрифт Onest, чёткие значки, крупные карточки «В эфире» со зрителями на превью, ' +
+                    'новое боковое меню и шапка; русские подсказки и названия без сокращений и опечаток.',
                 'Заставка при запуске — «Twitch Next-Gen», приветствие при первом запуске в том же стиле.',
                 'Пакет приложения стал меньше: около 1 МБ вместо 6 МБ (убраны неиспользуемые картинки).',
                 'Исправлена утечка памяти при смене скорости: закрытая запись больше не занимает память.',
@@ -119,7 +143,10 @@
             close: 'Press Back or OK to close',
             newsLabel: 'What\'s new',
             newsTitle: 'What\'s new',
+            aboutLabel: '',
             news: [
+                'New Next-Gen interface (stage 1): the Onest font, crisp icons, large live cards with viewers on the picture, ' +
+                    'a new side menu and header.',
                 'Launch screen: "Twitch Next-Gen", with a first-run welcome in the same style.',
                 'Smaller package: about 1 MB instead of 6 MB (unused images removed).',
                 'Memory leak fixed for speed changes: a closed video no longer holds memory.',
@@ -251,12 +278,19 @@
         oled: function (on) {
             if (on !== undefined) lsSet('TWITCHNG_OLED', on === null ? null : (on ? '1' : '0'));
             setClass(root, 'ng-classic', !oledOn());
+            applyUi();
             return oledOn();
         },
+        // Next-Gen UI: same contract as oled(); texts already reshaped by ng-ui.js stay until the next screen refresh / restart
+        ui: function (on) {
+            if (on !== undefined) lsSet('TWITCHNG_UI', on === null ? null : (on ? '1' : '0'));
+            return applyUi();
+        },
+        aboutLabel: function (def) { return T().aboutLabel || def; },
         aboutHtml: aboutHtml, newsHtml: newsHtml, newsLabel: newsLabel, authHelp: authHelp, lang: lang,
         state: function () {
             return { name: NAME, version: VERSION, preRelease: PRE, preReleaseN: PRE_N, variant: VARIANT, lang: lang(), engine: engineVersion() || null,
-                oled: oledOn(), classic: hasClass(root, 'ng-classic'), intro: stats.intro, about: stats.about, news: stats.news, auth: stats.auth,
+                oled: oledOn(), classic: hasClass(root, 'ng-classic'), ui: hasClass(root, 'ng-ui'), uiCss: uiCss().length, intro: stats.intro, about: stats.about, news: stats.news, auth: stats.auth,
                 logo: !!LOGOS[VARIANT], hero: !!HEROS[VARIANT], css: !!doc.querySelector('link[href*="twitchng.css"]'), platform: platform(), sys: SYS };
         }
     };

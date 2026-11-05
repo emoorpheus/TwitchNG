@@ -1,7 +1,9 @@
 /*
- * ng-ui.css - Twitch NG "Next-Gen UI" (concept, stage 1: design system + live grid + side menu). Scoped to html.ng-ui
- * (set by ng-ui.js); classic look = without the class. Sizes in vh (px at 1920 x 1080 in comments) so 720p panels scale.
- * Upstream builds the DOM in main.js and sets focus styles with !important -> html-prefixed selectors + !important here.
+ * ng-ui.css 1.0.0 pre-release 06 - Twitch NG "Next-Gen UI", stage 1: design system, live grid, side menu, header (DESIGN.md).
+ * Linked in the head by build/build-app.mjs (id ng-ui-css); twitchng.js sets html.ng-ui and disables this sheet when the UI is off
+ * (the @font-face remap below must not reach the classic look). Rules are scoped to html.ng-ui; sizes in vh (px at 1920 x 1080 in
+ * comments) so 720p panels scale. Upstream builds the DOM in main.js and sets focus styles with !important -> html-prefixed
+ * selectors + !important here. Live-card text rules need .ng-live (set by ng-ui.js on live cards; video / clip cards differ).
  */
 
 /* ---------------------------------------------------------------- tokens */
@@ -21,17 +23,22 @@ html.ng-ui {
     --ng-font: 'NG Sans', Roboto, sans-serif;
 }
 
-/* ---------------------------------------------------------------- type: NG Sans (Source Sans 3 subset, the splash wordmark letterforms)
+/* ---------------------------------------------------------------- type: NG Sans = Onest (owner pick; tools/make-ng-fonts.py, OFL)
  * own family for new elements + the upstream families remapped for the covered ranges (unicode-range): every Roboto / Roboto-Bold
- * text in main.js switches without touching its selectors, other scripts still fall back to Roboto / the system fonts */
+ * text in main.js switches without touching its selectors; Greek and other scripts keep Roboto / the system fonts. Upstream has
+ * Roboto at 400 only (bold = synthesized) -> a real 700 face here; Roboto-Bold is the bold family at any weight. */
 @font-face { font-family: 'NG Sans'; src: url('fonts/ng-sans-400.woff2') format('woff2'); font-weight: 400; font-style: normal; }
 @font-face { font-family: 'NG Sans'; src: url('fonts/ng-sans-600.woff2') format('woff2'); font-weight: 600; font-style: normal; }
 @font-face { font-family: 'NG Sans'; src: url('fonts/ng-sans-700.woff2') format('woff2'); font-weight: 700; font-style: normal; }
 @font-face { font-family: 'NG Sans'; src: url('fonts/ng-sans-900.woff2') format('woff2'); font-weight: 900; font-style: normal; }
-@font-face { font-family: 'Roboto'; src: url('fonts/ng-sans-400.woff2') format('woff2'); font-weight: normal; font-style: normal;
-    unicode-range: U+0000-024F, U+0370-03FF, U+0400-045F, U+2000-206F, U+20AC, U+2116, U+2122; }
-@font-face { font-family: 'Roboto-Bold'; src: url('fonts/ng-sans-700.woff2') format('woff2'); font-weight: normal; font-style: normal;
-    unicode-range: U+0000-024F, U+0370-03FF, U+0400-045F, U+2000-206F, U+20AC, U+2116, U+2122; }
+@font-face { font-family: 'Roboto'; src: url('fonts/ng-sans-400.woff2') format('woff2'); font-weight: 400; font-style: normal;
+    unicode-range: U+0000-024F, U+0400-045F, U+0490-0491, U+2000-206F, U+20AC, U+20BD, U+2116, U+2122, U+2190-2193; }
+@font-face { font-family: 'Roboto'; src: url('fonts/ng-sans-700.woff2') format('woff2'); font-weight: 700; font-style: normal;
+    unicode-range: U+0000-024F, U+0400-045F, U+0490-0491, U+2000-206F, U+20AC, U+20BD, U+2116, U+2122, U+2190-2193; }
+@font-face { font-family: 'Roboto-Bold'; src: url('fonts/ng-sans-700.woff2') format('woff2'); font-weight: 400; font-style: normal;
+    unicode-range: U+0000-024F, U+0400-045F, U+0490-0491, U+2000-206F, U+20AC, U+20BD, U+2116, U+2122, U+2190-2193; }
+@font-face { font-family: 'Roboto-Bold'; src: url('fonts/ng-sans-700.woff2') format('woff2'); font-weight: 700; font-style: normal;
+    unicode-range: U+0000-024F, U+0400-045F, U+0490-0491, U+2000-206F, U+20AC, U+20BD, U+2116, U+2122, U+2190-2193; }
 
 html.ng-ui body, html.ng-ui .screens, html.ng-ui .screen_size { letter-spacing: 0 !important; font-kerning: normal !important; -webkit-text-stroke: 0 !important; }
 
@@ -42,13 +49,20 @@ html.ng-ui .topbar { background: transparent !important; }
 html.ng-ui #side_panel_fix > div, html.ng-ui #side_panel_fix [style*="background-color"] { background: transparent !important; }
 
 /* ---------------------------------------------------------------- header: big left title (like the splash wordmark), quiet clock */
-html.ng-ui #scene1 .top_lable { text-align: left !important; width: auto !important; left: 1.2vh; top: 3.4vh !important; font-family: var(--ng-font) !important;
+html.ng-ui #scene1 .top_lable { text-align: left !important; width: auto !important; left: 1.2vh; top: 2.6vh !important; white-space: nowrap; font-family: var(--ng-font) !important;
     font-weight: 900; font-size: 4.26vh !important; line-height: 1 !important; color: var(--ng-text) !important; letter-spacing: -.01em !important; }
-html.ng-ui #clock_holder { top: 3.9vh !important; right: 7.9vh !important; }
+html.ng-ui #scene1 .top_lable > div { margin-left: .5vh; font-weight: 600; font-size: 2.6vh !important; color: var(--ng-mute); letter-spacing: 0; }
+/* header band: masks the rows scrolled up under the header (upstream: a black top bar) - the #scene1 night + haze, aligned to
+ * the viewport (the bar starts at 4.75 % = 91 px: haze centre 47.54 %), fading out at the bottom; the clock (z 4) stays above */
+html.ng-ui #topbar.topbar { top: 0 !important; height: 9.4% !important; transform: none !important; background: none !important; z-index: 0; }
+html.ng-ui #topbar.topbar::before { content: ''; position: absolute; left: 0; right: 0; top: 0; bottom: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(ellipse 70vw 46vh at 47.54% -8vh, rgba(145, 70, 255, .16), rgba(145, 70, 255, .05) 55%, rgba(145, 70, 255, 0) 100%), var(--ng-bg);
+    -webkit-mask-image: linear-gradient(#000 76%, rgba(0, 0, 0, 0)); mask-image: linear-gradient(#000 76%, rgba(0, 0, 0, 0)); }
+html.ng-ui #clock_holder { top: 3.1vh !important; right: 7.9vh !important; }
 html.ng-ui #label_clock { font-family: var(--ng-font) !important; font-size: 2.3vh !important; color: var(--ng-mute) !important; font-weight: 400; }
 html.ng-ui #label_clock .ng-clock-time { color: var(--ng-text); font-weight: 700; margin-left: .9vh; font-feature-settings: 'tnum'; }
 /* hints: out of the top-left corner, a quiet line in the header, left of the clock */
-html.ng-ui #controls_div { position: absolute !important; float: none !important; right: 29vh; top: 4.15vh !important; padding: 0 !important; white-space: nowrap; }
+html.ng-ui #controls_div { position: absolute !important; float: none !important; right: 29vh; top: 3.35vh !important; padding: 0 !important; white-space: nowrap; }
 html.ng-ui #controls_div .icon_top_label, html.ng-ui #controls_div #top_lable_etc { display: inline-block !important; margin: 0 0 0 3.2vh !important; height: auto !important;
     font-family: var(--ng-font) !important; font-weight: 600; font-size: 1.85vh !important; line-height: 1 !important; color: var(--ng-dim) !important; }
 html.ng-ui #controls_div i { color: var(--ng-dim) !important; font-size: 1.1em; margin-right: .5vh; }
@@ -78,25 +92,25 @@ html.ng-ui .ng-badge { position: absolute; left: 1.1vh; bottom: 1.1vh; z-index: 
 html.ng-ui .ng-badge::before { content: ''; display: inline-block; width: .95vh; height: .95vh; margin-right: .7vh; border-radius: 50%; background: var(--ng-live);
     vertical-align: .12vh; }
 /* text: name (bold) / title / game · uptime */
-html.ng-ui #screens_holder .stream_thumbnail_live_text_holder { height: auto !important; padding: 1.5vh .4vh 0 !important; margin: 0 !important; font-size: 100% !important; }
-html.ng-ui #screens_holder .stream_thumbnail_live .stream_text_holder { top: 0 !important; transform: none !important; display: flex; flex-wrap: wrap; align-items: baseline; }
-html.ng-ui #screens_holder .stream_text_holder > div:first-child { flex: 0 0 100%; display: flex; align-items: center; line-height: 1.2 !important; min-width: 0; }
-html.ng-ui #screens_holder .stream_info_live_name { flex: 1 1 auto; width: auto !important; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+html.ng-ui #screens_holder .ng-live .stream_thumbnail_live_text_holder { height: auto !important; padding: 1.5vh .4vh 0 !important; margin: 0 !important; font-size: 100% !important; }
+html.ng-ui #screens_holder .ng-live .stream_thumbnail_live .stream_text_holder { top: 0 !important; transform: none !important; display: flex; flex-wrap: wrap; align-items: baseline; }
+html.ng-ui #screens_holder .ng-live .stream_text_holder > div:first-child { flex: 0 0 100%; display: flex; align-items: center; line-height: 1.2 !important; min-width: 0; }
+html.ng-ui #screens_holder .ng-live .stream_info_live_name { flex: 1 1 auto; width: auto !important; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     font: 700 2.96vh/1.2 var(--ng-font) !important; color: var(--ng-text) !important; }
-html.ng-ui #screens_holder .stream_info_live_name .live_icon { display: none !important; }
-html.ng-ui #screens_holder .stream_text_holder > div:first-child > .stream_info_live { flex: none; width: auto !important; float: none !important; margin-left: 1.2vh;
+html.ng-ui #screens_holder .ng-live .stream_info_live_name .live_icon { display: none !important; }
+html.ng-ui #screens_holder .ng-live .stream_text_holder > div:first-child > .stream_info_live { flex: none; width: auto !important; float: none !important; margin-left: 1.2vh;
     padding: .3vh .65vh; border-radius: .6vh; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16); font: 600 1.6vh/1 var(--ng-font) !important; color: var(--ng-mute) !important; }
-html.ng-ui #screens_holder .stream_info_live_title { flex: 0 0 100%; max-height: 1.3em !important; margin-top: .55vh; white-space: nowrap !important; overflow: hidden;
+html.ng-ui #screens_holder .ng-live .stream_info_live_title { flex: 0 0 100%; max-height: 1.3em !important; margin-top: .55vh; white-space: nowrap !important; overflow: hidden;
     text-overflow: ellipsis; font: 400 2.3vh/1.3 var(--ng-font) !important; color: var(--ng-text-2) !important; }
-html.ng-ui #screens_holder .stream_info_live_title span { font-size: .92em !important; }
-html.ng-ui #screens_holder .stream_text_holder > [id*="_game_"] { flex: 0 1 auto; width: auto !important; min-width: 0; max-width: 72%; margin-top: .55vh;
+html.ng-ui #screens_holder .ng-live .stream_info_live_title span { font-size: .92em !important; }
+html.ng-ui #screens_holder .ng-live .stream_text_holder > [id*="_game_"] { flex: 0 1 auto; width: auto !important; min-width: 0; max-width: 72%; margin-top: .55vh;
     font: 600 2.13vh/1.3 var(--ng-font) !important; color: var(--ng-mute) !important; }
-html.ng-ui #screens_holder .stream_text_holder > .stream_info_live:last-child { flex: none; width: auto !important; margin-top: .55vh; font: 400 2.13vh/1.3 var(--ng-font) !important;
+html.ng-ui #screens_holder .ng-live .stream_text_holder > .stream_info_live:last-child { flex: none; width: auto !important; margin-top: .55vh; font: 400 2.13vh/1.3 var(--ng-font) !important;
     color: var(--ng-mute) !important; }
-html.ng-ui #screens_holder .stream_text_holder > .stream_info_live:last-child::before { content: '\00b7'; margin: 0 .8vh; color: var(--ng-dim); }
-html.ng-ui #screens_holder [id*="_views_"] { display: none !important; }
-html.ng-ui #screens_holder [class*="stream_thumbnail_focused"] .stream_info_live_name { color: #fff !important; }
-html.ng-ui #screens_holder [class*="stream_thumbnail_focused"] .stream_info_live_title { color: var(--ng-text) !important; }
+html.ng-ui #screens_holder .ng-live .stream_text_holder > .stream_info_live:last-child::before { content: '\00b7'; margin: 0 .8vh; color: var(--ng-dim); }
+html.ng-ui #screens_holder .ng-live [id*="_views_"] { display: none !important; }
+html.ng-ui #screens_holder .ng-live [class*="stream_thumbnail_focused"] .stream_info_live_name { color: #fff !important; }
+html.ng-ui #screens_holder .ng-live [class*="stream_thumbnail_focused"] .stream_info_live_title { color: var(--ng-text) !important; }
 
 /* ---------------------------------------------------------------- side rail (collapsed): outline icons, current section = lavender chip */
 html.ng-ui #side_panel_fix .side_panel_new_icons { color: var(--ng-mute) !important; border: 0 !important; border-image: none !important; background: none !important;

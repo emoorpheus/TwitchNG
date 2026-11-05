@@ -12,10 +12,11 @@
  * --brand twitchng: "Twitch NG" 1.0.0 (pre-release; NG = Next-Gen) - a standalone app: id com.twitchng.tv, own version
  *   line (default 1.0.0, independent of the engine), icon / splash from brand/twitchng/variants/<--icon>/,
  *   release/githubio/{js/twitchng.js, css/twitchng.css} (+ <link> in head, <script> after sttv-speed: OLED preset on by
- *   default, intro, About, What's new), main.js exact patches (each with a count check): speed menu
+ *   default, intro, About, What's new) + the Next-Gen UI (DESIGN.md: css/ng-ui.css, css/ng-icons.css, js/ng-ui.js,
+ *   css/fonts/ng-sans-*.woff2 = Onest, OFL; on by default), main.js exact patches (each with a count check): speed menu
  *   0.25/0.5/0.75/1/1.25/1.5/2 in VOD + clips only, app name, purple default focus; About / update dialog /
  *   changelog / side-menu entry / sign-in help from twitchng.js, no update check or update settings, local
- *   empty-screen image and icon-font fallback; index.html without the Firebase / Google Analytics tags and the preconnects of the original
+ *   empty-screen image and icon-font fallback, Russian copy fixes (typos, cut words); index.html without the Firebase / Google Analytics tags and the preconnects of the original
  *   project; donation images dropped.
  *   --icon L3  (default) own TV mark drawn in Twitch's outline style, white on Twitch purple (two 'eye' bars);
  *              --icon L4 the same TV with a play sign. Original artwork, but Twitch-like: own TV / GitHub, not a store
@@ -55,7 +56,13 @@ const SPEED_RE_G = /<script\b(?=[^>]*\bsrc\s*=\s*['"][^'"]*sttv-speed\.js(?:\?[^
 // ---- TwitchNG brand layer (--brand twitchng)
 const BRAND_DIR = path.join(KIT, 'brand', 'twitchng');
 const NG = { id: 'com.twitchng.tv', title: 'Twitch NG', version: '1.0.0', iconColor: { L3: '#9146FF', L4: '#9146FF', A: '#9146FF', B: '#2F6FE0', C: '#2F6FE0' } };
-const NG_WEB = [['web/twitchng.js', 'githubio/js/twitchng.js'], ['web/twitchng.css', 'githubio/css/twitchng.css']];
+const NG_WEB = [['web/twitchng.js', 'githubio/js/twitchng.js'], ['web/twitchng.css', 'githubio/css/twitchng.css'],
+    // Next-Gen UI (DESIGN.md; on by default, twitchng.js switches html.ng-ui + these two stylesheets): layout / tokens / NG Sans,
+    // Lucide icons (GENERATED: tools/make-ng-icons.mjs), the text reshaping layer, the font (GENERATED: tools/make-ng-fonts.py)
+    ['web/ng-ui.css', 'githubio/css/ng-ui.css'], ['web/ng-icons.css', 'githubio/css/ng-icons.css'], ['web/ng-ui.js', 'githubio/js/ng-ui.js'],
+    ['web/fonts/ng-sans-400.woff2', 'githubio/css/fonts/ng-sans-400.woff2'], ['web/fonts/ng-sans-600.woff2', 'githubio/css/fonts/ng-sans-600.woff2'],
+    ['web/fonts/ng-sans-700.woff2', 'githubio/css/fonts/ng-sans-700.woff2'], ['web/fonts/ng-sans-900.woff2', 'githubio/css/fonts/ng-sans-900.woff2'],
+    ['web/fonts/OFL-Onest.txt', 'githubio/css/fonts/OFL-Onest.txt']];
 // pre-release number comes from the app layer (twitchng.js: PRE = true, PRE_N = '02'), the one place to bump per build;
 // null = release build (PRE = false)
 function ngPreRelease() {
@@ -84,8 +91,8 @@ const NG_INDEX_DROP = [
     { what: 'Firebase + Google Analytics tags', n: 3, re: /<script\b[^>]*\bsrc\s*=\s*['"]https:\/\/www\.(?:gstatic\.com\/firebasejs|googletagmanager\.com)\/[^'"]*['"][^>]*>\s*<\/script>/gi },
     { what: 'dns-prefetch / preconnect to the original project site', n: 2, re: /<link\b[^>]*\brel\s*=\s*['"](?:dns-prefetch|preconnect)['"][^>]*\bhref\s*=\s*['"]https:\/\/fgl27\.github\.io\/?['"][^>]*>/gi }
 ];
-const NG_TAG_RE_G = /<script\b(?=[^>]*\bsrc\s*=\s*['"][^'"]*twitchng\.js(?:\?[^'"]*)?['"])[^>]*>\s*<\/script>/gi;
-const NG_LINK_RE_G = /<link\b(?=[^>]*\bhref\s*=\s*['"][^'"]*twitchng\.css(?:\?[^'"]*)?['"])[^>]*>/gi;
+const NG_TAG_RE_G = /<script\b(?=[^>]*\bsrc\s*=\s*['"][^'"]*(?:twitchng|ng-ui)\.js(?:\?[^'"]*)?['"])[^>]*>\s*<\/script>/gi;
+const NG_LINK_RE_G = /<link\b(?=[^>]*\bhref\s*=\s*['"][^'"]*(?:twitchng|ng-ui|ng-icons)\.css(?:\?[^'"]*)?['"])[^>]*>/gi;
 // main.js (minified bundled web app) - exact strings, each must occur exactly `n` times; T = app name (--title)
 const NG_GATE = 'window.TwitchNG&&TwitchNG.';
 function ngMain(T) {
@@ -126,7 +133,17 @@ function ngMain(T) {
         from: 'image:"https://fgl27.github.io/SmartTwitchTV/apk/app/src/main/res/mipmap-nodpi/ic_splash.png"', to: 'image:"' + NG_EMPTY[1] + '"' },
     { what: 'proxy info: TTV LOL home page instead of its donation page', n: 1, from: 'gh("https://ttv.lol/donate")', to: 'gh("https://ttv.lol")' },
     { what: 'icon-font check fallback: reload the local stylesheet (was the copy on the original project site)', n: 1,
-        from: '"https://fgl27.github.io/SmartTwitchTV/release/githubio/css/icons.min.css"', to: '"githubio/css/icons.min.css"' }
+        from: '"https://fgl27.github.io/SmartTwitchTV/release/githubio/css/icons.min.css"', to: '"githubio/css/icons.min.css"' },
+    // ---- Russian copy (pre-release 06; owner: fix the Russian texts freely): typos and cut words of the bundled translation
+    { what: 'side menu: "About" label from the app layer (ru: "About the app"; the shared word U also titles a channel description)', n: 1,
+        from: 'r("side_panel_movel_new_11",p+U)', to: 'r("side_panel_movel_new_11",p+(' + NG_GATE + 'aboutLabel?TwitchNG.aboutLabel(U):U))' },
+    { what: 'ru: typo ("Uzherzhivayte") in the live feed refresh hint; lower case after "Refresh:"', n: 1, from: 'ho="\u0423\u0436\u0435\u0440\u0436\u0438\u0432\u0430\u0439\u0442\u0435 \u0432\u0432\u0435\u0440\u0445"', to: 'ho="\u0443\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0439\u0442\u0435 \u0432\u0432\u0435\u0440\u0445"' },
+    { what: 'ru: typo ("Vrmemya") in "wait time"', n: 1, from: 'ru="\u0412\u0440\u043c\u0435\u043c\u044f \u043e\u0436\u0438\u0434\u0430\u043d\u0438\u044f"', to: 'ru="\u0412\u0440\u0435\u043c\u044f \u043e\u0436\u0438\u0434\u0430\u043d\u0438\u044f"' },
+    { what: 'ru: refresh hint in full words ("Refresh: hold OK", was the cut "Uderzh.")', n: 1, from: 'vt="\u0423\u0434\u0435\u0440\u0436. \u041e\u041a"', to: 'vt="\u0443\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0439\u0442\u0435 \u041e\u041a"' },
+    { what: 'ru: card options hint in full words ("Options: hold left")', n: 1, from: 'hs="\u0423\u0434\u0435\u0440\u0436. \u0432\u043b\u0435\u0432\u043e \u0434\u043b\u044f \u0434\u043e\u043f. \u043e\u043f\u0446\u0438\u0439"', to: 'hs="\u041e\u043f\u0446\u0438\u0438: \u0443\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0439\u0442\u0435 \u0432\u043b\u0435\u0432\u043e"' },
+    { what: 'ru: live feed title "Now live" (was the cut "Akt. kanaly")', n: 1, from: 'qi="\u0410\u043a\u0442. \u043a\u0430\u043d\u0430\u043b\u044b"', to: 'qi="\u0421\u0435\u0439\u0447\u0430\u0441 \u0432 \u044d\u0444\u0438\u0440\u0435"' },
+    { what: 'ru: Featured = "Recommended" (was "On the front page")', n: 1, from: 'jt="\u041d\u0430 \u0433\u043b\u0430\u0432\u043d\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435"', to: 'jt="\u0420\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0443\u0435\u043c\u044b\u0435"' },
+    { what: 'ru: the About hint names the menu entry by its new label', n: 1, from: '\u043d\u0430 \u0431\u043e\u043a\u043e\u0432\u043e\u0439 \u043f\u0430\u043d\u0435\u043b\u0438 \u043d\u0430\u0436\u043c\u0438\u0442\u0435 \u041e\u043f\u0438\u0441\u0430\u043d\u0438\u0435"', to: '\u043d\u0430 \u0431\u043e\u043a\u043e\u0432\u043e\u0439 \u043f\u0430\u043d\u0435\u043b\u0438 \u043d\u0430\u0436\u043c\u0438\u0442\u0435 \u00ab\u041e \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0438\u00bb"' }
     ];
 }
 const NG_TITLE_FROM = '<title>SmartTV Twitch</title>';
@@ -257,12 +274,14 @@ function injectEngine(web, v2b) {
 // ---- TwitchNG brand layer
 function ngTags(a) {
     const at = ' data-name="' + htmlEsc(a.title) + '" data-variant="' + a.icon + '"' + (a.sourceUrl ? ' data-source="' + htmlEsc(a.sourceUrl) + '"' : '');
-    return { link: '<link rel="stylesheet" href="githubio/css/twitchng.css?v=' + a.version + '">',
-        script: '<script src="githubio/js/twitchng.js?v=' + a.version + '"' + at + '></script>' };
+    const v = '?v=' + a.version;
+    return { link: '<link rel="stylesheet" href="githubio/css/twitchng.css' + v + '">' +
+            '<link rel="stylesheet" href="githubio/css/ng-ui.css' + v + '" id="ng-ui-css"><link rel="stylesheet" href="githubio/css/ng-icons.css' + v + '" id="ng-icons-css">',
+        script: '<script src="githubio/js/twitchng.js' + v + '"' + at + '></script><script src="githubio/js/ng-ui.js' + v + '"></script>' };
 }
 function checkNgIndex(html, tags, a) {
     const nl = (html.match(NG_LINK_RE_G) || []).length, ns = (html.match(NG_TAG_RE_G) || []).length;
-    if (nl !== 1 || ns !== 1) return 'twitchng link/script count ' + nl + '/' + ns;
+    if (nl !== 3 || ns !== 2) return 'twitchng / ng-ui link + script count ' + nl + '/' + ns;
     const l = html.indexOf(tags.link), t = html.indexOf(tags.script), sp = html.search(SPEED_RE_G), m = html.search(MAIN_RE), d = html.indexOf('<div');
     if (l < 0 || t < 0) return 'twitchng tags differ';
     if (!(l < d)) return 'twitchng.css link is not in the head';
