@@ -2,7 +2,7 @@
 // (webOS stubs, 1920x1080, real Twitch API), optionally injects extra CSS / JS on top (iterate without rebuilding), walks the
 // main screens and saves screenshots (+ DOM dumps with --dump).
 // Usage: node tools/ui-lab.mjs <twitchng.ipk> <outDir> [--css a.css[,b.css]] [--js file.js] [--screens intro,home,home2,side,side2,side3,games,videos,exit,about,settings,player] [--dump 1]
-// (NG_LANG=ru_RU NG_LOCALE=ru-RU for the Russian UI)
+// [--fontsets DIR] (screen fonts); NG_LANG=ru_RU NG_LOCALE=ru-RU for the Russian UI
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -17,6 +17,9 @@ if (!fs.existsSync(IPK)) { console.error('usage: node tools/ui-lab.mjs <twitchng
 const CSS_FILES = opt('css') ? opt('css').split(',').map((f) => path.resolve(f)) : [];
 const CSS = CSS_FILES.length ? CSS_FILES.map((f) => fs.readFileSync(f, 'utf8')).join('\n') : null, JS = opt('js') ? fs.readFileSync(path.resolve(opt('js')), 'utf8') : null;
 const SCREENS = (opt('screens', 'home,side,games,settings,about,exit')).split(','), DUMP = opt('dump', '0') === '1';
+// --fontsets DIR: DIR/<name>/fonts.css (+ font files) re-declare 'NG Sans' / 'Roboto' / 'Roboto-Bold'; screen "fonts" shoots the
+// home screen once per set (font-<name>.png), same page and data, so only the typeface changes
+const FONTSETS = opt('fontsets') ? path.resolve(opt('fontsets')) : null;
 const W = path.join(OUT, '.app');
 fs.rmSync(W, { recursive: true, force: true });
 for (const d of ['ar', 'root', 'stub/webos-service']) fs.mkdirSync(path.join(W, d), { recursive: true });
@@ -26,6 +29,7 @@ const PK = path.join(W, 'root/usr/palm/packages');
 const pinfo = JSON.parse(fs.readFileSync(path.join(PK, fs.readdirSync(PK)[0], 'packageinfo.json'), 'utf8'));
 const ID = pinfo.app, SID = pinfo.services[0];
 const APP = path.join(W, 'root/usr/palm/applications', ID), SVC = path.join(W, 'root/usr/palm/services', SID);
+if (FONTSETS) fs.cpSync(FONTSETS, path.join(APP, 'release/githubio/css/fontsets'), { recursive: true });
 if (CSS) {
   const cssDir = path.join(APP, 'release/githubio/css');
   fs.writeFileSync(path.join(cssDir, 'ui-lab.css'), CSS);
@@ -90,6 +94,16 @@ if (DUMP) {
   fs.writeFileSync(path.join(OUT, 'dom-full.html'), await page.content());
 }
 if (SCREENS.includes('home')) await shot('home');
+if (SCREENS.includes('fonts') && FONTSETS) {
+  await shot('font-0-base');
+  for (const n of fs.readdirSync(FONTSETS).filter((d) => fs.existsSync(path.join(FONTSETS, d, 'fonts.css'))).sort()) {
+    await page.evaluate((href) => new Promise((res) => { let l = document.getElementById('ng-fontset');
+      if (!l) { l = document.createElement('link'); l.id = 'ng-fontset'; l.rel = 'stylesheet'; document.head.appendChild(l); }
+      l.onload = () => document.fonts.ready.then(() => setTimeout(res, 1200)); l.href = href; }), 'githubio/css/fontsets/' + n + '/fonts.css');
+    await shot('font-' + n);
+  }
+  await page.evaluate(() => { const l = document.getElementById('ng-fontset'); if (l) l.remove(); });
+}
 if (SCREENS.includes('home2')) { await key('ArrowRight'); await shot('home2'); await key('ArrowLeft'); }
 const side = () => page.evaluate(() => { const m = document.getElementById('side_panel_movel'); let f = null;
   for (let i = 0; i < 15; i++) { const e = document.getElementById('side_panel_movel_new_' + i);
