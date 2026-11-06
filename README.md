@@ -6,6 +6,31 @@
 
 Project history and implementation notes are available in the [engineering notes](docs/engineering-notes.ru.md).
 
+## Screenshots
+
+Screenshots show the pre-release 06 interface. They document the shipped design; individual Twitch cards and stream listings are live content supplied by Twitch and may differ from what you see.
+
+| Home and live streams | Video library | Categories |
+|---|---|---|
+| ![Twitch NG home screen with live stream cards](docs/screenshots/pre06/home.jpg) | ![Twitch NG video grid](docs/screenshots/pre06/videos.jpg) | ![Twitch NG games and categories](docs/screenshots/pre06/games.jpg) |
+
+| Game streams | Channel search | Clips |
+|---|---|---|
+| ![Streams in a selected game category](docs/screenshots/pre06/game-streams.jpg) | ![Channel search screen](docs/screenshots/pre06/search-channels.jpg) | ![Clip grid](docs/screenshots/pre06/clips.jpg) |
+
+| Side navigation | Settings | What's New |
+|---|---|---|
+| ![Twitch NG side navigation](docs/screenshots/pre06/side.jpg) | ![Twitch NG settings screen](docs/screenshots/pre06/settings.jpg) | ![Twitch NG What's New screen](docs/screenshots/pre06/news.jpg) |
+
+## Why use Twitch NG on a TV?
+
+- **Built around a remote control.** Large cards, clear focus indication, a persistent side rail, and readable labels make browsing possible without a mouse or keyboard.
+- **More context before opening a stream.** Viewer count, language, category, title, and live duration appear together on the live card; video cards surface length, views, date, and watched progress.
+- **A faster way to find the right content.** Browse recommended rows, follow live channels, search channels, open a game category, and switch between streams and highlights from the TV interface.
+- **Choose a VOD pace that suits you.** Speeds from 0.25× to 2× are available for supported VOD and clip playback paths, with pitch-preserving processing where supported.
+- **Keep your existing app.** Twitch NG has its own app identity and data, so it installs alongside the stock Twitch app instead of replacing it.
+- **Make the screen comfortable in a dark room.** The default black canvas and restrained purple focus accents are designed for OLED viewing; the Next-Gen UI can be disabled if you prefer the classic interface.
+
 > Twitch NG is an independent community project. It is not affiliated with or endorsed by Twitch Interactive, Inc.
 
 ## Features
@@ -22,22 +47,23 @@ Playback speed uses the bundled **STTV Speed** engine. The app and engine have i
 
 The app keeps the familiar Twitch navigation model and adds a TV-focused presentation. Names below describe the current English UI; exact sections shown depend on the account and the data returned by Twitch.
 
-### Home and live streams
+### Home, recommendations, and live streams
 
-- **Recommended / Home** shows Twitch's recommendations and available content rows.
-- **Live** presents stream cards. A card can show the channel, stream title, category, viewer count, language, and how long the stream has been live. Viewer count is displayed as a badge over the preview; the focused card is enlarged and outlined.
-- **Following and search results** use the same card language so channel identity and stream details are easy to scan from across the room.
+- **Recommended / Home** is the starting point for discovery. It brings available Twitch rows into one TV-friendly screen, with large artwork and a persistent side rail for navigation.
+- **Live** presents stream cards. Each card combines the preview with a prominent live-viewer badge, channel name, stream title, game/category, language, and elapsed stream time. This makes it easier to compare streams without opening each one.
+- **Focus feedback** raises and outlines the selected card so remote-control navigation is easy to track at a distance. The Next-Gen visual system uses Onest typography, sharp Lucide-style icons, a black OLED canvas, and purple focus accents.
+- **Following and search results** reuse the same card hierarchy, keeping channel identity and stream context in the same place throughout the app.
 - Row controls, such as the time period, **Streams / Highlights**, and **Play all**, are presented as selectable buttons. Their availability depends on the current screen.
 
 ### Categories and channels
 
-- **Categories** use portrait artwork, with current viewer totals on the artwork and channel counts below the category name.
-- **Channel search** uses circular channel portraits and centered names. Opening a channel leads to its available live stream, videos, or clips.
+- **Categories** use portrait artwork, with current viewer totals on the artwork and channel counts below the category name. This surfaces both the game's popularity and how many creators are live before opening it.
+- **Channel search** uses circular channel portraits and centered names to distinguish people from game artwork. Opening a channel leads to its available live stream, videos, or clips.
 - **Channel pages** and account-specific areas require a Twitch sign-in. Their contents are provided by Twitch and can change independently of this app.
 
 ### Videos and clips
 
-- **Videos (VODs)** show the preview, duration, view count, category, and date. A progress strip marks previously watched portions when Twitch provides that data.
+- **Videos (VODs)** show the preview, duration, view count, category, and date. A progress strip marks previously watched portions when Twitch provides that data. Duration and view count sit directly on the thumbnail, leaving the title and channel details readable below it.
 - **Clips** have their own preview and playback page. Speed control is available only when the TV's player applies the selected rate; a clip may remain at normal speed.
 - A playback speed selector is available on VODs and clips, not on live streams. Supported choices are **0.25×, 0.5×, 0.75×, 1×, 1.25×, 1.5×, and 2×**. The engine aims to preserve pitch on supported playback paths. On some TV/player paths Twitch or webOS may ignore a rate or need time to restore normal playback.
 - Playback quality remains controlled by the player. Changing quality should preserve the VOD position, though the current pre-release has a known recovery delay described above.
@@ -48,6 +74,8 @@ The app keeps the familiar Twitch navigation model and adds a TV-focused present
 - **Settings** use the same Next-Gen typography and focus treatment. The stock SmartTwitchTV settings and controls remain available; descriptive text is styled as secondary information.
 - **About** identifies Twitch NG, the app pre-release, the speed-engine version, and the webOS version reported by the TV. It also contains the project's license and trademark notice.
 - **What's New** summarizes changes in the installed pre-release. A welcome panel may appear on first launch; press OK or Back to close it.
+
+The same typography, icon style, focus states, and spacing carry through navigation, content grids, dialogs, settings, About, and What's New, so the app feels consistent rather than like a collection of unrelated screens.
 
 ### Appearance controls
 
