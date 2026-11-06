@@ -1,5 +1,5 @@
 /*
- * ng-ui.js 1.0.0 pre-release 06 - Twitch NG "Next-Gen UI" text layer, ES5 (stage 1: live grid, side menu, header; DESIGN.md).
+ * ng-ui.js 1.0.0 pre-release 07 - Twitch NG "Next-Gen UI" text layer, ES5 (stages 1-3; DESIGN.md).
  * Loaded by release/index.html right after twitchng.js (build/build-app.mjs --brand twitchng). twitchng.js switches the UI on / off
  * (html.ng-ui + ng-ui.css / ng-icons.css; localStorage.TWITCHNG_UI = '0' or TwitchNG.ui(false) = the OLED preset look); with the
  * class off this file changes nothing. It reshapes a few texts main.js renders, as DOM post-processing, textContent only:
@@ -20,7 +20,7 @@
     'use strict';
     var d = w.document, html = d && d.documentElement;
     if (!html || w.NgUi) return;
-    var VERSION = '1.0.0-pre06', stats = { passes: 0, cards: 0, chrome: 0 };
+    var VERSION = '1.0.0-pre07', stats = { passes: 0, cards: 0, chrome: 0 };
 
     function has(el, c) { return !!el && el.nodeType === 1 && (' ' + el.className + ' ').indexOf(' ' + c + ' ') >= 0; }
     function setClass(el, c, on) {

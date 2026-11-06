@@ -269,3 +269,103 @@ html.ng-ui #screens_holder .stream_info_channel_name { width: auto !important; m
     color: var(--ng-text-2) !important; }
 html.ng-ui #screens_holder .stream_info_channel_partner_icon { flex: none; margin-left: .2vh; }
 html.ng-ui #screens_holder .stream_thumbnail_channel[class*="stream_thumbnail_focused"] .stream_info_channel_name { color: #fff !important; }
+
+/* ---------------------------------------------------------------- stage 3: player OSD, timeline, controls, dialogs */
+/* kill upstream faux-3D text shadow */
+html.ng-ui .pause_button3d { text-shadow: none !important; }
+html.ng-ui .strokedeline, html.ng-ui .strokedelinebig { text-shadow: none !important; }
+
+/* player container */
+html.ng-ui #scene2 { background: var(--ng-bg) !important; }
+html.ng-ui .scene_channel_panel { transition: opacity .2s ease-out !important; }
+
+/* top info bar */
+html.ng-ui #playerinfo { background: linear-gradient(to bottom, rgba(0, 0, 0, .92) 0%, rgba(0, 0, 0, .65) 60%, transparent 100%) !important;
+    padding: 3vh 4vw 7vh !important; }
+html.ng-ui img.stream_info_icon { width: 6.8vh !important; height: 6.8vh !important; border-radius: 50% !important;
+    box-shadow: 0 0 0 1px var(--ng-line) !important; vertical-align: middle !important; margin-right: 1.8vh !important; }
+html.ng-ui .playmaininfo { vertical-align: middle !important; }
+html.ng-ui #stream_info_name { font-family: var(--ng-font) !important; font-weight: 700 !important; font-size: 3.2vh !important;
+    line-height: 1.2 !important; color: #fff !important; }
+html.ng-ui #stream_info_title { font-family: var(--ng-font) !important; font-weight: 400 !important; font-size: 2.3vh !important;
+    color: var(--ng-text-2) !important; margin-top: .4vh !important; }
+html.ng-ui #stream_info_game { font-family: var(--ng-font) !important; font-weight: 600 !important; font-size: 2.1vh !important;
+    color: var(--ng-mute) !important; margin-top: .3vh !important; }
+html.ng-ui .partnericon_text { background: var(--ng-live) !important; border-radius: .6vh !important; font-family: var(--ng-font) !important;
+    font-weight: 700 !important; font-size: 1.6vh !important; padding: .2vh .8vh !important; letter-spacing: .02em; }
+html.ng-ui .playclock { font-family: var(--ng-font) !important; font-weight: 600 !important; font-size: 2.2vh !important;
+    color: var(--ng-mute) !important; top: 3.5vh !important; right: 4vw !important; }
+
+/* timeline / progress bar */
+html.ng-ui .progress_pause_holder { bottom: 12.5vh !important; padding: 0 3.5vw !important; box-sizing: border-box !important; }
+html.ng-ui .progress_bar_div { background: transparent !important; border: 0 !important; height: auto !important; transform: none !important; }
+html.ng-ui .progress_bar { height: .75vh !important; border: 0 !important; border-radius: .4vh !important; background: rgba(255, 255, 255, .16) !important;
+    position: relative !important; overflow: visible !important; }
+html.ng-ui .inner_progress_bar { height: 100% !important; border-radius: .4vh !important; background: linear-gradient(90deg, #9146ff, #bf94ff) !important; }
+html.ng-ui .inner_progress_bar_buffer { height: 100% !important; border-radius: .4vh !important; background: rgba(255, 255, 255, .28) !important; }
+html.ng-ui .inner_progress_animate { height: .75vh !important; border: 0 !important; }
+html.ng-ui .inner_progress_circle { width: 1.8vh !important; height: 1.8vh !important; border-radius: 50% !important;
+    background: var(--ng-accent-2) !important; border: .25vh solid #fff !important; box-shadow: 0 0 1.2vh rgba(191, 148, 255, .8) !important;
+    transform: translate(50%, -35%) !important; }
+html.ng-ui .progress_bar_timer, html.ng-ui .progress_bar_jump { font-family: var(--ng-font) !important; font-weight: 700 !important;
+    font-size: 2.1vh !important; color: var(--ng-text) !important; font-feature-settings: 'tnum' !important; }
+html.ng-ui .progress_bar_holder_focus { box-shadow: 0 0 0 .28vh var(--ng-accent-2) !important; border-radius: .8vh !important; }
+
+/* control buttons & pause button */
+html.ng-ui .controls_holder { bottom: 2vh !important; padding: 3.5vh 0 1.8vh !important;
+    background: linear-gradient(to top, rgba(0, 0, 0, .96) 0%, rgba(0, 0, 0, .7) 65%, transparent 100%) !important; }
+html.ng-ui .controls_button_holder { width: auto !important; margin: 0 .45vh !important; display: inline-block !important; vertical-align: middle !important; }
+html.ng-ui .controls_button { width: 5.6vh !important; height: 5.6vh !important; display: inline-flex !important; align-items: center !important;
+    justify-content: center !important; border-radius: 1.3vh !important; background: rgba(255, 255, 255, .08) !important;
+    box-shadow: inset 0 0 0 1px var(--ng-line) !important; border: 0 !important; color: var(--ng-text-2) !important;
+    padding: 0 !important; transform: scale(1) !important; transition: transform .15s ease-out, background .15s ease-out, box-shadow .15s ease-out !important; }
+html.ng-ui .controls_button i { font-size: 2.8vh !important; }
+html.ng-ui .controls_button.progress_bar_div_focus { background: linear-gradient(90deg, #9146ff, #7a2ff0) !important; color: #fff !important;
+    box-shadow: 0 0 0 .37vh var(--ng-accent-2), 0 .8vh 3vh rgba(145, 70, 255, .45) !important; transform: scale(1.12) !important; }
+
+/* central pause/play button */
+html.ng-ui .pause_button, html.ng-ui .next_button, html.ng-ui .back_button { width: 6.2vh !important; height: 6.2vh !important;
+    display: inline-flex !important; align-items: center !important; justify-content: center !important; border-radius: 50% !important;
+    background: rgba(255, 255, 255, .12) !important; box-shadow: inset 0 0 0 1px var(--ng-line) !important; border: 0 !important;
+    color: #fff !important; margin: 0 1.2vh !important; transform: scale(1) !important; transition: transform .15s ease-out, background .15s ease-out, box-shadow .15s ease-out !important; }
+html.ng-ui .pause_button i, html.ng-ui .next_button i, html.ng-ui .back_button i { font-size: 3vh !important; }
+html.ng-ui .pause_button.progress_bar_div_focus, html.ng-ui .next_button.progress_bar_div_focus, html.ng-ui .back_button.progress_bar_div_focus {
+    background: linear-gradient(90deg, #9146ff, #7a2ff0) !important; box-shadow: 0 0 0 .37vh var(--ng-accent-2), 0 .8vh 3vh rgba(145, 70, 255, .55) !important;
+    transform: scale(1.15) !important; }
+
+/* button hover/focus title label */
+html.ng-ui .controls_text_title_holder { position: absolute !important; bottom: 7.6vh !important; left: 0 !important; right: 0 !important;
+    width: 100% !important; text-align: center !important; pointer-events: none !important; }
+html.ng-ui .controls_button_title { width: auto !important; height: auto !important; position: static !important; transform: none !important;
+    left: auto !important; font-family: var(--ng-font) !important; font-weight: 600 !important; font-size: 2.1vh !important;
+    color: var(--ng-text) !important; text-shadow: 0 .2vh 1vh rgba(0, 0, 0, .9) !important; display: inline-block !important; }
+
+/* dialogs (speed, quality, multi, exit) */
+html.ng-ui .dialog_exit, html.ng-ui .dialog_period, html.ng-ui .dialog_multi, html.ng-ui .about_dialogs {
+    background: #000 !important; border-radius: var(--ng-r) !important; border: 1px solid var(--ng-line) !important;
+    box-shadow: 0 2vh 6vh rgba(0, 0, 0, .85) !important; font-family: var(--ng-font) !important; }
+html.ng-ui .exit_text { font-family: var(--ng-font) !important; font-weight: 600 !important; font-size: 2.4vh !important;
+    color: var(--ng-text) !important; text-shadow: none !important; }
+html.ng-ui .button_dialog { border-radius: 1.2vh !important; background: rgba(255, 255, 255, .08) !important; border: 0 !important;
+    box-shadow: inset 0 0 0 1px var(--ng-line) !important; color: var(--ng-text-2) !important; font-family: var(--ng-font) !important;
+    font-weight: 600 !important; font-size: 2.2vh !important; padding: 1vh 2.4vh !important; transition: background .15s ease-out, box-shadow .15s ease-out, color .15s ease-out !important; }
+html.ng-ui .button_dialog.button_dialog_focused, html.ng-ui .button_dialog_focused {
+    background: linear-gradient(90deg, #9146ff, #7a2ff0) !important; color: #fff !important;
+    box-shadow: 0 0 0 .37vh var(--ng-accent-2), 0 .8vh 3vh rgba(145, 70, 255, .45) !important; }
+
+/* quality / codecs dialog & in-player settings */
+html.ng-ui #dialog_codecs, html.ng-ui #dialog_settings { background: rgba(0, 0, 0, .85) !important; }
+html.ng-ui .about_text { font-family: var(--ng-font) !important; color: var(--ng-text) !important; }
+html.ng-ui .about_dialogs .settings_div_focus { background: linear-gradient(90deg, rgba(145, 70, 255, .25), transparent) !important; border-left: .4vh solid var(--ng-accent-2) !important; }
+html.ng-ui .about_dialogs .settings_value_focus { color: var(--ng-accent-2) !important; font-weight: 700 !important; }
+
+/* end of stream dialog */
+html.ng-ui #dialog_end_stream { background: rgba(0, 0, 0, .88) !important; font-family: var(--ng-font) !important; }
+html.ng-ui .dialog_end_stream_text { font-family: var(--ng-font) !important; font-weight: 700 !important; font-size: 3.8vh !important; color: var(--ng-text) !important; text-shadow: none !important; }
+html.ng-ui .dialog_end_icons { background: rgba(255, 255, 255, .06) !important; border-radius: var(--ng-r) !important; border: 1px solid var(--ng-line) !important; transition: transform .15s ease-out, box-shadow .15s ease-out, background .15s ease-out !important; }
+html.ng-ui .dialog_end_icons.dialog_end_icons_focus, html.ng-ui .dialog_end_icons_focus {
+    background: linear-gradient(135deg, rgba(145, 70, 255, .35), rgba(122, 47, 240, .2)) !important; border-color: var(--ng-accent-2) !important;
+    box-shadow: 0 0 0 .37vh var(--ng-accent-2), 0 .8vh 3vh rgba(145, 70, 255, .45) !important; transform: scale(1.05) !important; }
+html.ng-ui .next_info_dialog, html.ng-ui .end_text { font-family: var(--ng-font) !important; text-shadow: none !important; }
+html.ng-ui .end_text { font-weight: 700 !important; color: var(--ng-text) !important; }
+html.ng-ui .next_info_dialog { color: var(--ng-text-2) !important; font-size: 80% !important; }

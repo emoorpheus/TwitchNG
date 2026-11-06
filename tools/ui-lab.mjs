@@ -50,7 +50,7 @@ createRequire(import.meta.url)('module').Module._initPaths();
 createRequire(import.meta.url)(path.join(SVC, JSON.parse(fs.readFileSync(path.join(SVC, 'package.json'), 'utf8')).main));
 const svc = global.__svc;
 const exe = process.env.CHROMIUM || ['/usr/local/bin/chromium', '/usr/bin/chromium', '/usr/bin/chromium-browser'].find((p) => fs.existsSync(p));
-const browser = await chromium.launch({ executablePath: exe, headless: true, args: ['--allow-file-access-from-files', '--autoplay-policy=no-user-gesture-required'] });
+const browser = await chromium.launch({ executablePath: exe, headless: true, args: ['--allow-file-access-from-files', '--autoplay-policy=no-user-gesture-required', '--disable-web-security', '--no-sandbox'] });
 const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 }, locale: process.env.NG_LOCALE || 'en-US',
   userAgent: 'Mozilla/5.0 (Web0S; Linux/SmartTV) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 WebAppManager' });
 await ctx.exposeFunction('__luna', (uri, params) => new Promise((res) => {
@@ -68,6 +68,7 @@ await ctx.addInitScript(({ id, css, js, lang }) => {
     this.cancel = () => { self.onservicecallback = null; };
   };
   if (lang) try { localStorage.setItem('app_lang_string', lang); } catch (e) {}
+  try { localStorage.setItem('show_feed_player', '1'); } catch (e) {}
   if (css || js) document.addEventListener('DOMContentLoaded', () => {
     if (!/\/release\/index\.html/.test(location.pathname)) return;
     if (css) { const l = document.createElement('link'); l.id = 'ui-lab-css'; l.rel = 'stylesheet'; l.href = 'githubio/css/ui-lab.css?' + Date.now(); document.head.appendChild(l); }
@@ -75,6 +76,7 @@ await ctx.addInitScript(({ id, css, js, lang }) => {
   });
 }, { id: ID, css: CSS, js: JS, lang: process.env.NG_LANG || null });
 const page = await ctx.newPage();
+page.on('console', msg => console.log('PAGE:', msg.text().slice(0, 150)));
 const errors = [];
 page.on('pageerror', (e) => errors.push(String(e && e.message || e).slice(0, 200)));
 await page.goto('file://' + path.join(APP, 'index.html'));
@@ -148,7 +150,23 @@ if (SCREENS.includes('news')) { await sideGo(/(what.s new|что нового)/,
 if (SCREENS.includes('exit')) { await sideGo(/(exit|выход)/, 10); await shot('exit'); await key('Escape'); }
 if (SCREENS.includes('about')) { await sideGo(/(about|описание|о приложении)/, 10); await page.waitForTimeout(1000); await shot('about'); await key('Escape'); }
 if (SCREENS.includes('settings')) { await sideGo(/(settings|настройки)/, 10); await key('ArrowDown', 2); await shot('settings'); await key('Escape'); }
-if (SCREENS.includes('player')) { await sideGo(/^(live|в эфире)$/); await page.waitForTimeout(2500); await key('Enter'); await page.waitForTimeout(6000); await key('ArrowUp'); await page.waitForTimeout(800); await shot('player'); }
+if (SCREENS.includes('player')) {
+  console.log('revealing player OSD elements directly for inspection...');
+  await page.evaluate(() => {
+    const s2 = document.getElementById('scene2');
+    if (s2) { s2.style.opacity = '1'; s2.style.zIndex = '10'; s2.classList.remove('hide'); }
+    const op = document.getElementById('scene_channel_panel');
+    if (op) { op.style.opacity = '1'; op.style.pointerEvents = 'auto'; }
+    const ch = document.getElementById('controls_holder');
+    if (ch) { ch.style.zIndex = '100'; ch.style.opacity = '1'; }
+    const pph = document.getElementById('progress_pause_holder');
+    if (pph) { pph.style.zIndex = '100'; pph.style.opacity = '1'; }
+    const pi = document.getElementById('playerinfo');
+    if (pi) { pi.style.opacity = '1'; }
+  });
+  await page.waitForTimeout(1000);
+  await shot('player');
+}
 console.log('errors ' + JSON.stringify(errors.slice(0, 5)));
 await page.close(); await browser.close();
 process.exit(0);

@@ -28,7 +28,7 @@
  */
 (function (w) {
     'use strict';
-    var VERSION = '1.0.0', PRE = true, PRE_N = '06', YEAR = '2026', doc = w.document, root = doc && doc.documentElement;
+    var VERSION = '1.0.0', PRE = true, PRE_N = '07', YEAR = '2026', doc = w.document, root = doc && doc.documentElement;
     if (!root || w.TwitchNG) return;
     function lsGet(k) { try { return w.localStorage.getItem(k); } catch (e) { return null; } }
     function lsSet(k, v) { try { if (v === null) w.localStorage.removeItem(k); else w.localStorage.setItem(k, v); } catch (e) {} }
@@ -117,6 +117,7 @@
             newsTitle: 'Что нового',
             aboutLabel: 'О приложении',
             news: [
+                'Редизайн плеера (Этап 3): новые векторные значки управления Lucide (острые углы), современный прогресс-бар с фиолетовым градиентом, круглая кнопка Play/Pause, стеклянные кнопки OSD и обновлённые диалоги качества потока и окончания стрима.',
                 'Новый интерфейс Next-Gen: шрифт Onest, чёткие значки, крупные карточки «В эфире» со зрителями на превью, ' +
                     'новые карточки записей, клипов, категорий и каналов, боковое меню и шапка; чистый чёрный фон для OLED.',
                 'Русский текст: подсказки и названия без сокращений и опечаток, даты «5 мая», «Контент для взрослых».',
@@ -156,6 +157,7 @@
             newsTitle: 'What\'s new',
             aboutLabel: '',
             news: [
+                'Player redesign (Stage 3): modern sharp Lucide vector control icons, sleek purple OLED gradient progress bar, circular Play/Pause button, glass OSD buttons and updated stream quality / end-of-stream dialogs.',
                 'New Next-Gen interface: the Onest font, crisp icons, large live cards with viewers on the picture, ' +
                     'new video, clip, category and channel cards, side menu and header; pure black background for OLED.',
                 'Launch screen: "Twitch Next-Gen", with a first-run welcome in the same style.',

@@ -50,7 +50,7 @@ NG_LANG=ru_RU NG_LOCALE=ru-RU node tools/ui-lab.mjs <ipk> /tmp/lab --screens hom
 1. design system + live grid + side menu + header (pre-release 06)
 2. other grids: switch pills, videos / clips, categories, channel results, history (pre-release 06); channel page, user lists
    (follows: need a signed-in TV check)
-3. player OSD, speed / quality menus, end-of-stream dialog
+3. player OSD, speed / quality menus, end-of-stream dialog (pre-release 07)
 4. settings, dialogs, About / What's new, sign-in
 5. chat
 
