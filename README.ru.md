@@ -4,6 +4,8 @@
 
 [English version](README.md) · [Релизы](https://github.com/emoorpheus/TwitchNG/releases) · [Сообщить о проблеме](https://github.com/emoorpheus/TwitchNG/issues)
 
+История разработки и технические заметки сохранены в [инженерном журнале](docs/engineering-notes.ru.md).
+
 > Twitch NG — независимый проект сообщества. Он не связан с Twitch Interactive, Inc. и не одобрен этой компанией.
 
 ## Возможности

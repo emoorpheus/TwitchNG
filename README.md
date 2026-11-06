@@ -4,6 +4,8 @@
 
 [Русская версия](README.ru.md) · [Releases](https://github.com/emoorpheus/TwitchNG/releases) · [Report a problem](https://github.com/emoorpheus/TwitchNG/issues)
 
+Project history and implementation notes are available in the [engineering notes](docs/engineering-notes.ru.md).
+
 > Twitch NG is an independent community project. It is not affiliated with or endorsed by Twitch Interactive, Inc.
 
 ## Features
