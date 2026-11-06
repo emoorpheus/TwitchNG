@@ -18,6 +18,48 @@ Project history and implementation notes are available in the [engineering notes
 
 Playback speed uses the bundled **STTV Speed** engine. The app and engine have independent version numbers.
 
+## Interface guide
+
+The app keeps the familiar Twitch navigation model and adds a TV-focused presentation. Names below describe the current English UI; exact sections shown depend on the account and the data returned by Twitch.
+
+### Home and live streams
+
+- **Recommended / Home** shows Twitch's recommendations and available content rows.
+- **Live** presents stream cards. A card can show the channel, stream title, category, viewer count, language, and how long the stream has been live. Viewer count is displayed as a badge over the preview; the focused card is enlarged and outlined.
+- **Following and search results** use the same card language so channel identity and stream details are easy to scan from across the room.
+- Row controls, such as the time period, **Streams / Highlights**, and **Play all**, are presented as selectable buttons. Their availability depends on the current screen.
+
+### Categories and channels
+
+- **Categories** use portrait artwork, with current viewer totals on the artwork and channel counts below the category name.
+- **Channel search** uses circular channel portraits and centered names. Opening a channel leads to its available live stream, videos, or clips.
+- **Channel pages** and account-specific areas require a Twitch sign-in. Their contents are provided by Twitch and can change independently of this app.
+
+### Videos and clips
+
+- **Videos (VODs)** show the preview, duration, view count, category, and date. A progress strip marks previously watched portions when Twitch provides that data.
+- **Clips** have their own preview and playback page. Speed control is available only when the TV's player applies the selected rate; a clip may remain at normal speed.
+- A playback speed selector is available on VODs and clips, not on live streams. Supported choices are **0.25×, 0.5×, 0.75×, 1×, 1.25×, 1.5×, and 2×**. The engine aims to preserve pitch on supported playback paths. On some TV/player paths Twitch or webOS may ignore a rate or need time to restore normal playback.
+- Playback quality remains controlled by the player. Changing quality should preserve the VOD position, though the current pre-release has a known recovery delay described above.
+
+### Navigation, settings, and app information
+
+- **Side menu and header** provide navigation, the focused section title, a clock, and a relative “updated” time where available. The menu's current item is highlighted for remote-control navigation.
+- **Settings** use the same Next-Gen typography and focus treatment. The stock SmartTwitchTV settings and controls remain available; descriptive text is styled as secondary information.
+- **About** identifies Twitch NG, the app pre-release, the speed-engine version, and the webOS version reported by the TV. It also contains the project's license and trademark notice.
+- **What's New** summarizes changes in the installed pre-release. A welcome panel may appear on first launch; press OK or Back to close it.
+
+### Appearance controls
+
+The OLED-oriented preset and Next-Gen UI are enabled by default. These are diagnostic overrides for advanced users, not regular in-app settings:
+
+| Override | Effect | Restore default |
+|---|---|---|
+| `localStorage.TWITCHNG_OLED = '0'` | Turns off the OLED preset; the Next-Gen UI is also disabled. | Remove the key or set it to `null`. |
+| `localStorage.TWITCHNG_UI = '0'` | Turns off the Next-Gen interface while keeping the OLED preset. Restart the app after changing it. | Remove the key or set it to `null`, then restart. |
+
+These values can be changed from the app's web inspector. They are not entered in Twitch search or in the TV's ordinary settings screens.
+
 ## Compatibility and current status
 
 The current pre-release line is **Twitch NG 1.0.0 pre-release 06**, with **STTV Speed 1.3.8**. The packaged app was installed and inspected on an LG webOS 25 TV. VOD speed changes to 1.5× and 2× were observed; audio quality was not evaluated in that test.
