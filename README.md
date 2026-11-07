@@ -119,3 +119,5 @@ Twitch NG uses Twitch services to provide Twitch content and sign-in. The speed 
 ## Credits and license
 
 Twitch NG builds on the open-source SmartTwitchTV project and its webOS port. The playback-speed engine is maintained in this project. See the source headers and [SECURITY.md](SECURITY.md) for component details and license notices. The project is distributed under GPL-3.0; third-party components retain their respective licenses.
+
+Development and AI pairing: built and refined with AI assistance (opus 5.5 + gemini 3.8 flash + luna 6).

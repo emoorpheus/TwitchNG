@@ -28,7 +28,7 @@
  */
 (function (w) {
     'use strict';
-    var VERSION = '1.0.0', PRE = true, PRE_N = '07', YEAR = '2026', doc = w.document, root = doc && doc.documentElement;
+    var VERSION = '1.0.0', PRE = false, PRE_N = '', YEAR = '2026', doc = w.document, root = doc && doc.documentElement;
     if (!root || w.TwitchNG) return;
     function lsGet(k) { try { return w.localStorage.getItem(k); } catch (e) { return null; } }
     function lsSet(k, v) { try { if (v === null) w.localStorage.removeItem(k); else w.localStorage.setItem(k, v); } catch (e) {} }

@@ -20,7 +20,7 @@
     'use strict';
     var d = w.document, html = d && d.documentElement;
     if (!html || w.NgUi) return;
-    var VERSION = '1.0.0-pre07', stats = { passes: 0, cards: 0, chrome: 0 };
+    var VERSION = '1.0.0', stats = { passes: 0, cards: 0, chrome: 0 };
 
     function has(el, c) { return !!el && el.nodeType === 1 && (' ' + el.className + ' ').indexOf(' ' + c + ' ') >= 0; }
     function setClass(el, c, on) {
