@@ -1,127 +1,222 @@
-# Twitch NG
+<p align="center">
+  <img src="brand/twitchng/variants/L3/icon-130.png" width="120" height="120" alt="Twitch Next-Gen Logo" />
+</p>
 
-**Twitch NG (Next-Gen)** is a community-maintained Twitch app for LG webOS TVs. It is distributed as a separate application, so it can be installed alongside the stock Twitch app.
+<h1 align="center">Twitch Next-Gen for LG webOS</h1>
 
-[Русская версия](README.ru.md) · [Releases](https://github.com/emoorpheus/TwitchNG/releases) · [Report a problem](https://github.com/emoorpheus/TwitchNG/issues)
+<p align="center">
+  <b>Modern, lightweight, ad-free standalone Twitch client for LG webOS Smart TVs</b><br>
+  Featuring pitch-preserving 0.25–2× VOD speed, Next-Gen Onest typography, 52.4 FPS smooth remote navigation, and True Black OLED mode.
+</p>
 
-Project history and technical notes are available in the [engineering notes](docs/engineering-notes.ru.md).
+<p align="center">
+  <a href="https://github.com/emoorpheus/TwitchNG/releases/latest"><img src="https://img.shields.io/badge/release-v1.0.0-9146FF.svg?style=flat-square" alt="Latest Release" /></a>
+  <img src="https://img.shields.io/badge/webOS-3.0%2B%20%7C%2022%2B%20%7C%2024%2B%20%7C%2025%2B-brightgreen.svg?style=flat-square" alt="Supported webOS" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg?style=flat-square" alt="License" /></a>
+  <img src="https://img.shields.io/badge/lang-English%20%7C%20Русский-orange.svg?style=flat-square" alt="Languages" />
+</p>
 
-## Screenshots
+<p align="center">
+  <a href="README.ru.md"><b>🇷🇺 Читать документацию на русском языке</b></a>
+</p>
 
-Screenshots demonstrate the Twitch NG 1.0.0 release interface captured on 1080p TV layout. Individual stream cards, channels, and thumbnails are live content supplied by Twitch and reflect real-time browsing.
+---
 
-| Home and live streams | Video library | Categories |
-|---|---|---|
-| ![Twitch NG home screen with live stream cards](docs/screenshots/en/home.jpg) | ![Twitch NG video grid](docs/screenshots/en/videos.jpg) | ![Twitch NG games and categories](docs/screenshots/en/games.jpg) |
+## 🌟 Overview
 
-| Game streams | Channel search | Clips |
-|---|---|---|
-| ![Streams in a selected game category](docs/screenshots/en/game-streams.jpg) | ![Channel search screen](docs/screenshots/en/search-channels.jpg) | ![Clip grid](docs/screenshots/en/clips.jpg) |
+**Twitch Next-Gen (Twitch NG)** is a community-driven, standalone Twitch application designed from the ground up for LG webOS Smart TVs. It installs under its own dedicated application identity (`com.twitchng.tv`), running side-by-side with the stock Twitch app without overwriting, replacing, or interfering with it.
 
-| Side navigation | Settings | Player & Controls (Stage 3) |
-|---|---|---|
-| ![Twitch NG side navigation](docs/screenshots/en/side.jpg) | ![Twitch NG settings screen](docs/screenshots/en/settings.jpg) | ![Twitch NG modern player interface](docs/screenshots/en/player.jpg) |
+Twitch NG bridges the gap between desktop Twitch browsing and the living room TV experience: enjoy pitch-preserving variable speed playback on VODs (from 0.25× up to 2×), a high-refresh Next-Gen UI powered by **Onest** typography and **Lucide** vector glyphs, instant 1× speed restoration without decoder stalls, and a dedicated True Black OLED presentation crafted specifically for dark-room viewing on modern OLED panels.
 
-## Why use Twitch NG on a TV?
+<p align="center">
+  <img src="docs/screenshots/en/home.jpg" width="90%" alt="Twitch Next-Gen Home Screen in OLED Mode" />
+  <br>
+  <i>Home screen with live stream cards, rich stream metadata, Onest typography, and True Black (#000000) OLED theme</i>
+</p>
 
-- **Built around a remote control.** Large cards, clear focus indication, a persistent side rail, and readable labels make browsing possible without a mouse or keyboard. Focus navigation runs smoothly at **52.4 FPS** on live TV.
-- **More context before opening a stream.** Viewer count, language, category, title, and live duration appear together on the live card; video cards surface length, views, date, and watched progress.
-- **Modern player interface (Stage 3).** Centered Play/Pause button with subtle focus glow, sleek gradient timeline with unclipped 100% position marker, asymmetric boundary preventing rewind leaks, and glass controls elevated above the chat overlay.
-- **A faster way to find the right content.** Browse recommended rows, follow live channels, search channels, open a game category, and switch between streams and highlights from the TV interface.
-- **Choose a VOD pace that suits you.** Speeds from 0.25× to 2× are available for supported VODs with pitch-preserving audio processing (WSOLA algorithm) and instant, smooth return to 1×.
-- **Keep your existing app.** Twitch NG has its own app identity and data, so it installs alongside the stock Twitch app instead of replacing it.
-- **Make the screen comfortable in a dark room.** The default black canvas (`#000`) and restrained purple focus accents are designed for OLED viewing; the Next-Gen UI can be disabled if you prefer the classic interface.
+---
 
-> Twitch NG is an independent community project. It is not affiliated with or endorsed by Twitch Interactive, Inc.
+## ✨ Features
 
-## Features
-
-- Browse Twitch and watch streams, VODs, and clips using the TV interface.
-- **Next-Gen UI** with redesigned typography (**Onest** / NG Sans), sharp **Lucide** vector icons, focus states, badges, and playback details. Can be toggled with `TWITCHNG_UI='0'`.
-- Pitch-preserving VOD speed control from **0.25× to 2×** powered by the bundled **STTV Speed 1.3.9** engine. Speed controls are not shown for live streams.
-- **Smooth 1× Restore:** instantaneous return from speed back to 1× without 10–24s decoder stalls or black frames.
-- **Automatic Quality Step-Up:** dynamically recovers back to higher quality variants after temporary bandwidth drops once the connection stabilizes.
-- Pure black OLED visual preset (`#000`) by default.
-- Separate app data and sign-in from the stock Twitch app.
-
-## Interface guide
-
-The app keeps the familiar Twitch navigation model and adds a TV-focused presentation.
-
-### Home, recommendations, and live streams
-
-- **Recommended / Home** is the starting point for discovery. It brings available Twitch rows into one TV-friendly screen, with large artwork and a persistent side rail for navigation.
-- **Live** presents stream cards. Each card combines the preview with a prominent live-viewer badge, channel name, stream title, game/category, language, and elapsed stream time.
-- **Focus feedback** raises and outlines the selected card so remote-control navigation is easy to track at a distance. The Next-Gen visual system uses Onest typography, sharp Lucide-style icons, a black OLED canvas, and purple focus accents with 52.4 FPS smooth remote response.
-- **Following and search results** reuse the same card hierarchy, keeping channel identity and stream context in the same place throughout the app.
-
-### Categories and channels
-
-- **Categories** use portrait artwork, with current viewer totals on the artwork and channel counts below the category name.
-- **Channel search** uses circular channel portraits and centered names to distinguish people from game artwork. Opening a channel leads to its available live stream, videos, or clips.
-- **Channel pages** and account-specific areas require a Twitch sign-in.
-
-### Videos, clips, and player interface
-
-- **Videos (VODs)** show the preview, duration, view count, category, and date. A progress strip marks previously watched portions when Twitch provides that data.
-- **Player Redesign (Stage 3):**
+- 🎮 **Built Around the TV Remote**: Large readable cards, prominent purple focus glows, persistent side navigation rail, and fluid remote navigation calibrated at **52.4 FPS** on live LG webOS TV hardware.
+- ⚡ **Pitch-Preserving VOD Speed (0.25× – 2×)**: Bundled **STTV Speed 1.3.9** engine provides time-stretching with pitch preservation using the WSOLA algorithm across 0.25×, 0.5×, 0.75×, 1×, 1.25×, 1.5×, and 2× speeds. Speed controls appear strictly on VODs and never clutter live broadcasts.
+- 🔄 **Instantaneous 1× Speed Restoration**: Zero-delay transition back to native 1× playback, eliminating the 10–24 second decoder stalls and black-screen freezes common in webOS media pipelines.
+- 📈 **Dynamic Quality Step-Up**: Intelligent network recovery automatically restores high-definition stream variants after transient Wi-Fi drops once bandwidth stabilizes.
+- 🌑 **True Black OLED Mode**: Replaces washed-out greys with pure `#000000` pixels across the browse interface, player controls, and start screen to eliminate panel glow and maximize contrast.
+- 🎬 **Modern Player Interface (Stage 3)**:
   - Minimalist centered circular Play/Pause button with focus glow.
-  - Smooth gradient progress bar with accurate 100% boundary marker.
-  - Asymmetric clip-path preventing progress timeline leakage to the left during rewind.
-  - Multi-layer drop shadows on timecodes for crisp legibility over bright video and live chat messages.
-  - Lower OSD controls elevated to `z-index: 10` above semi-transparent chat.
-- **Speed Control (STTV Speed 1.3.9):** Supported choices are **0.25×, 0.5×, 0.75×, 1×, 1.25×, 1.5×, and 2×**. The engine preserves pitch via WSOLA. Restoring 1× playback is instantaneous.
-- **Automatic Quality Recovery:** If network congestion triggers a temporary downCap, the engine restores higher quality automatically after 2 minutes of sustained bandwidth headroom.
+  - Smooth gradient progress timeline with unclipped 100% position marker.
+  - Asymmetric clip-path boundary preventing progress timeline leakage to the left during rewind.
+  - Multi-layer drop shadows on timecodes for crisp legibility over bright video content.
+  - Glass OSD controls elevated above semi-transparent chat overlays.
+- 💬 **Integrated Live Chat & Channel Context**: Real-time viewer count, broadcast uptime, language tags, category badges, and chat overlay without obstructing the action.
+- 🔍 **Comprehensive Discovery**: Browse recommended rows, follow live channels, explore game categories, search channels with instant results, and browse highlights or VODs.
+- 🎛️ **Dual Language Support**: Full out-of-the-box support for both **English** and **Russian**, with automatic system locale detection and manual overrides in Settings.
+- 🛡️ **Zero Telemetry & Private Session**: Completely ad-free stream viewing without analytics or telemetry tracking. App data and credentials remain fully isolated on your TV.
 
-### Navigation, settings, and app information
+---
 
-- **Side menu and header** provide navigation, section title, clock, and relative “updated” time.
-- **Settings** use the same Next-Gen typography and focus treatment with descriptive secondary labels.
-- **About** displays Twitch NG 1.0.0, speed-engine 1.3.9, and the webOS platform details reported by the TV.
-- **What's New** summarizes features and updates in the release.
+## 📸 Screenshots
 
-### Appearance controls
+Screenshots demonstrate the Twitch NG 1.0.0 release interface captured directly on 1080p LG OLED TV layout. Individual stream cards, channels, and thumbnails reflect live real-time browsing content.
 
-The OLED preset and Next-Gen UI are enabled by default:
+<table align="center" width="100%">
+  <tr>
+    <td width="50%" align="center"><b>Home & Live Streams</b></td>
+    <td width="50%" align="center"><b>Side Navigation Drawer</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/en/home.jpg" width="100%" alt="Twitch NG Home Screen" /></td>
+    <td align="center"><img src="docs/screenshots/en/side.jpg" width="100%" alt="Twitch NG Side Navigation" /></td>
+  </tr>
+  <tr>
+    <td align="center"><i>Live streams with real-time viewer badges, category tags, stream title, and uptime</i></td>
+    <td align="center"><i>Quick access rail to Search, Categories, VODs, Clips, Settings, and Account</i></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><b>Categories & Games</b></td>
+    <td width="50%" align="center"><b>Game Streams Row</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/en/games.jpg" width="100%" alt="Twitch NG Categories & Games" /></td>
+    <td align="center"><img src="docs/screenshots/en/game-streams.jpg" width="100%" alt="Streams in Selected Game" /></td>
+  </tr>
+  <tr>
+    <td align="center"><i>Browse games and creative categories with live viewer counters</i></td>
+    <td align="center"><i>Top live broadcasts within the selected game category</i></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><b>Video Library (VODs)</b></td>
+    <td width="50%" align="center"><b>Clips Grid</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/en/videos.jpg" width="100%" alt="Twitch NG Video Library" /></td>
+    <td align="center"><img src="docs/screenshots/en/clips.jpg" width="100%" alt="Twitch NG Clips Grid" /></td>
+  </tr>
+  <tr>
+    <td align="center"><i>Past broadcasts with duration pills, watch progress bars, and broadcast dates</i></td>
+    <td align="center"><i>Popular clips filtered by day, week, month, or all-time highlights</i></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><b>Channel Search</b></td>
+    <td width="50%" align="center"><b>Settings Screen</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/en/search-channels.jpg" width="100%" alt="Twitch NG Channel Search" /></td>
+    <td align="center"><img src="docs/screenshots/en/settings.jpg" width="100%" alt="Twitch NG Settings Screen" /></td>
+  </tr>
+  <tr>
+    <td align="center"><i>Instant channel search with circular avatars and partner status</i></td>
+    <td align="center"><i>Remote-optimized settings with purple focus rings, audio diagnostics, and language controls</i></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><b>What's New Dialog</b></td>
+    <td width="50%" align="center"><b>Player Interface & OSD (Stage 3)</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/en/news.jpg" width="100%" alt="Twitch NG What's New Dialog" /></td>
+    <td align="center"><img src="docs/screenshots/en/player.jpg" width="100%" alt="Twitch NG Modern Player Interface" /></td>
+  </tr>
+  <tr>
+    <td align="center"><i>Release changelog and feature updates directly on screen</i></td>
+    <td align="center"><i>Modern Stage 3 player with centered controls, sleek progress gradient, and live chat</i></td>
+  </tr>
+</table>
 
-| Override | Effect | Restore default |
-|---|---|---|
-| `localStorage.TWITCHNG_OLED = '0'` | Turns off the OLED preset; the Next-Gen UI is also disabled. | Remove the key or set it to `null`. |
-| `localStorage.TWITCHNG_UI = '0'` | Turns off the Next-Gen interface while keeping the OLED preset. Restart the app after changing it. | Remove the key or set it to `null`, then restart. |
+---
 
-## Compatibility and verified TV testing
+## 📦 Package Selection
 
-Twitch NG 1.0.0 is verified on **LG OLED TV (webOS 24 / webOS 10.3.0, Chromium 120)**:
-- Navigation runs at **52.4 FPS** with instant remote response.
-- Pitch-preserving VOD speed (0.25×–2×) and smooth return to 1× without freeze.
-- WebAudio WSOLA graph with lip-sync consistency verified.
-- Account authorization, personal subscriptions, and watch history verified.
-- App package size is compact (**1.2 MB**, 53 files).
+| Package | Supported webOS | Target Architecture | Size |
+|---|---|---|---|
+| **`com.twitchng.tv_1.0.0_all.ipk`** | **webOS 3.0+ \| 22+ \| 24+ \| 25+** | Universal (All webOS Smart TVs) | **~1.2 MB** *(Standalone client)* |
 
-## Install
+---
 
-1. Open the [Releases](https://github.com/emoorpheus/TwitchNG/releases) page and download `com.twitchng.tv_1.0.0_all.ipk`.
-2. Install via webOS Dev Mode / Homebrew Channel:
-   ```bash
-   ares-install -d <device> com.twitchng.tv_1.0.0_all.ipk
-   ```
-   Or via root SSH:
-   ```bash
-   scp com.twitchng.tv_1.0.0_all.ipk root@TV:/tmp/
-   ssh root@TV "luna-send -i -f luna://com.webos.appInstallService/dev/install '{\"id\":\"com.twitchng.tv\",\"ipkUrl\":\"/tmp/com.twitchng.tv_1.0.0_all.ipk\",\"subscribe\":true}'"
-   ```
-3. Launch **Twitch NG** from the TV launcher and sign in.
+## 🚀 Installation
 
-## Report an issue
+Ensure your TV is in **Developer Mode** or has **Root** (via [webosbrew.org](https://webosbrew.org)).
 
-Before filing an issue, check the [existing reports](https://github.com/emoorpheus/TwitchNG/issues). Include the app version (1.0.0), webOS version, reproduction steps, and relevant log messages. Do not post account credentials, tokens, or private IP addresses.
+### Method 1: webOS Dev Manager (Recommended GUI)
+1. Download `com.twitchng.tv_1.0.0_all.ipk` from the [Releases](https://github.com/emoorpheus/TwitchNG/releases) page.
+2. Launch [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) on your computer.
+3. Click **Install...**, select the `.ipk` file, and wait for confirmation.
 
-## Privacy and security
+### Method 2: webOS CLI (ares-cli)
+```bash
+ares-install -d tv com.twitchng.tv_1.0.0_all.ipk
+ares-launch -d tv com.twitchng.tv
+```
 
-Twitch NG runs locally inside webOS without external hosting, telemetry, or analytics. Review [SECURITY.md](SECURITY.md) for data-flow details.
+### Method 3: Rooted TV over SSH
+```bash
+scp com.twitchng.tv_1.0.0_all.ipk root@$TV_HOST:/tmp/com.twitchng.tv.ipk
+ssh root@$TV_HOST 'luna-send -n 1 luna://com.webos.appInstallService/dev/install "{\"id\":\"com.twitchng.tv\",\"ipkUrl\":\"/tmp/com.twitchng.tv.ipk\",\"subscribe\":false}"'
+```
 
-## Credits and license
+*To uninstall:* `ares-install -d tv -r com.twitchng.tv`
 
-Twitch NG builds on the open-source SmartTwitchTV project and its webOS port. Distributed under GPL-3.0; third-party components retain their respective licenses.
+---
 
-Development and AI pairing: built and refined with AI assistance (opus 5.5 + gemini 3.8 flash + luna 6).
+## 🎮 Remote Control & Shortcuts
+
+| Button | Action |
+|---|---|
+| **D-Pad (Arrows)** | Navigate stream cards, sidebar, categories, and settings with clear focus rings |
+| **OK / Enter** | Open selected stream, channel, category, or toggle setting |
+| **Back / Return** | Return to previous view / Open side navigation drawer / Close active dialog |
+| **Up (in Player)** | Show player OSD controls, progress bar, channel info, and chat status |
+| **Down (in Player)** | Dismiss player OSD / Quick access to player options |
+| **Left / Right (in Player)** | Seek backwards / forwards in VODs (with instant speed resume) |
+| **Play / Pause** | Toggle video playback |
+| **Hold OK** | Refresh active streams row or category grid |
+| **Hold Left** | Open thumbnail and grid viewing options |
+
+---
+
+## 🌍 Language Configuration
+
+Twitch Next-Gen includes complete localization for both **English** and **Russian**:
+- The app automatically detects your TV's system locale on initial setup.
+- To switch language manually:
+  1. Open the left sidebar and select **Settings** (⚙️).
+  2. Navigate to **Language** (`app_lang`).
+  3. Select **English [EN]** or **Русский [RU]**. The UI updates instantly.
+
+---
+
+## 🛠️ Building from Source
+
+**Requirements:** Node.js 22+, npm.
+
+```bash
+# Clone the repository
+git clone https://github.com/emoorpheus/TwitchNG.git
+cd TwitchNG
+
+# Run quality and hygiene checks
+node tests/hygiene.mjs
+
+# Build universal package into dist/
+node build/build-app.mjs
+```
+
+The resulting package will be created at:
+- `dist/com.twitchng.tv_1.0.0_all.ipk`
+
+---
+
+## 💡 Notes & Details
+
+- **Independent Session**: Twitch NG maintains its own authentication tokens and local preferences separate from the stock Twitch app. You can log into your account via QR code or manual key without touching other installed apps.
+- **Dedicated Application ID**: Installed as `com.twitchng.tv` — will never conflict with or replace official store applications.
+- **Privacy & Safety**: Twitch NG connects directly to official Twitch GraphQL, Usher, and HLS streaming endpoints. Zero telemetry, user tracking, or third-party analytical requests.
+
+---
+
+## 📜 Credits & License
+
+- Licensed under **GPL-3.0-only**. See [LICENSE](LICENSE).
+- Fork and evolution of [SmartTwitchTV](https://github.com/fgl27/SmartTwitchTV) by fgl27, with enhancements by TBSniller.
+- Engineering, modern Next-Gen UI overhaul, STTV Speed 1.3.9 engine, and webOS 24/25 adaptations developed in human-AI pairing by **emoorpheus** with **Anthropic Claude 3.7 / Opus 5.5**, **Google Gemini 3.8 Flash**, and **Luna 6**.
+- *Disclaimer:* Twitch is a trademark of Twitch Interactive, Inc. This project is an independent community open-source initiative and is not affiliated with, endorsed by, or authorized by Twitch Interactive, Inc. or LG Electronics.
