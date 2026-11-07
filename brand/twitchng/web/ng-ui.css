@@ -277,7 +277,7 @@ html.ng-ui .strokedeline, html.ng-ui .strokedelinebig { text-shadow: none !impor
 
 /* player container: MUST be transparent so webOS native hardware video punches through */
 html.ng-ui #scene2 { background: transparent !important; }
-html.ng-ui .scene_channel_panel { transition: opacity .2s ease-out !important; }
+html.ng-ui .scene_channel_panel { transition: opacity .2s ease-out !important; z-index: 10 !important; }
 
 /* top info bar */
 html.ng-ui #playerinfo { background: linear-gradient(to bottom, rgba(0, 0, 0, .92) 0%, rgba(0, 0, 0, .5) 70%, transparent 100%) !important;
@@ -297,10 +297,11 @@ html.ng-ui .playclock { font-family: var(--ng-font) !important; font-weight: 600
     color: var(--ng-mute) !important; top: 3.5vh !important; right: 4vw !important; }
 
 /* timeline / progress bar */
-html.ng-ui .progress_pause_holder { bottom: 13.5vh !important; padding: 0 3vw !important; box-sizing: border-box !important; }
+html.ng-ui .progress_pause_holder { bottom: 13.5vh !important; padding: 0 3vw !important; box-sizing: border-box !important; z-index: 10 !important; }
 html.ng-ui .progress_bar_div, html.ng-ui .progress_bar_div.opacity_zero { background: transparent !important; border: 0 !important; height: auto !important; transform: none !important; opacity: 1 !important; }
 html.ng-ui #progress_bar_inner_container { height: .65vh !important; border: 0 !important; border-radius: .35vh !important;
-    background: rgba(255, 255, 255, .15) !important; position: relative !important; overflow: visible !important; }
+    background: rgba(255, 255, 255, .15) !important; position: relative !important; overflow: visible !important;
+    clip-path: inset(-2vh -2vh -2vh 0 round .35vh 0 0 .35vh) !important; }
 html.ng-ui #progress_bar_inner_holder { height: .65vh !important; background: transparent !important; }
 html.ng-ui #inner_progress_bar_buffer { height: .65vh !important; border-radius: .35vh !important;
     background: rgba(255, 255, 255, .25) !important; border: 0 !important; position: absolute !important; bottom: 0 !important; }
@@ -312,7 +313,8 @@ html.ng-ui .inner_progress_circle { width: 1.6vh !important; height: 1.6vh !impo
     box-shadow: 0 0 1vh rgba(191, 148, 255, .8) !important; position: absolute !important; right: 0 !important;
     top: 50% !important; transform: translate(50%, -50%) !important; }
 html.ng-ui .progress_bar_timer, html.ng-ui .progress_bar_jump { font-family: var(--ng-font) !important;
-    font-weight: 700 !important; font-size: 2vh !important; color: var(--ng-text) !important; font-feature-settings: 'tnum' !important; }
+    font-weight: 700 !important; font-size: 2vh !important; color: var(--ng-text) !important; font-feature-settings: 'tnum' !important;
+    text-shadow: 0 0 .8vh #000, 0 .2vh .4vh #000, 0 0 1.2vh #000 !important; }
 html.ng-ui .progress_bar_holder_focus { box-shadow: 0 0 0 .28vh var(--ng-accent-2) !important; border-radius: .8vh !important; }
 
 /* central pause/play button */
@@ -338,7 +340,7 @@ html.ng-ui .next_button.progress_bar_div_focus, html.ng-ui .back_button.progress
 
 /* control buttons bottom bar */
 html.ng-ui .controls_holder { bottom: 0 !important; padding: 1.5vh 0 1.2vh !important;
-    background: linear-gradient(to top, rgba(0, 0, 0, .95) 0%, rgba(0, 0, 0, .6) 70%, transparent 100%) !important; }
+    background: linear-gradient(to top, rgba(0, 0, 0, .95) 0%, rgba(0, 0, 0, .6) 70%, transparent 100%) !important; z-index: 10 !important; }
 html.ng-ui .controls_button_holder[style*="display: none"] { display: none !important; }
 html.ng-ui .controls_button_holder { width: auto !important; margin: 0 .4vh !important; }
 html.ng-ui .controls_button { width: 5vh !important; height: 5vh !important; display: inline-flex !important;
