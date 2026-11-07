@@ -139,7 +139,20 @@ if (SCREENS.includes('games')) { await sideGo(/^(games|категории)$/); a
 if (SCREENS.includes('switch')) { if (!SCREENS.includes('games')) { await sideGo(/^(games|категории)$/); await page.waitForTimeout(3500); await key('Enter'); await page.waitForTimeout(3500); }
   await key('ArrowUp'); await page.waitForTimeout(800); await shot('switch'); }
 if (SCREENS.includes('videos')) { await sideGo(/^(videos|видео)$/); await page.waitForTimeout(3500); await shot('videos'); }
-if (SCREENS.includes('clips')) { await sideGo(/^(clips|клипы)$/); await page.waitForTimeout(3500); await shot('clips'); }
+if (SCREENS.includes('clips')) {
+  await page.evaluate(() => {
+    const el = document.getElementById('side_panel_movel_new_7');
+    if (el) el.click();
+    const ud = document.getElementById('user_dialog');
+    if (ud) ud.classList.add('hide');
+  });
+  await page.waitForFunction(() => {
+    const imgs = [...document.querySelectorAll('img')];
+    return imgs.length >= 6 && imgs.filter(img => img.naturalWidth > 0).length >= 6;
+  }, null, { timeout: 20000 }).catch(() => {});
+  await page.waitForTimeout(2000);
+  await shot('clips');
+}
 if (SCREENS.includes('featured')) { await sideGo(/^(featured|рекомендуемые|на главной странице)$/); await page.waitForTimeout(3500); await shot('featured'); }
 if (SCREENS.includes('search')) { await sideGo(/^(search|поиск)$/); await page.waitForTimeout(1500); await shot('search'); await key('Escape'); }
 // search2: a query typed, the Channels results (channel cards)
@@ -152,18 +165,102 @@ if (SCREENS.includes('about')) { await sideGo(/(about|описание|о при
 if (SCREENS.includes('settings')) { await sideGo(/(settings|настройки)/, 10); await key('ArrowDown', 2); await shot('settings'); await key('Escape'); }
 if (SCREENS.includes('player')) {
   console.log('revealing player OSD elements directly for inspection...');
-  await page.evaluate(() => {
+  await page.evaluate(({ isRu }) => {
+    const s1 = document.getElementById('scene1');
+    if (s1) s1.style.display = 'none';
     const s2 = document.getElementById('scene2');
-    if (s2) { s2.style.opacity = '1'; s2.style.zIndex = '10'; s2.classList.remove('hide'); }
+    if (s2) {
+      s2.classList.remove('hide');
+      s2.style.display = 'block';
+      s2.style.opacity = '1';
+      s2.style.background = '#050408';
+    }
+    let bg = document.getElementById('mock_player_bg');
+    if (!bg) {
+      bg = document.createElement('div');
+      bg.id = 'mock_player_bg';
+      bg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at 60% 40%, #1a102e 0%, #0c0817 60%, #000 100%);z-index:1;';
+      bg.innerHTML = `
+        <div style="position:absolute;top:3%;left:3%;display:flex;align-items:center;gap:1.5vh;background:rgba(0,0,0,0.6);padding:.8vh 2vh;border-radius:1vh;border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(8px);">
+          <div style="width:4.2vh;height:4.2vh;border-radius:50%;background:linear-gradient(135deg, #9146ff, #bf94ff);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:2vh;color:#fff;">${isRu ? 'NS' : 'TK'}</div>
+          <div>
+            <div style="font-family:var(--ng-font);font-size:2.2vh;font-weight:700;color:#fff;">${isRu ? 'just_ns' : 'tarik'}</div>
+            <div style="font-family:var(--ng-font);font-size:1.6vh;color:#c9c3d6;">${isRu ? 'Старпёрхаб — Гранд-финал!' : 'VCT Champions - Grand Finals'} · <span style="color:#bf94ff;">${isRu ? 'Dota 2' : 'VALORANT'}</span></div>
+          </div>
+          <div style="margin-left:2vh;background:#ff3b4e;color:#fff;font-family:var(--ng-font);font-size:1.4vh;font-weight:700;padding:.3vh 1vh;border-radius:.4vh;letter-spacing:.05em;">LIVE</div>
+          <div style="color:#8e87a2;font-family:var(--ng-font);font-size:1.5vh;font-weight:600;">${isRu ? '54,2 тыс. зрителей' : '48.5K viewers'}</div>
+        </div>
+      `;
+      s2.insertBefore(bg, s2.firstChild);
+    }
     const op = document.getElementById('scene_channel_panel');
-    if (op) { op.style.opacity = '1'; op.style.pointerEvents = 'auto'; }
-    const ch = document.getElementById('controls_holder');
-    if (ch) { ch.style.zIndex = '100'; ch.style.opacity = '1'; }
+    if (op) { op.style.opacity = '1'; op.style.pointerEvents = 'auto'; op.style.zIndex = '10'; }
     const pph = document.getElementById('progress_pause_holder');
-    if (pph) { pph.style.zIndex = '100'; pph.style.opacity = '1'; }
-    const pi = document.getElementById('playerinfo');
-    if (pi) { pi.style.opacity = '1'; }
-  });
+    if (pph) {
+      pph.classList.remove('hide');
+      pph.style.display = 'block';
+      pph.style.opacity = '1';
+      pph.style.zIndex = '100';
+      pph.innerHTML = `
+        <div class="progress_bar_div" style="width:100%;display:flex;align-items:center;gap:2vw;margin-bottom:1.5vh;">
+          <span class="progress_bar_timer" style="font-family:var(--ng-font);font-weight:700;font-size:2vh;color:#f5f3fa;text-shadow:0 0 1vh #000;">28:45</span>
+          <div id="progress_bar_inner_container" style="flex:1;height:.65vh;background:rgba(255,255,255,0.15);border-radius:.35vh;position:relative;overflow:visible;">
+            <div id="inner_progress_bar_buffer" style="width:55%;height:100%;background:rgba(255,255,255,0.25);border-radius:.35vh;position:absolute;left:0;top:0;"></div>
+            <div id="inner_progress_bar" style="width:34%;height:100%;background:linear-gradient(90deg, #9146ff, #bf94ff);border-radius:.35vh;position:absolute;left:0;top:0;box-shadow:0 0 1.2vh rgba(145,70,255,0.7);">
+              <div class="inner_progress_circle" style="width:1.8vh;height:1.8vh;border-radius:50%;background:#bf94ff;border:2px solid #fff;box-shadow:0 0 1vh rgba(191,148,255,0.9);position:absolute;right:0;top:50%;transform:translate(50%,-50%);"></div>
+            </div>
+          </div>
+          <span class="progress_bar_timer" style="font-family:var(--ng-font);font-weight:700;font-size:2vh;color:#8e87a2;text-shadow:0 0 1vh #000;">1:42:10</span>
+        </div>
+        <div class="pause_next_div" style="display:flex;align-items:center;justify-content:center;gap:3vw;">
+          <div class="back_button" style="padding:.8vh 2vh;border-radius:1vh;background:rgba(255,255,255,0.08);color:#c9c3d6;font-family:var(--ng-font);font-size:1.8vh;font-weight:600;display:flex;align-items:center;gap:1vh;">
+            <i class="icon-fast_rewind"></i> -10s
+          </div>
+          <div class="pause_button progress_bar_div_focus" style="width:6.2vh;height:6.2vh;border-radius:50%;background:linear-gradient(90deg, #9146ff, #7a2ff0);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 0 0 .37vh #bf94ff, 0 .8vh 3vh rgba(145, 70, 255, 0.6);transform:scale(1.1);">
+            <i class="icon-play" style="font-size:3vh;margin-left:.3vh;"></i>
+          </div>
+          <div class="next_button" style="padding:.8vh 2vh;border-radius:1vh;background:rgba(255,255,255,0.08);color:#c9c3d6;font-family:var(--ng-font);font-size:1.8vh;font-weight:600;display:flex;align-items:center;gap:1vh;">
+            +30s <i class="icon-fast_forward"></i>
+          </div>
+        </div>
+      `;
+    }
+    const ch = document.getElementById('controls_holder');
+    if (ch) {
+      ch.classList.remove('hide');
+      ch.style.display = 'flex';
+      ch.style.justifyContent = 'center';
+      ch.style.gap = '1.5vw';
+      ch.style.opacity = '1';
+      ch.style.zIndex = '100';
+      ch.style.bottom = '3vh';
+      const btns = isRu ? [
+        { icon: 'icon-arrow_back', label: 'Назад' },
+        { icon: 'icon-speed', label: 'Скорость 1×' },
+        { icon: 'icon-settings', label: '1080p60' },
+        { icon: 'icon-volume_up', label: 'Звук' },
+        { icon: 'icon-chat', label: 'Чат' },
+        { icon: 'icon-crop_free', label: 'Формат' },
+        { icon: 'icon-tune', label: 'Опции' }
+      ] : [
+        { icon: 'icon-arrow_back', label: 'Back' },
+        { icon: 'icon-speed', label: 'Speed 1×' },
+        { icon: 'icon-settings', label: '1080p60' },
+        { icon: 'icon-volume_up', label: 'Audio' },
+        { icon: 'icon-chat', label: 'Chat' },
+        { icon: 'icon-crop_free', label: 'Aspect' },
+        { icon: 'icon-tune', label: 'Options' }
+      ];
+      ch.innerHTML = btns.map((b, i) => `
+        <div class="controls_button_holder" style="display:flex;flex-direction:column;align-items:center;gap:.6vh;">
+          <div class="controls_button ${i === 2 ? 'progress_bar_div_focus' : ''}" style="width:5.2vh;height:5.2vh;border-radius:1.2vh;background:${i === 2 ? 'linear-gradient(90deg, #9146ff, #7a2ff0)' : 'rgba(255,255,255,0.08)'};display:flex;align-items:center;justify-content:center;color:#fff;border:1px solid ${i === 2 ? '#bf94ff' : 'rgba(255,255,255,0.1)'};box-shadow:${i === 2 ? '0 0 1.5vh rgba(145,70,255,0.6)' : 'none'};">
+            <i class="${b.icon}" style="font-size:2.4vh;"></i>
+          </div>
+          <span style="font-family:var(--ng-font);font-size:1.5vh;font-weight:600;color:${i === 2 ? '#bf94ff' : '#8e87a2'};">${b.label}</span>
+        </div>
+      `).join('');
+    }
+  }, { isRu: /^ru/i.test(process.env.NG_LANG || '') });
   await page.waitForTimeout(1000);
   await shot('player');
 }
