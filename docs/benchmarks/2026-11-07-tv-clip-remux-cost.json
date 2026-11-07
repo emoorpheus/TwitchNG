@@ -1,0 +1,42 @@
+{
+  "tvHost": "$TV_HOST",
+  "timestamp": "2026-11-07T07:49:45.314Z",
+  "memory": {
+    "usedJSHeap": 31200000,
+    "totalJSHeap": 33100000
+  },
+  "bench30s": {
+    "clipDurationS": 30,
+    "totalVideoFrames": 1800,
+    "totalGops": 30,
+    "initBytes": 204,
+    "totalDataBytes": 20596560,
+    "totalDataMB": 19.64,
+    "moovParseMs": 0.8,
+    "initGenMs": 2.4,
+    "totalRemuxMs": 41.1,
+    "avgPerGopMs": 1.37,
+    "minPerGopMs": 0.7,
+    "maxPerGopMs": 4.8,
+    "throughputMBs": 477.92,
+    "overheadPct": 0.137,
+    "verdict": "FEASIBLE_INSTANT"
+  },
+  "bench60s": {
+    "clipDurationS": 60,
+    "totalVideoFrames": 3600,
+    "totalGops": 60,
+    "initBytes": 204,
+    "totalDataBytes": 41193120,
+    "totalDataMB": 39.28,
+    "moovParseMs": 2.6,
+    "initGenMs": 0.8,
+    "totalRemuxMs": 103.4,
+    "avgPerGopMs": 1.723,
+    "minPerGopMs": 0.6,
+    "maxPerGopMs": 28.3,
+    "throughputMBs": 379.93,
+    "overheadPct": 0.172,
+    "verdict": "FEASIBLE_INSTANT"
+  }
+}

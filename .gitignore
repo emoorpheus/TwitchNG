@@ -17,3 +17,5 @@ tests/e2e/sttv-v2b.js
 tests/e2e/sttv-hls.min.js
 tests/e2e/hls.min.js
 tests/wav/
+sttv-*.json
+*.heapsnapshot
