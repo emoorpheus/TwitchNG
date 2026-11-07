@@ -69,6 +69,11 @@
  * v1.3.8: memory (tests/app/leak.mjs, 20 speed cycles): the v2b segment cache (up to 24 MB of video/audio segments)
  *       outlived the player - it is now emptied on stopVideo and on a new stream (late downloads of the old one are not
  *       cached); sttv-v2b.js 1.3.8 no longer keeps every MediaSource of the page alive (+2 per engage / respeed).
+ * v1.3.9: TV report / Roadmap Item 13 (observation D3): restore from v2b (1.5x/2x -> 1x) stood for 10-24 s on webOS 25.
+ *       Root cause: webOS native HLS resumes at segment keyframe (p0 - 0.5s); watchdog required ct > p0 + 0.3, then
+ *       poked v.currentTime = p0 + 0.05, flushing the decoder pipeline inside the segment and freezing it. Now:
+ *       forward movement (ct > lastCt + 0.08 within 15 s of p0) confirms v2b_restore_ok; no in-segment seek; early
+ *       nudge at ~1.5 s on stalled decoder (readyState >= 3) without seek.
  * Kill switch:   localStorage.STTV_SPEED_MODE = 'off'    (modes: auto | native | off)
  * v2b:           localStorage.STTV_SPEED_V2B = 'auto' (use when the TV ignores playbackRate) | 'force' | 'off'
  *                default = the script tag's data-v2b attribute (app build / install.sh 1.3.1: 'auto'), else 'off'
@@ -89,7 +94,7 @@
 (function (w) {
     'use strict';
     if (!w || (w.STTVSpeed && w.STTVSpeed.version)) return;
-    var VERSION = '1.3.8';
+    var VERSION = '1.3.9';
     var SELF_EL = (w.document && w.document.currentScript) || null;
     var SELF_SRC = (SELF_EL && SELF_EL.src) || '';
     var doc = w.document;
@@ -2306,25 +2311,43 @@
         return true;
     }
     // 1.3.5: the restored native pipeline must really play again. TV report: a restore that left the element at the v2b
-    // speed froze at the restore position, the bridge's stall recovery then restarted the VOD from 0. 20 s watch:
-    // no progress after 3.5 s -> rate 1 + seek to the position + play; after 8 s -> load the native source once more.
+    // speed froze at the restore position, the bridge's stall recovery then restarted the VOD from 0.
     // 1.3.6: a restore is pending from v2bRestore until the native element plays on (v2b_restore_ok) or the watchdog gives up
+    // 1.3.9: detection of moving playback without waiting for ct > p0 + 0.3. On webOS native HLS, restore starts at
+    // the segment keyframe (p0 - 0.5s or earlier). Advancing time within 15s of p0 marks v2b_restore_ok; no in-segment seek;
+    // early nudge at ~1.5 s on stalled decoder (readyState >= 3) without flushing the decoder pipeline.
     function v2bRestorePending() { return !!(v2b.restoring || v2b.rwTimer); }
     function v2bRestoreWatch(v, r) {
         if (v2b.rwTimer) w.clearInterval(v2b.rwTimer);
         var t0 = now(), p0 = r.pos, gen = v2b.gen, step = 0, attempt = r.attempt || 1;
+        var lastCt = -1, lastCtAt = t0;
         function stop(type, data) { if (v2b.rwTimer) { w.clearInterval(v2b.rwTimer); v2b.rwTimer = 0; } if (type) ev(type, data); }
         v2b.rwTimer = w.setInterval(function () {
-            var t = now() - t0, ct = 0, x, rr;
+            var tn = now(), t = tn - t0, ct = 0, x, rr;
             if (v2b.state !== 'idle' || v2b.gen !== gen || v2b.restoring || mainVideo() !== v || srcOf(v) !== r.src || v.ended) { stop(); return; }
             if (ctl.userPauseAt > r.at) { stop(); return; }                   // paused by the user: not stuck
             try { ct = v.currentTime || 0; } catch (e) {}
-            if (!v.paused && ct > p0 + 0.3) { stop('v2b_restore_ok', { ms: Math.round(now() - r.at), nudges: step, attempt: attempt }); return; }
-            if (step === 0 && t > 3500) {
+
+            var advancing = (lastCt >= 0 && ct > lastCt + 0.08 && Math.abs(ct - p0) < 15);
+            if (!v.paused && (ct > p0 + 0.2 || advancing)) {
+                stop('v2b_restore_ok', { ms: Math.round(now() - r.at), nudges: step, attempt: attempt, ct: +ct.toFixed(2), pos: +p0.toFixed(2) });
+                return;
+            }
+            if (lastCt < 0 || Math.abs(ct - lastCt) > 0.04) {
+                lastCt = ct;
+                lastCtAt = tn;
+            }
+
+            var stalledMs = tn - lastCtAt;
+            // 1.3.9: early nudge if readyState >= 3 and stalled for > 1.4s (or general step 0 at 3.5s).
+            // Never seek inside the segment (no p0 + 0.05). Only seek if severe drift (> 4.0s off).
+            if (step === 0 && (t > 3500 || (v.readyState >= 3 && stalledMs > 1400 && t > 1500))) {
                 step = 1; v2b.restoreNudges++;
-                ev('v2b_restore_stuck', { step: 1, ct: +ct.toFixed(2), pos: +p0.toFixed(2), rate: realRate(v), rs: v.readyState, paused: v.paused });
+                ev('v2b_restore_stuck', { step: 1, ct: +ct.toFixed(2), pos: +p0.toFixed(2), rate: realRate(v), rs: v.readyState, paused: v.paused, stalledMs: Math.round(stalledMs) });
                 applyNative(v, 1);
-                try { if (p0 > 0.5) v.currentTime = p0 + 0.05; } catch (e1) {}
+                if (Math.abs(ct - p0) > 4.0 && p0 > 0.5) {
+                    try { v.currentTime = p0; } catch (e1) {}
+                }
                 try { x = v.play(); if (x && x.catch) x.catch(function () {}); } catch (e2) {}
             } else if (step === 1 && t > 8000 && attempt < 2 && r.src) {
                 step = 2; v2b.restoreNudges++;
@@ -2337,7 +2360,7 @@
                 try { v.src = r.src; } catch (e3) { v2b.restoring = null; v2bShield(false); } finally { v2b.internal--; }
                 w.setTimeout(function () { v2bRestoreTimeout(v, rr); }, 15000);
             } else if (t > 20000) stop('v2b_restore_giveup', { ct: +ct.toFixed(2), pos: +p0.toFixed(2), rs: v.readyState, paused: v.paused });
-        }, 500);
+        }, 250);
     }
     // ---- lifecycle
     function v2bReset(state, keepApp) {
