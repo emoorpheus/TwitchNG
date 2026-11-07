@@ -8,7 +8,7 @@ Canonical instructions for AI coding agents (Codex, Claude Code, Gemini CLI, ...
 - **sttv-speed**: pitch-preserving VOD playback speed (0.25-2x) for SmartTwitchTV on LG webOS 24/25. The engine
   hooks the app's player; where the TV ignores `playbackRate` (webOS 25 native HLS) it switches to **v2b**: a private
   hls.js 1.5.20 + MSE timeline compression, audio through WebAudio WSOLA.
-- **Twitch NG (Next-Gen)**: a separate webOS app (`com.twitchng.tv`, version line 1.0.0 + pre-release number), built
+- **Twitch NG (Next-Gen)**: a separate webOS app (`com.twitchng.tv`, version 1.0.0), built
   from a SmartTwitchWebOSTV checkout (TBSniller's webOS port of fgl27's SmartTwitchTV) + the engine + the brand layer.
 - License GPL-3.0 (upstream). Not affiliated with Twitch.
 
@@ -51,9 +51,9 @@ A single suite: `node tests/unit.mjs`, `node tests/app/twitchng.mjs <ipk>`, ... 
 2. **Every fix comes with a test** that fails on the old code and passes on the new one. Never weaken or delete a
    test to make it pass; if a test is wrong, say why in the commit.
 3. **Before handing over a build**: `sh tests/run-all.sh <ipk>` is all `ok`; deliver the IPK with its SHA-256.
-4. **Versions live in one place each**: engine `VERSION` in `sttv-speed.js`, pre-release `PRE_N` in `twitchng.js`
-   (the app itself stays 1.0.0). `probe check` and the tests read them from the sources: do not hardcode versions
-   in tests. A new pre-release also needs: the `twitchng.js` header line + What's new (ru and en), the README
+4. **Versions live in one place each**: engine `VERSION` in `sttv-speed.js`, `VERSION` in `twitchng.js`
+   (app version 1.0.0). `probe check` and the tests read them from the sources: do not hardcode versions
+   in tests. A release also needs: the `twitchng.js` header line + What's new (ru and en), the README
    title + status row + section, the `CODEX_TV_TEST.md` header and "what changed".
 5. **Generated code is generated**: the `<ng-logo>` block in `twitchng.js`, `brand/twitchng/variants/**`, icons and
    splash come from `make_assets.py` / `render.mjs`. Edit the generator, regenerate, commit both.
@@ -89,7 +89,7 @@ Only with access the owner gave you, and only by `CODEX_TV_TEST.md` (its rules w
   run JS in the app page through `probe/sttv-cdp.mjs`;
 - not allowed: touching the stock app `com.tbsniller.smarttwitchwebostv` (no `deploy/install.sh` / `rollback.sh`
   without an explicit request), editing installed files by hand, system settings, reboots, network changes;
-- first `node probe/sttv-cdp.mjs check` (build gate: engine, app id, pre-release); stop if it fails;
+- first `node probe/sttv-cdp.mjs check` (build gate: engine, app id, version); stop if it fails;
 - never print or save sign-in values from `localStorage` (`AddUser*`, anything with token / oauth / auth): only
   whether a key exists and its length. The probe redacts its output by default; keep it that way (`--raw 1` is for
   local debugging only).

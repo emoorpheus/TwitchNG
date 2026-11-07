@@ -1,5 +1,5 @@
 /*
- * twitchng.css 1.0.0 (pre-release) - Twitch NG app layer: intro, About, What's new, OLED preset. NG = Next-Gen.
+ * twitchng.css 1.0.0 - Twitch NG app layer: intro, About, What's new, OLED preset. NG = Next-Gen.
  * OLED preset = default (html:not(.ng-classic)); classic look = html.ng-classic (localStorage TWITCHNG_OLED = '0').
  * The app sets most colours inline / in its own sheet and the thumbnail focus with !important (focus_class_holder):
  * every rule here carries the html prefix (+ specificity) and !important. Player overlays on top of the video are kept.

@@ -1,7 +1,6 @@
 /*
- * twitchng.js 1.0.0 pre-release 06 - Twitch NG app layer, ES5. NG = Next-Gen.
- * Version line: the app stays 1.0.0 until the release; pre-releases are numbered (PRE_N: 01, 02, ...) and shown as
- *   "1.0.0 · pre-release 02" (appinfo.json version stays 1.0.0).
+ * twitchng.js 1.0.0 - Twitch NG app layer, ES5. NG = Next-Gen.
+ * Version line: 1.0.0 stable release.
  * pre-release 02: About shows the webOS version + firmware from the system (luna systemproperty getSystemInfo; on webOS 25
  *   PalmSystem.deviceInfo.platformVersion is the firmware number, TV report: "webOS 33.30.97"); honest clip wording
  *   (clips are MP4: speed only where the TV itself applies it); What's new for pre-release 02.

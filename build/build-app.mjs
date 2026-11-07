@@ -9,7 +9,7 @@
  *   appinfo.json         id / version / title;  services.json + package.json: service id <id>.hls;  + LICENSE (GPL text)
  *   index.js             DEFAULT_TARGET_URL (local: release/index.html inside the IPK, hosted: --target-url)
  *   release/             dev-only files dropped (githubio/temp, scripts, main_uncompressed.js, *.xcf; --keep-dev-files)
- * --brand twitchng: "Twitch NG" 1.0.0 (pre-release; NG = Next-Gen) - a standalone app: id com.twitchng.tv, own version
+ * --brand twitchng: "Twitch NG" 1.0.0 (NG = Next-Gen) - a standalone app: id com.twitchng.tv, own version
  *   line (default 1.0.0, independent of the engine), icon / splash from brand/twitchng/variants/<--icon>/,
  *   release/githubio/{js/twitchng.js, css/twitchng.css} (+ <link> in head, <script> after sttv-speed: OLED preset on by
  *   default, intro, About, What's new) + the Next-Gen UI (DESIGN.md: css/ng-ui.css, css/ng-icons.css, js/ng-ui.js,

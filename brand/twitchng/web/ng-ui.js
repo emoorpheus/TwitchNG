@@ -1,5 +1,5 @@
 /*
- * ng-ui.js 1.0.0 pre-release 07 - Twitch NG "Next-Gen UI" text layer, ES5 (stages 1-3; DESIGN.md).
+ * ng-ui.js 1.0.0 - Twitch NG "Next-Gen UI" text layer, ES5 (stages 1-3; DESIGN.md).
  * Loaded by release/index.html right after twitchng.js (build/build-app.mjs --brand twitchng). twitchng.js switches the UI on / off
  * (html.ng-ui + ng-ui.css / ng-icons.css; localStorage.TWITCHNG_UI = '0' or TwitchNG.ui(false) = the OLED preset look); with the
  * class off this file changes nothing. It reshapes a few texts main.js renders, as DOM post-processing, textContent only:

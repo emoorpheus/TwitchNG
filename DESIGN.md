@@ -1,8 +1,8 @@
-# Next-Gen UI (redesign, in progress)
+# Next-Gen UI (redesign)
 
-Status: **in the build since pre-release 06**, on by default on top of the OLED preset (`html.ng-ui`; no NG UI without the
-preset). Stage 1 done (design system, live grid, side menu, header) + part of stage 2 (switch pills, video / clip, category and
-channel cards, history cards). Off: `localStorage.TWITCHNG_UI = '0'` or `TwitchNG.ui(false)`, then restart the app (main.js
+Status: **included in Twitch NG 1.0.0 release**, on by default on top of the OLED preset (`html.ng-ui`; no NG UI without the
+preset). Stage 1 (design system, live grid, side menu, header), Stage 2 (switch pills, video / clip, category and
+channel cards, history cards), Stage 3 (player OSD, modern Lucide control icons, purple OLED gradient progress bar, circular Play/Pause button, end-of-stream dialogs). Off: `localStorage.TWITCHNG_UI = '0'` or `TwitchNG.ui(false)`, then restart the app (main.js
 measured the grid row steps with the other sizes). Plan and owner decisions: `ROADMAP.md` items 1-2.
 
 Owner decisions (2026-11-05): font **Onest** (as "NG Sans"), icons **variant B: sharp corners** (Lucide, miter joins, stroke 2.5),
@@ -47,10 +47,9 @@ NG_LANG=ru_RU NG_LOCALE=ru-RU node tools/ui-lab.mjs <ipk> /tmp/lab --screens hom
 
 ## Stages
 
-1. design system + live grid + side menu + header (pre-release 06)
-2. other grids: switch pills, videos / clips, categories, channel results, history (pre-release 06); channel page, user lists
-   (follows: need a signed-in TV check)
-3. player OSD, speed / quality menus, end-of-stream dialog (pre-release 07)
+1. design system + live grid + side menu + header (completed)
+2. other grids: switch pills, videos / clips, categories, channel results, history (completed)
+3. player OSD, speed / quality menus, end-of-stream dialog (completed in 1.0.0 Stage 3)
 4. settings, dialogs, About / What's new, sign-in
 5. chat
 
