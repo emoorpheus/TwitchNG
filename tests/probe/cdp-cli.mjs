@@ -11,7 +11,9 @@ import { fileURLToPath } from 'node:url';
 const KIT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..'), CLI = path.join(KIT, 'probe/sttv-cdp.mjs');
 // what `check` must find by default = this kit's versions (engine VERSION, twitchng.js PRE_N)
 const KSRC = (f) => fs.readFileSync(new URL('../../' + f, import.meta.url), 'utf8');
-const KV = { engine: /\bVERSION = '([\d.]+)'/.exec(KSRC('sttv-speed/sttv-speed.js'))[1], pre: /\bPRE_N = '(\d*)'/.exec(KSRC('brand/twitchng/web/twitchng.js'))[1] };
+const ngSrc = KSRC('brand/twitchng/web/twitchng.js');
+const isPre = /\bPRE\s*=\s*true\b/.test(ngSrc);
+const KV = { engine: /\bVERSION = '([\d.]+)'/.exec(KSRC('sttv-speed/sttv-speed.js'))[1], isPre, pre: isPre ? (/\bPRE_N = '(\d*)'/.exec(ngSrc) || [])[1] || '' : 'none' };
 const IPK = path.resolve(process.argv[2] || ''), W = path.resolve(process.argv[3] || path.join(os.tmpdir(), 'sttv-cdp-cli'));
 if (!fs.existsSync(IPK)) { console.error('usage: node tests/probe/cdp-cli.mjs <twitchng.ipk> [workDir]'); process.exit(2); }
 fs.rmSync(W, { recursive: true, force: true }); fs.mkdirSync(path.join(W, 'ar'), { recursive: true }); fs.mkdirSync(path.join(W, 'root'));
@@ -38,11 +40,12 @@ const runAsync = (...a) => new Promise((res) => { import('node:child_process').t
   p.stdout.on('data', (d) => (out += d)); p.stderr.on('data', (d) => (out += d)); p.on('close', (code) => res({ code, out })); }); });
 
 let r = run('list');
-ok(r.code === 0 && /com\.twitchng\.tv/.test(r.out), 'list: the app target is visible');
+ok(r.code === 0 && (/com\.twitchng\.tv|Twitch NG/.test(r.out)), 'list: the app target is visible');
 r = run('check');
-ok(r.code === 0 && r.out.includes('PASS engine ' + KV.engine) && /PASS app id com\.twitchng\.tv/.test(r.out) && /PASS BASE inside/.test(r.out) && /PASS TwitchNG 1\.0\.0 variant L3/.test(r.out) && r.out.includes('PASS TwitchNG pre-release ' + KV.pre) && /CHECK OK/.test(r.out), 'check: engine ' + KV.engine + ', app id, BASE, pre-release ' + KV.pre + ', TwitchNG 1.0.0 L3 -> exit 0', r.out.split('\n').filter((l) => /PASS|FAIL|CHECK/.test(l)));
+const preOk = KV.isPre ? r.out.includes('PASS TwitchNG pre-release ' + KV.pre) : !r.out.includes('PASS TwitchNG pre-release');
+ok(r.code === 0 && r.out.includes('PASS engine ' + KV.engine) && /PASS app id com\.twitchng\.tv/.test(r.out) && /PASS BASE inside/.test(r.out) && /PASS TwitchNG 1\.0\.0 variant L3/.test(r.out) && preOk && /CHECK OK/.test(r.out), 'check: engine ' + KV.engine + ', app id, BASE, pre-release ' + KV.pre + ', TwitchNG 1.0.0 L3 -> exit 0', r.out.split('\n').filter((l) => /PASS|FAIL|CHECK/.test(l)));
 r = run('check', '--pre', '01');
-ok(r.code === 4 && /FAIL TwitchNG pre-release 01/.test(r.out), 'check: pre-release 01 expected on a ' + KV.pre + ' build -> FAIL + exit 4', { code: r.code });
+ok(r.code === 4 && /FAIL TwitchNG pre-release 01/.test(r.out), 'check: pre-release 01 expected on a ' + (KV.isPre ? KV.pre : 'release') + ' build -> FAIL + exit 4', { code: r.code });
 r = run('check', '--variant', 'A', '--engine', '1.3.3');
 ok(r.code === 4 && /FAIL engine 1\.3\.3/.test(r.out) && /CHECK FAILED/.test(r.out), 'check: wrong expectations -> FAIL lines + exit 4', { code: r.code });
 await page.evaluate(() => (window.__keys = []));

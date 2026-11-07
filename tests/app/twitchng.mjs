@@ -19,7 +19,9 @@ import { KIT } from '../_paths.mjs';
 
 const IPK = path.resolve(process.argv[2] || '');
 // expected pre-release number: the one place it is set (brand/twitchng/web/twitchng.js PRE_N), not a copy in this test
-const PRE = (/\bPRE_N\s*=\s*'(\d*)'/.exec(fs.readFileSync(path.join(KIT, 'brand/twitchng/web/twitchng.js'), 'utf8')) || [])[1] || '?';
+const jsSrc = fs.readFileSync(path.join(KIT, 'brand/twitchng/web/twitchng.js'), 'utf8');
+const isPre = /\bPRE\s*=\s*true\b/.test(jsSrc);
+const PRE = (/\bPRE_N\s*=\s*'(\d*)'/.exec(jsSrc) || [])[1] || '';
 const W = path.resolve(process.argv[3] || path.join(os.tmpdir(), 'sttv-app-twitchng'));
 if (!fs.existsSync(IPK)) { console.error('usage: node tests/app/twitchng.mjs <twitchng.ipk> [workDir]'); process.exit(2); }
 fs.rmSync(W, { recursive: true, force: true });
@@ -39,7 +41,7 @@ const ai = JSON.parse(fs.readFileSync(path.join(APP, 'appinfo.json'), 'utf8'));
 const asz = (k) => (ai[k] && fs.existsSync(path.join(APP, ai[k])) ? pngSize(path.join(APP, ai[k])) : null);
 ok(ai.title === 'Twitch NG' && ai.vendor === 'TwitchNG' && ai.iconColor === '#9146FF' && ai.version === '1.0.0', 'appinfo: title Twitch NG, vendor, iconColor #9146FF, version 1.0.0 (own version line)', { id: ai.id, title: ai.title, version: ai.version });
 ok(!/fgl27|TBSniller|SmartTwitchTV/i.test(ai.appDescription || ''), 'appinfo description names only this app', ai.appDescription);
-ok(new RegExp('^Twitch NG 1\\.0\\.0 \\(pre-release ' + PRE + '\\) - ').test(ai.appDescription || ''), 'appinfo description carries the pre-release number from twitchng.js (PRE_N)', ai.appDescription);
+ok(!isPre ? /^Twitch NG 1\.0\.0 - /.test(ai.appDescription || '') : new RegExp('^Twitch NG 1\\.0\\.0 \\(pre-release ' + PRE + '\\) - ').test(ai.appDescription || ''), 'appinfo description carries the release/pre-release format from twitchng.js', ai.appDescription);
 const icon = asz('icon'), large = asz('largeIcon'), splash = asz('splashBackground');
 ok(icon && icon[0] === 80 && icon[1] === 80 && large && large[0] === 130 && large[1] === 130 && splash && splash[0] === 1920 && splash[1] === 1080, 'LG appinfo spec: icon 80x80, largeIcon 130x130, splash 1920x1080', { icon, large, splash });
 const iconPx = (() => {   // pixel (4, 0) of the icon PNG (8-bit RGB/RGBA, row 0 unfiltered) -> the purple field
@@ -141,15 +143,16 @@ const st = await page.evaluate(() => ({ ng: window.TwitchNG && window.TwitchNG.s
     return t ? { text: t.innerText.replace(/\s+/g, ' ').trim(), hero: h ? h.getAttribute('aria-label') : null, heroBox: r ? [Math.round(r.top), Math.round(r.height)] : null,
       backdrop: i ? getComputedStyle(i).backgroundImage.slice(0, 40) : null, glitch: /M11\.571 4\.714/.test(t.innerHTML), old: /SmartTV Client|Press return or enter/i.test(t.innerText) } : null; })(),
   bg: getComputedStyle(document.getElementById('welcome_dialog')).backgroundColor }));
-ok(st.ng && st.ng.version === '1.0.0' && st.ng.preRelease === true && st.ng.preReleaseN === PRE && st.ng.name === 'Twitch NG' && st.ng.variant === 'L3' && st.ng.oled === true && st.ng.classic === false && st.ng.css && st.ng.logo && st.ng.hero,
-  'TwitchNG API: 1.0.0 pre-release ' + PRE + ', variant L3 (default icon), OLED preset on by default, css + logo + intro hero', st.ng);
+ok(st.ng && st.ng.version === '1.0.0' && st.ng.preRelease === isPre && st.ng.preReleaseN === PRE && st.ng.name === 'Twitch NG' && st.ng.variant === 'L3' && st.ng.oled === true && st.ng.classic === false && st.ng.css && st.ng.logo && st.ng.hero,
+  'TwitchNG API: 1.0.0, variant L3 (default icon), OLED preset on by default, css + logo + intro hero', st.ng);
 ok(st.app && st.app.id === ID && st.app.name === 'Twitch NG' && st.app.version === '1.0.0', 'STTVSpeed.status().app = this app 1.0.0', st.app);
 ok(st.title === 'Twitch NG', 'document.title', st.title);
 // the viewport is 1920 x 1080 (as the TV): the hero sits where the splash has it (ink top 344 px, 372 px high; SVG box + 4 px pad)
+const introVerOk = !isPre ? /Twitch NG 1\.0\.0 · /.test(st.intro.text) : new RegExp('Twitch NG 1\\.0\\.0 · pre-release ' + PRE + ' · ').test(st.intro.text);
 ok(introUp && st.intro && st.intro.hero === 'Twitch Next-Gen' && st.intro.heroBox && Math.abs(st.intro.heroBox[0] - 340) <= 3 && Math.abs(st.intro.heroBox[1] - 380) <= 3 &&
-  /radial-gradient/.test(st.intro.backdrop || '') && !st.intro.glitch && !st.intro.old && new RegExp('Twitch NG 1\\.0\\.0 · pre-release ' + PRE + ' · ').test(st.intro.text) &&
+  /radial-gradient/.test(st.intro.backdrop || '') && !st.intro.glitch && !st.intro.old && introVerOk &&
   /not affiliated with Twitch/.test(st.intro.text) && !/fgl27|TBSniller|SmartTwitch|Felipe/i.test(st.intro.text) && st.bg === 'rgb(8, 7, 13)',
-  'first run: Twitch NG intro continues the splash (hero "Twitch Next-Gen" at the splash position, same backdrop + glow, no Glitch, pre-release, no names of the original projects)', st.intro);
+  'first run: Twitch NG intro continues the splash (hero "Twitch Next-Gen" at the splash position, same backdrop + glow, no Glitch, no names of the original projects)', st.intro);
 await page.screenshot({ path: path.join(W, 'shots', 'intro.png') });
 
 // light metric: pictures hidden (thumbnails, avatars, emotes, video), the rest is the UI the preset is about
@@ -206,8 +209,8 @@ const ngui = await page.evaluate(async () => {
     bottom: [10, 11, 12, 13, 14].map((i) => (document.getElementById('side_panel_movel_new_' + i) || {}).className || ''),
     clock: !!document.querySelector('#label_clock .ng-clock-time'), refresh: (document.getElementById('label_last_refresh') || {}).textContent };
 });
-ok(ngui.cls && ngui.on && ngui.order && ngui.tw === true && ngui.ng && ngui.ng.on && ngui.ng.started && ngui.ng.version === '1.0.0-pre' + PRE && ngui.ng.passes > 0,
-  'NG UI on by default: html.ng-ui, ng-ui.css + ng-icons.css enabled and after the base sheet, ng-ui.js ' + PRE + ' running', { cls: ngui.cls, on: ngui.on, order: ngui.order, ng: ngui.ng });
+ok(ngui.cls && ngui.on && ngui.order && ngui.tw === true && ngui.ng && ngui.ng.on && ngui.ng.started && ngui.ng.version === (!isPre ? '1.0.0' : '1.0.0-pre' + PRE) && ngui.ng.passes > 0,
+  'NG UI on by default: html.ng-ui, ng-ui.css + ng-icons.css enabled and after the base sheet, ng-ui.js running', { cls: ngui.cls, on: ngui.on, order: ngui.order, ng: ngui.ng });
 ok(ngui.fw.roboto === ngui.fw.ng400 && ngui.fw.robotoBold === ngui.fw.ng700 && ngui.fw.roboto700 === ngui.fw.ng700 && ngui.fw.ng400 !== ngui.fw.serif && ngui.fw.ng400 > 0,
   'fonts: upstream Roboto / Roboto-Bold text renders in NG Sans 400 / 700 (Onest), Latin + Cyrillic', ngui.fw);
 const cardOk = (c) => /^\d+(\.\d)?K$|^\d{1,3}$|^\d+(\.\d)?M$/.test(c.badge || '') && /^(\d+h )?\d+m$/.test(c.since || '') && !/^(Playing|Стрим по)\s/.test(c.game || '') &&
@@ -268,9 +271,10 @@ const aboutUp = await page.evaluate(() => !document.getElementById('dialog_about
 await page.waitForTimeout(1200);
 const about = await page.evaluate(() => { const t = document.getElementById('dialog_about_text'); return t ? { html: t.innerHTML.length, ng: !!t.querySelector('.ng-about'),
   text: t.innerText.replace(/\s+/g, ' ').trim(), run: (document.getElementById('about_runningtime') || {}).innerText || '' } : null; });
-ok(aboutUp && about && about.ng && new RegExp('Version 1\\.0\\.0 · pre-release ' + PRE + ' · speed engine \\d+\\.\\d+\\.\\d+').test(about.text) && /GNU GPL v3\.0/.test(about.text) && /absolutely no warranty/i.test(about.text) &&
+const aboutVerOk = !isPre ? /Version 1\.0\.0 · speed engine \d+\.\d+\.\d+/.test(about.text) : new RegExp('Version 1\\.0\\.0 · pre-release ' + PRE + ' · speed engine \\d+\\.\\d+\\.\\d+').test(about.text);
+ok(aboutUp && about && about.ng && aboutVerOk && /GNU GPL v3\.0/.test(about.text) && /absolutely no warranty/i.test(about.text) &&
   /gnu\.org\/licenses\/gpl-3\.0/.test(about.text) && /OLED65M59LA · webOS 10\.3\.0 · firmware 33\.30\.97 · Chromium \d+/.test(about.text) && !/webOS 33/.test(about.text) && /\S/.test(about.run),
-  'About: Twitch NG 1.0.0 pre-release ' + PRE + ', engine, device (webOS 10.3.0 + firmware 33.30.97 from getSystemInfo, report T3), run time, GPL + no-warranty notice', about && about.text.slice(0, 400));
+  'About: Twitch NG 1.0.0, engine, device (webOS 10.3.0 + firmware 33.30.97 from getSystemInfo, report T3), run time, GPL + no-warranty notice', about && about.text.slice(0, 400));
 const aboutBad = about ? ['fglfgl27', 'gmail', 'PayPal', 'Paypal', 'Bitcoin', 'donat', 'Phone and tablet', 'github.com/fgl27', 'tinyurl', 'Apk:', 'Contact'].filter((k) => about.text.indexOf(k) >= 0) : ['?'];
 ok(aboutBad.length === 0, 'About: no contact e-mail, donation, phone/tablet, upstream links or APK info', aboutBad);
 const aboutBg = await page.evaluate(() => [getComputedStyle(document.getElementById('dialog_about')).backgroundColor, getComputedStyle(document.querySelector('#dialog_about .about_dialogs')).backgroundColor]);
@@ -281,7 +285,8 @@ const goNews = await sideGo(/what.s new/);
 await page.waitForTimeout(1500);
 const news = await page.evaluate(() => { const d = document.getElementById('update_dialog'), t = document.getElementById('update_dialog_text'), vis = (id) => { const e = document.getElementById(id); return !!e && getComputedStyle(e).display !== 'none'; };
   return { up: !!d && !d.classList.contains('hide'), ng: !!(t && t.querySelector('.ng-news')), text: t ? t.innerText.replace(/\s+/g, ' ').trim() : '', up_btn: vis('update_dialog_upbutton'), change_btn: vis('update_dialog_changebutton') }; });
-ok(side14 === "What's new" && goNews && news.up && news.ng && new RegExp("What's new — Twitch NG 1\\.0\\.0 \\(pre-release " + PRE + '\\)').test(news.text) && !news.up_btn && !news.change_btn && !/Changelog|APK|fgl27/i.test(news.text),
+const newsVerOk = !isPre ? /What's new — Twitch NG 1\.0\.0/.test(news.text) : new RegExp("What's new — Twitch NG 1\\.0\\.0 \\(pre-release " + PRE + '\\)').test(news.text);
+ok(side14 === "What's new" && goNews && news.up && news.ng && newsVerOk && !news.up_btn && !news.change_btn && !/Changelog|APK|fgl27/i.test(news.text),
   'side menu "What\'s new" -> this app\'s notes, no update / changelog buttons', { side14, item: goNews, news: { ...news, text: news.text.slice(0, 160) } });
 await measure('news');
 await key('Escape');
@@ -302,14 +307,15 @@ ok(names.every((n) => metrics[n].oled.meanY <= metrics[n].classic.meanY + 0.05),
 ok(metrics.exit.lessLight >= 30 && metrics.about.lessLight >= 15 && metrics.settings.lessLight >= 10, 'OLED: exit -30%, about -15%, settings -10% light at least', { exit: metrics.exit.lessLight, about: metrics.about.lessLight, settings: metrics.settings.lessLight });
 const lsOff = await page.evaluate(() => { TwitchNG.oled(false); const r = [localStorage.getItem('TWITCHNG_OLED'), document.documentElement.classList.contains('ng-classic')]; TwitchNG.oled(null); return r.concat([localStorage.getItem('TWITCHNG_OLED'), document.documentElement.classList.contains('ng-classic')]); });
 ok(lsOff[0] === '0' && lsOff[1] === true && lsOff[2] === null && lsOff[3] === false, 'TwitchNG.oled(false) persists TWITCHNG_OLED=0 (classic), oled(null) -> default', lsOff);
-const misc = await page.evaluate(() => {
+const misc = await page.evaluate((isPre) => {
   const en = TwitchNG.authHelp('Adding a key is not demanding.<br><br>In doubt read the contents of this link:<br><br>%x<br><br>For some devices, a mouse is necessary.');
   const pt = TwitchNG.authHelp('mais tarde <br><br> Em caso de dúvida, leia este link: <br><br>%x<br><br> Para alguns dispositivos');
   localStorage.setItem('app_lang_string', 'ru_RU');
   const ru = { about: TwitchNG.aboutHtml(), news: TwitchNG.newsHtml(), label: TwitchNG.newsLabel('x'), lang: TwitchNG.lang() };
   localStorage.removeItem('app_lang_string');
-  return { en, pt, ru: { lang: ru.lang, label: ru.label, about: /Версия 1\.0\.0 · предварительная версия/.test(ru.about) && /без каких-либо гарантий/.test(ru.about), news: /Что нового — Twitch NG 1\.0\.0/.test(ru.news) } };
-});
+  const ruAboutVerOk = !isPre ? /Версия 1\.0\.0 · /.test(ru.about) : /Версия 1\.0\.0 · предварительная версия/.test(ru.about);
+  return { en, pt, ru: { lang: ru.lang, label: ru.label, about: ruAboutVerOk && /без каких-либо гарантий/.test(ru.about), news: /Что нового — Twitch NG 1\.0\.0/.test(ru.news) } };
+}, isPre);
 ok(misc.en === 'Adding a key is not demanding.<br><br>For some devices, a mouse is necessary.' && misc.pt === 'mais tarde <br><br> Para alguns dispositivos',
   'sign-in help without a source URL: the "read this link" sentence is dropped (en, pt spacing)', { en: misc.en, pt: misc.pt });
 ok(misc.ru.lang === 'ru' && misc.ru.label === 'Что нового' && misc.ru.about && misc.ru.news, 'app language ru_RU -> Russian About / What\'s new', misc.ru);

@@ -3,6 +3,7 @@ tests/testdata
 # local, per-machine settings (TV address etc.) - copy from tv.env.example
 tv.env
 *.local.env
+node_modules
 node_modules/
 __pycache__/
 
