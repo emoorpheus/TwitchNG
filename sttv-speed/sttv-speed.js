@@ -163,7 +163,8 @@
         v2b_fail: ['Ускорение недоступно (%s) · 1×', 'Speed-up unavailable (%s) · 1×'],
         v2b_cool: ['Ускорение недоступно ещё %s с после сбоя · 1×', 'Speed-up unavailable for %s s after a failure · 1×'],
         v2b_budget: ['Слишком частая смена скорости · подождите %s с', 'Too many speed changes · wait %s s'],
-        v2b_down: ['Скорость %s · сеть не успевает, качество %s', 'Speed %s · network too slow, quality %s']
+        v2b_down: ['Скорость %s · сеть не успевает, качество %s', 'Speed %s · network too slow, quality %s'],
+        v2b_up: ['Скорость %s · качество восстановлено: %s', 'Speed %s · quality restored: %s']
     };
     var toastEl = null, toastTimer = 0;
     function toast(key, arg) {
@@ -1986,7 +1987,7 @@
         tl: { checks: 0, bad: 0, mismatches: 0, noted: -1, last: null },
         // 1.3.5: network awareness (TV report on 1.3.4 / Twitch NG 1.0.0)
         netAt: 0, kicked: false, kicks: 0, lastKick: 0, absorbAt: [], absorbed: 0, netEp: null, netRecovers: 0,
-        bwEst: 0, bwN: 0, master: null, downs: { key: '', n: 0 }, stepDowns: 0, downCap: null, lowSince: 0,
+        bwEst: 0, bwN: 0, master: null, downs: { key: '', n: 0 }, stepDowns: 0, stepUps: 0, downCap: null, lowSince: 0, highSince: 0, lastStepAt: 0,
         restoreNudges: 0, rwTimer: 0, engRetry: { key: '', n: 0, at: 0 }, engineRetries: 0 };
     function v2bNetSeen() { v2b.netAt = now(); }
     function v2bOwns(v) { return v2b.state !== 'idle' && !!v && v === v2b.v; }
@@ -2667,12 +2668,13 @@
         if (!pick) pick = known ? lower[lower.length - 1] : lower[0];
         var v = v2b.v, pos = v2bPos(v), gen = ++v2b.gen, old = v2b.hls, from = variantName(cur);
         v2b.downs.n++; v2b.stepDowns++;
+        v2b.lastStepAt = now();
         v2b.downCap = { key: v2b.key, bps: Math.round(pick.bw * S) };
         ev('v2b_step_down', { why: why, speed: S, from: from, to: variantName(pick), needMbps: +(cur.bw * S / 1e6).toFixed(2),
             bwEstMbps: known ? +(v2b.bwEst / 1e6).toFixed(2) : null, ahead: v2bAhead(v), pos: +pos.toFixed(2), n: v2b.downs.n });
         v2b.plUrl = pick.uri;
         v2b.variant = { h: variantHeight(pick), bw: pick.bw, video: pick.video || null, from: 'step_down:' + why };
-        v2b.stalls = []; v2b.lowSince = 0;
+        v2b.stalls = []; v2b.lowSince = 0; v2b.highSince = 0;
         v2b.hls = null; v2b.t0 = now();
         v2b.internal++;
         try { old.destroy(); } catch (e) {} finally { v2b.internal--; }
@@ -2680,19 +2682,73 @@
         toast('v2b_down', [S + '×', variantName(pick)]);
         return true;
     }
-    // 1.3.5 (active, takeover, speed > 1): step down BEFORE the stall when the buffer drains (< 4 s of wall-clock playback
-    // left) and the measured link is below what the variant needs at this speed; a stalled element with nothing arriving
-    // for 10 s gets a kick (hls.js itself waits up to 60 s for a hung fragment request)
+    // 1.3.9 (Roadmap item 11): helper to find the next higher variant below v2bMaxH
+    function v2bNextHigherVariant(cur) {
+        var list = v2b.master || [], higher = [], i, c;
+        if (!cur || !list.length) return null;
+        for (i = 0; i < list.length; i++) {
+            c = list[i];
+            if (!c.audioOnly && c.uri && c.bw > cur.bw * 1.05 && (!cfg.v2bMaxH || variantHeight(c) <= cfg.v2bMaxH)) {
+                higher.push(c);
+            }
+        }
+        if (!higher.length) return null;
+        higher.sort(function (a, b) { return a.bw - b.bw; });
+        return higher[0];
+    }
+    function v2bStepUp(why) {
+        var cur = v2b.variant, list = v2b.master || [], S = v2b.speed, pick = v2bNextHigherVariant(cur), i;
+        if (v2b.mode !== 'takeover' || v2b.state !== 'active' || !v2b.hls || !cur || !(cur.bw > 0) || !pick) return false;
+        if (!v2b.downCap || v2b.downCap.key !== v2b.key) return false;
+        var v = v2b.v, pos = v2bPos(v), gen = ++v2b.gen, old = v2b.hls, from = variantName(cur);
+        v2b.stepUps++;
+        v2b.lastStepAt = now();
+        var isTop = true;
+        for (i = 0; i < list.length; i++) {
+            if (!list[i].audioOnly && list[i].bw > pick.bw * 1.05 && (!cfg.v2bMaxH || variantHeight(list[i]) <= cfg.v2bMaxH)) {
+                isTop = false; break;
+            }
+        }
+        if (isTop) v2b.downCap = null;
+        else v2b.downCap = { key: v2b.key, bps: Math.round(pick.bw * S) };
+
+        ev('v2b_step_up', { why: why, speed: S, from: from, to: variantName(pick), needMbps: +(pick.bw * S / 1e6).toFixed(2),
+            bwEstMbps: +(v2b.bwEst / 1e6).toFixed(2), ahead: v2bAhead(v), pos: +pos.toFixed(2), stepUps: v2b.stepUps });
+        v2b.plUrl = pick.uri;
+        v2b.variant = { h: variantHeight(pick), bw: pick.bw, video: pick.video || null, from: 'step_up:' + why };
+        v2b.stalls = []; v2b.lowSince = 0; v2b.highSince = 0;
+        v2b.hls = null; v2b.t0 = now();
+        v2b.internal++;
+        try { old.destroy(); } catch (e) {} finally { v2b.internal--; }
+        v2bStartHls(v, pos, S, gen);
+        toast('v2b_up', [S + '×', variantName(pick)]);
+        return true;
+    }
+    // 1.3.5: step down before stall when buffer drains; 1.3.9: step up when bandwidth & buffer recover
     function v2bNetWatch(v) {
-        var t = now(), ahead, cur = v2b.variant;
-        if (v2b.state !== 'active' || !v2b.hls || v.paused || v.seeking || v.ended) { v2b.lowSince = 0; return; }
+        var t = now(), ahead, cur = v2b.variant, S = v2b.speed;
+        if (v2b.state !== 'active' || !v2b.hls || v.paused || v.seeking || v.ended) { v2b.lowSince = 0; v2b.highSince = 0; return; }
         ahead = v2bAhead(v);
         if (v.readyState < 3 && ahead < 1 && t - lastOf(v2b.netAt, v2b.activeAt) > 10000 && (!v2b.lastKick || t - v2b.lastKick > 30000)) { v2bKick('stall_idle'); return; }
-        if (!(v2b.speed > 1) || v2b.mode !== 'takeover' || !cur || !(cur.bw > 0) || t - v2b.activeAt < 30000 || t - v2b.seekAt < 15000) { v2b.lowSince = 0; return; }
-        if (ahead < 4 * v2b.speed && v2b.bwN >= 3 && v2b.bwEst < cur.bw * v2b.speed * 1.1) {
+        if (!(S > 1) || v2b.mode !== 'takeover' || !cur || !(cur.bw > 0) || t - v2b.activeAt < 30000 || t - v2b.seekAt < 15000) { v2b.lowSince = 0; v2b.highSince = 0; return; }
+        if (ahead < 4 * S && v2b.bwN >= 3 && v2b.bwEst < cur.bw * S * 1.1) {
+            v2b.highSince = 0;
             if (!v2b.lowSince) v2b.lowSince = t;
             else if (t - v2b.lowSince > 5000) { v2b.lowSince = 0; v2bStepDown('low_buffer'); }
+            return;
         } else v2b.lowSince = 0;
+
+        // 1.3.9: quality step-up if downCap is present, buffer >= 10*S, link >= 1.5x of target for >= 120s
+        if (v2b.downCap && v2b.downCap.key === v2b.key && v2b.bwN >= 3 && ahead >= 10 * S) {
+            var higher = v2bNextHigherVariant(cur);
+            if (higher && higher.bw * S * 1.5 <= v2b.bwEst) {
+                if (!v2b.highSince) v2b.highSince = t;
+                else if (t - v2b.highSince >= 120000 && (!v2b.lastStepAt || t - v2b.lastStepAt >= 300000)) {
+                    v2b.highSince = 0;
+                    v2bStepUp('recovered_link');
+                }
+            } else v2b.highSince = 0;
+        } else v2b.highSince = 0;
     }
     // 1.3.5: engaging timeout follows the network. TV report: slow-but-moving downloads (4-24 Mbit/s, one 9 MB 1080p60
     // segment = 3-18 s) hit the fixed 15 s -> fallback to 1x. Now: a kick after 8 s if nothing arrived for 6 s; fail only
@@ -3576,7 +3632,7 @@
             V2B_SPEEDS: V2B_SPEEDS, ENGINE_MIN: ENGINE_MIN, nativeRate: nativeRate, onSetSpeed: onSetSpeed, applyNative: applyNative,
             bridgeRate: bridgeRate, hook: hook,
             // 1.3.5
-            v2bStepDown: v2bStepDown, v2bKick: v2bKick, v2bAbsorbLoad: v2bAbsorbLoad, v2bRestoreWatch: v2bRestoreWatch, v2bEngageWatch: v2bEngageWatch,
+            v2bStepDown: v2bStepDown, v2bStepUp: v2bStepUp, v2bNextHigherVariant: v2bNextHigherVariant, v2bKick: v2bKick, v2bAbsorbLoad: v2bAbsorbLoad, v2bRestoreWatch: v2bRestoreWatch, v2bEngageWatch: v2bEngageWatch,
             v2bNetWatch: v2bNetWatch, v2bNetRecover: v2bNetRecover, v2bEngineRetry: v2bEngineRetry, clipRateCheck: clipRateCheck, plCache: plCache,
             plText: plText, v2bAhead: v2bAhead, variantName: variantName, v2bMaintain: v2bMaintain, v2bFail: v2bFail, v2bRestore: v2bRestore,
             onEngineFail: onEngineFail, toast: toast, MSG: MSG,
